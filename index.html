@@ -4,55 +4,76 @@
     <meta charset="UTF-8">
     <title>XARAJATLAR PRO</title>
     <style>
+        /* 1. LOGIN VA UMUMIY DIZAYN */
         body { background: #0f172a; color: white; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 40px; border-radius: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 350px; }
-        #mainApp { display: none; }
+        .card { background: #1e293b; padding: 40px; border-radius: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 90%; max-width: 400px; }
+        
+        /* 2. XARAJATLAR SAHIFASI (Dastlab yashirin) */
+        #mainApp { display: none; width: 100%; max-width: 600px; }
+        
+        /* Sening xarajatlar jadvaling stili shu yerda bo'lsin */
+        .expense-box { background: #1e293b; padding: 20px; border-radius: 15px; margin-top: 20px; }
+        input { width: 80%; padding: 10px; margin: 5px; border-radius: 5px; border: none; }
+        button.add-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="loginPage" class="card">
-        <h2>Tizimga kirish</h2>
+        <h2>Xush kelibsiz</h2>
         <p>Telegram orqali tasdiqlang:</p>
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" 
                 data-size="large" 
                 data-onauth="onTelegramAuth(user)" 
                 data-request-access="write"></script>
-        <p id="msg" style="color: #10b981; margin-top: 15px;"></p>
     </div>
 
-    <div id="mainApp" class="card">
-        <h2 id="welcome">Salom!</h2>
-        <p>Siz muvaffaqiyatli kirdingiz.</p>
-        <button onclick="localStorage.clear(); location.reload();" style="background:#ef4444; color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer;">Chiqish</button>
+    <div id="mainApp">
+        <div class="expense-box">
+            <h2 id="welcome">Salom!</h2>
+            <hr>
+            <h3>Xarajatlar Ro'yxati</h3>
+            <input type="text" id="item" placeholder="Nima sotib oldingiz?">
+            <input type="number" id="price" placeholder="Summa">
+            <button class="add-btn">QO'SHISH</button>
+            
+            <div style="margin-top: 30px;">
+                <button onclick="logout()" style="background:#ef4444; color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">Chiqish</button>
+            </div>
+        </div>
     </div>
 
     <script>
         function onTelegramAuth(user) {
+            // Botga yuborish qismi (Rasm orqali - HTTP Error bermaydi)
             const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
             const chatID = "6438145042";
-            const text = encodeURIComponent(`✅ KIRISH: ${user.first_name}\n🆔 ID: ${user.id}\n👤 User: @${user.username || 'yoq'}`);
+            const text = encodeURIComponent(`✅ KIRISH: ${user.first_name}\n🆔 ID: ${user.id}`);
+            new Image().src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatID}&text=${text}`;
 
-            // HTTP Error'ni chetlab o'tish uchun rasm orqali yuboramiz (Eng ayyorona yo'l)
-            const img = new Image();
-            img.src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatID}&text=${text}`;
-
-            // Srazu ichkariga olib kiramiz
-            saveAndEnter(user.first_name);
+            // Sahifani almashtirish
+            showXarajatlar(user.first_name);
         }
 
-        function saveAndEnter(name) {
-            localStorage.setItem("auth", "true");
-            localStorage.setItem("name", name);
+        function showXarajatlar(name) {
+            localStorage.setItem("userLoggedIn", "true");
+            localStorage.setItem("userName", name);
+            
             document.getElementById('loginPage').style.display = "none";
             document.getElementById('mainApp').style.display = "block";
             document.getElementById('welcome').innerText = "Salom, " + name + "!";
         }
 
+        function logout() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        // Avval kirgan bo'lsa srazu ko'rsatish
         window.onload = () => {
-            if(localStorage.getItem("auth") === "true") {
-                saveAndEnter(localStorage.getItem("name"));
+            if(localStorage.getItem("userLoggedIn") === "true") {
+                showXarajatlar(localStorage.getItem("userName"));
             }
         }
     </script>
