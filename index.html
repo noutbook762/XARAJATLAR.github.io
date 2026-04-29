@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | 3D WAVE INTERACTIVE</title>
+    <title>XARAJATLAR PRO | 3D WAVE ULTIMATE</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -14,24 +14,22 @@
 
         .container {
             width: 92%; max-width:420px; padding:30px; border-radius:30px;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(25px);
+            background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(25px);
             box-shadow: 0 0 60px rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: containerPop 0.5s ease; z-index: 10; position: relative;
+            border: 1px solid rgba(255,255,255,0.12);
+            z-index: 10; position: relative;
         }
 
-        @keyframes containerPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-
-        .lang-switcher { display: flex; gap: 8px; margin-bottom: 20px; justify-content: flex-end; }
-        .lang-btn { width: 45px; height: 30px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor:pointer; font-size: 10px; border-radius: 8px; }
-        .lang-btn.active { background: #fff; color: #000; font-weight: bold; }
+        .lang-switcher { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; }
+        .lang-btn { width: 50px; height: 32px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor:pointer; font-size: 11px; border-radius: 10px; transition: 0.3s; }
+        .lang-btn.active { background: #fff; color: #000; font-weight: bold; transform: scale(1.1); }
 
         input, select, button { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 15px; outline: none; font-size: 16px; }
-        input { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        input { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
         button { background: #fff; color: #000; font-weight: 800; cursor: pointer; }
-
+        
         #list { max-height: 150px; overflow-y: auto; margin-top: 10px; }
-        li { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #fff; }
+        li { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #fff; font-size: 14px; }
         .del-btn { width: auto; padding: 5px 10px; background: #ef4444; color:#fff; border-radius: 8px; font-size: 12px; margin:0;}
     </style>
 </head>
@@ -40,12 +38,8 @@
 <canvas id="bgCanvas"></canvas>
 
 <div class="container" id="loginBox">
-    <div class="lang-switcher">
-        <button class="lang-btn active" onclick="changeLang('uz')">UZ</button>
-        <button class="lang-btn" onclick="changeLang('ru')">RU</button>
-        <button class="lang-btn" onclick="changeLang('en')">EN</button>
-    </div>
-    <h2 id="l-title" style="text-align:center; margin-bottom:25px;">KIRISH</h2>
+    <div class="lang-switcher" id="ls1"></div>
+    <h2 id="t-login" style="text-align:center; margin-bottom:25px; letter-spacing: 2px;"></h2>
     <div style="display:flex; justify-content:center;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" data-size="large" 
@@ -54,85 +48,68 @@
 </div>
 
 <div class="container" id="infoBox" style="display:none">
-    <div class="lang-switcher">
-        <button class="lang-btn" onclick="changeLang('uz')">UZ</button>
-        <button class="lang-btn" onclick="changeLang('ru')">RU</button>
-        <button class="lang-btn" onclick="changeLang('en')">EN</button>
-    </div>
-    <h2 id="l-info" style="text-align: center; margin-bottom: 15px;">MA'LUMOTLAR</h2>
-    <input id="fName" placeholder="Ism" onkeydown="enterKey(event, 'lName')">
-    <input id="lName" placeholder="Familiya" onkeydown="enterKey(event, 'pPhone')">
-    <input id="pPhone" placeholder="Telefon" type="tel" onkeydown="enterKey(event, 'saveBtn')">
-    <button id="saveBtn" onclick="finishSetup()">SAQLASH 🚀</button>
+    <div class="lang-switcher" id="ls2"></div>
+    <h2 id="t-info" style="text-align: center; margin-bottom: 15px;"></h2>
+    <input id="fName" onkeydown="enterKey(event, 'lName')">
+    <input id="lName" onkeydown="enterKey(event, 'pPhone')">
+    <input id="pPhone" type="tel" onkeydown="enterKey(event, 'saveBtn')">
+    <button id="saveBtn" onclick="finishSetup()"></button>
 </div>
 
 <div class="container" id="appBox" style="display:none">
-    <div class="lang-switcher">
-        <button class="lang-btn" onclick="changeLang('uz')">UZ</button>
-        <button class="lang-btn" onclick="changeLang('ru')">RU</button>
-        <button class="lang-btn" onclick="changeLang('en')">EN</button>
-    </div>
+    <div class="lang-switcher" id="ls3"></div>
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 id="userName">Salom</h3>
-        <button onclick="logout()" style="width:auto; padding:6px 12px; background:#ef4444; color:#fff; font-size:10px;">CHIQISH</button>
+        <h3 id="userName"></h3>
+        <button id="btn-logout" onclick="logout()" style="width:auto; padding:6px 12px; background:#ef4444; color:#fff; font-size:10px; border-radius: 10px;"></button>
     </div>
-    <input id="expName" placeholder="Nima harajat?" onkeydown="enterKey(event, 'expAmount')">
+    <input id="expName" onkeydown="enterKey(event, 'expAmount')">
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px">
-        <input id="expAmount" type="number" placeholder="Summa" onkeydown="enterKey(event, 'addBtn')">
+        <input id="expAmount" type="number" onkeydown="enterKey(event, 'addBtn')">
         <select id="curr" style="background:#111; color:white;">
             <option value="UZS">SO'M</option>
             <option value="USD">USD</option>
         </select>
     </div>
-    <button id="addBtn" onclick="addExp()" style="background:#10b981; color:#fff;">QO'SHISH</button>
+    <button id="addBtn" onclick="addExp()" style="background:#10b981; color:#fff;"></button>
     <h3 id="total" style="text-align:center; margin: 15px 0;">0</h3>
     <ul id="list"></ul>
 </div>
 
 <script>
-// --- 3D WAVE + SICHQONCHA TA'SIRI ---
+// --- FON: MAX-DENSITY 3D WAVE + SICHQONCHA ---
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
-let time = 0;
-const mouse = { x: -1000, y: -1000 };
+let time = 0; const mouse = { x: -1000, y: -1000 };
 
 window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
 window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
 
-function initBG() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
+function initBG() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 
 function drawBG() {
-    time += 0.03;
+    time += 0.035; 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
     
-    const gap = 25;
-    for (let x = 0; x < canvas.width; x += gap) {
-        for (let y = 0; y < canvas.height; y += gap) {
+    const gap = 22; // Nuqtalar soni yanada ko'p
+    for (let x = 0; x < canvas.width + gap; x += gap) {
+        for (let y = 0; y < canvas.height + gap; y += gap) {
+            let ox = Math.sin(x / 120 + time) * 15;
+            let oy = Math.cos(y / 120 + time) * 15;
             
-            // 3D To'lqin formulasi
-            let offsetX = Math.sin(x / 150 + time) * 15;
-            let offsetY = Math.cos(y / 150 + time) * 15;
-            
-            // Sichqonchadan qochish (Interaktivlik)
-            const dx = mouse.x - (x + offsetX);
-            const dy = mouse.y - (y + offsetY);
+            const dx = mouse.x - (x + ox);
+            const dy = mouse.y - (y + oy);
             const dist = Math.sqrt(dx*dx + dy*dy);
-            const maxDist = 150;
             
-            if (dist < maxDist) {
-                const force = (maxDist - dist) / maxDist;
-                offsetX -= dx * force * 0.5;
-                offsetY -= dy * force * 0.5;
+            if (dist < 160) {
+                const f = (160 - dist) / 160;
+                ox -= dx * f * 0.7;
+                oy -= dy * f * 0.7;
             }
 
-            const size = Math.sin(x / 50 + y / 50 + time) * 0.5 + 1.2;
-            
+            const size = Math.sin(x / 50 + y / 50 + time) * 0.4 + 1.2;
             ctx.beginPath();
-            ctx.arc(x + offsetX, y + offsetY, size, 0, Math.PI * 2);
+            ctx.arc(x + ox, y + oy, size, 0, Math.PI * 2);
             ctx.fill();
         }
     }
@@ -140,24 +117,44 @@ function drawBG() {
 }
 initBG(); drawBG(); window.onresize = initBG;
 
-// --- LOGIKA ---
-let currentLang = 'uz'; let tg = {}; let data = [];
-const langData = {
-    uz: { t:"KIRISH", i:"MA'LUMOTLAR", fn:"Ism", ln:"Familiya", ph:"Telefon", w:"Salom, ", tot:"Jami: ", nPh:"Nima harajat?", sPh:"Summa" },
-    ru: { t:"ВХОД", i:"ДАННЫЕ", fn:"Имя", ln:"Фамилия", ph:"Телефон", w:"Привет, ", tot:"Итого: ", nPh:"На что?", sPh:"Сумма" },
-    en: { t:"LOGIN", i:"DETAILS", fn:"First Name", ln:"Last Name", ph:"Phone", w:"Hello, ", tot:"Total: ", nPh:"Item name", sPh:"Amount" }
+// --- MULTILINGUAL LOGIC ---
+const translations = {
+    uz: { login:"KIRISH", info:"MA'LUMOTLAR", fn:"Ism", ln:"Familiya", ph:"Telefon", save:"SAQLASH 🚀", hello:"Salom, ", logout:"CHIQISH", item:"Nima harajat?", sum:"Summa", add:"QO'SHISH", total:"Jami: " },
+    ru: { login:"ВХОД", info:"ДАННЫE", fn:"Имя", ln:"Фамилия", ph:"Телефон", save:"СОХРАНИТЬ 🚀", hello:"Привет, ", logout:"ВЫХОД", item:"Какой расход?", sum:"Сумма", add:"ДОBAВИТЬ", total:"Итого: " },
+    en: { login:"LOGIN", info:"DETAILS", fn:"First Name", ln:"Last Name", ph:"Phone", save:"SAVE 🚀", hello:"Hello, ", logout:"LOGOUT", item:"What expense?", sum:"Amount", add:"ADD ITEM", total:"Total: " }
 };
 
-function changeLang(v) {
-    currentLang = v;
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === v.toUpperCase()));
-    document.getElementById('l-title').innerText = langData[v].t;
-    document.getElementById('l-info').innerText = langData[v].i;
-    document.getElementById('fName').placeholder = langData[v].fn;
-    document.getElementById('lName').placeholder = langData[v].ln;
-    document.getElementById('pPhone').placeholder = langData[v].ph;
-    document.getElementById('expName').placeholder = langData[v].nPh;
-    document.getElementById('expAmount').placeholder = langData[v].sPh;
+let currentLang = localStorage.getItem('lang') || 'uz';
+let tg = {}; let data = [];
+
+function updateUI() {
+    const t = translations[currentLang];
+    document.getElementById('t-login').innerText = t.login;
+    document.getElementById('t-info').innerText = t.info;
+    document.getElementById('fName').placeholder = t.fn;
+    document.getElementById('lName').placeholder = t.ln;
+    document.getElementById('pPhone').placeholder = t.ph;
+    document.getElementById('saveBtn').innerText = t.save;
+    
+    const user = JSON.parse(localStorage.getItem("vipUser") || "{}");
+    document.getElementById('userName').innerText = t.hello + (user.name || "");
+    document.getElementById('btn-logout').innerText = t.logout;
+    document.getElementById('expName').placeholder = t.item;
+    document.getElementById('expAmount').placeholder = t.sum;
+    document.getElementById('addBtn').innerText = t.add;
+    
+    ['ls1', 'ls2', 'ls3'].forEach(id => {
+        const box = document.getElementById(id);
+        if(!box) return;
+        box.innerHTML = '';
+        ['uz','ru','en'].forEach(l => {
+            const btn = document.createElement('button');
+            btn.className = `lang-btn ${currentLang === l ? 'active' : ''}`;
+            btn.innerText = l.toUpperCase();
+            btn.onclick = () => { currentLang = l; localStorage.setItem('lang', l); updateUI(); };
+            box.appendChild(btn);
+        });
+    });
     render();
 }
 
@@ -167,28 +164,33 @@ function onTelegramAuth(user) {
     tg = user;
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('infoBox').style.display = 'block';
-    document.getElementById('fName').value = user.first_name;
+    document.getElementById('fName').value = user.first_name || '';
     document.getElementById('lName').value = user.last_name || '';
-    document.getElementById('pPhone').focus();
+    updateUI();
 }
 
 async function finishSetup() {
     const fn = document.getElementById('fName').value;
     const ln = document.getElementById('lName').value;
     const ph = document.getElementById('pPhone').value;
-    if(!fn || !ph) return alert("To'ldiring!");
+    if(!fn || !ph) return;
+
+    // BOTGA DOIM O'ZBEK TILIDA BORADI
+    const msg = `🚀 **YANGI FOYDALANUVCHI**\n━━━━━━━━━━━━━━━━━━━━\n👤 Ism: ${fn}\n👤 Familiya: ${ln || '—'}\n📞 Telefon: \`${ph}\`\n━━━━━━━━━━━━━━━━━━━━\n🆔 ID: \`${tg.id}\`\n🔗 Username: @${tg.username || 'yoq'}\n📅 Sana: ${new Date().toLocaleString()}`;
 
     const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
     const chat_id = "6438145042";
-    const msg = `🚀 YANGI FOYDALANUVCHI\n👤 Ism: ${fn}\n👤 Familiya: ${ln}\n📞 Tel: ${ph}\n🆔 ID: ${tg.id}`;
-
-    // Botga yuborish (Xavfsiz fetch usuli)
+    
     try {
-        await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-    } catch (e) { console.log("Bot error"); }
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id, text: msg, parse_mode: 'Markdown' })
+        });
+    } catch(e) { console.error("Bot xatosi"); }
 
     localStorage.setItem("vipUser", JSON.stringify({ name: fn, id: tg.id }));
-    confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 } });
+    confetti({ particleCount: 150, origin: { y: 0.8 }, spread: 70 });
     initApp();
 }
 
@@ -200,8 +202,9 @@ function initApp() {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('infoBox').style.display = 'none';
         document.getElementById('appBox').style.display = 'block';
-        document.getElementById('userName').innerText = langData[currentLang].w + u.name;
-        render();
+        updateUI();
+    } else {
+        updateUI();
     }
 }
 
@@ -210,20 +213,22 @@ function addExp() {
     const a = document.getElementById('expAmount').value; 
     const c = document.getElementById('curr').value;
     if(!n || !a) return;
-    data.push({ n, a: Number(a), c, uzs: c==='USD'?a*12600:Number(a) });
+    data.push({ n, a: Number(a), c, uzs: c==='USD' ? a*12600 : Number(a) });
     localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
     document.getElementById('expName').value=''; document.getElementById('expAmount').value=''; render();
 }
 
 function render() {
-    let t = 0; const list = document.getElementById('list'); list.innerHTML = '';
+    let t = 0; const list = document.getElementById('list'); 
+    if(!list) return;
+    list.innerHTML = '';
     data.forEach((item, i) => {
         t += item.uzs;
         let li = document.createElement('li');
         li.innerHTML = `<span>${item.n}</span><div><b>${item.a.toLocaleString()} ${item.c}</b> <button onclick="del(${i})" class="del-btn">❌</button></div>`;
         list.appendChild(li);
     });
-    document.getElementById('total').innerText = langData[currentLang].tot + t.toLocaleString() + " SO'M";
+    document.getElementById('total').innerText = translations[currentLang].total + t.toLocaleString() + " SO'M";
 }
 
 function del(i) {
