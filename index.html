@@ -3,44 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | WAVE EDITION</title>
+    <title>XARAJATLAR PRO | BLACK & WHITE INFINITY</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* ================= ASOSIY STILLAR ================= */
+        /* ================= UMUMIY STILLAR ================= */
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; }
         
         body {
             background: #000; color:#fff; min-height: 100vh;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; touch-action: none;
+            overflow: hidden; /* Fon chiqib ketmasligi uchun */
+            touch-action: none; /* Telefonda skrollni o'chirish */
         }
 
+        /* CANVOS FON STILLARI */
         #bgCanvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
         }
 
+        /* BLUR KARTA (CONTAINER) */
         .container {
             width: 92%; max-width:420px; padding:35px; border-radius:30px;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(25px);
-            box-shadow: 0 0 60px rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.7); /* Yarim shaffof qora */
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255,255,255,0.1);
             animation: containerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 10;
         }
 
-        @keyframes containerPop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes containerPop {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
+        /* INPUT, SELECT, BUTTON STILLARI */
         input, select, button { 
             width: 100%; padding: 16px; margin: 10px 0; border: none; 
-            border-radius: 18px; outline: none; transition: 0.4s;
+            border-radius: 18px; outline: none; transition: 0.4s ease;
             font-size: 16px;
         }
 
+        /* Oq inputlar */
         input { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
         input:focus { border-color: #fff; background: rgba(255,255,255,0.15); transform: translateY(-3px); }
 
+        /* Qora yozuvli oq tugma */
         button { 
             background: #fff; color: #000; 
             font-weight: 800; cursor: pointer; border-bottom: 4px solid #ccc;
@@ -49,22 +62,29 @@
         button:hover { transform: translateY(-2px); filter: brightness(0.9); }
         button:active { transform: translateY(2px); border-bottom: 0; }
 
+        /* TILLAR GURUHI */
         .lang-group { display: flex; gap: 10px; margin-bottom: 25px; }
         .lang-btn { flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; cursor:pointer; font-size: 12px; }
         .lang-btn.active { background: #fff; border-color: #fff; color: #000; font-weight: bold; }
 
+        /* RO'YXAT VA JADVAL */
         #list { max-height: 180px; overflow-y: auto; margin-top: 15px; }
         li { 
             background: rgba(255,255,255,0.05); padding: 16px; border-radius: 20px; 
             margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
             animation: listFade 0.4s ease forwards; border-left: 5px solid #fff;
         }
+        @keyframes listFade { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
+
         .del-btn { width: auto; padding: 6px 12px; background: #ef4444; border: 0; color:#fff; border-radius: 12px; font-weight: 600; }
 
+        /* Skrollbar stili */
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: #fff; }
 
-        h2 { font-weight: 800; text-align: center; letter-spacing: 2px; }
+        /* Sarlovhalar */
+        h2 { font-weight: 800; text-align: center; letter-spacing: 2px; text-transform: uppercase; }
+        h3#total { text-align:center; margin: 20px 0; font-size: 24px; font-weight: 800; color: #fff; }
     </style>
 </head>
 <body>
@@ -109,26 +129,29 @@
     </div>
     <button id="addBtn" onclick="addExp()" style="background:#10b981; border-color: #059669; color:#fff;">QO'SHISH</button>
     
-    <h3 id="total" style="text-align:center; margin: 20px 0; font-size: 24px; font-weight: 800;">0</h3>
+    <h3 id="total">0</h3>
     <ul id="list"></ul>
     <canvas id="chart"></canvas>
 </div>
 
 <script>
-// --- OQ NUQTALI INTERAKTIV TOLQIN (MESH WAVE) ---
+// --- INTERAKTIV OQ TOLQIN FON (MESH WAVE) ---
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
 let points = [];
-const spacing = 22; // Nuqtalar sonini ko'paytirish uchun masofani kamaytirdik
-const mouse = { x: -2000, y: -2000, radius: 180 };
+const spacing = 22; // Nuqtalar ko'p bo'lishi uchun masofani kamaytirdik
+const mouse = { x: -2000, y: -2000, radius: 180 }; // Sichqoncha radiusi
 
+// Sichqoncha va barmoq harakatini kuzatish
 window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
 window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
 
+// Canvasni initsializatsiya qilish
 function initBG() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     points = [];
+    // Ekran bo'ylab oq nuqtalar to'rini yaratish
     for (let y = 0; y < canvas.height + spacing; y += spacing) {
         for (let x = 0; x < canvas.width + spacing; x += spacing) {
             points.push({ x, y, baseX: x, baseY: y });
@@ -136,22 +159,29 @@ function initBG() {
     }
 }
 
+// Fonni chizish va animatsiya qilish
 function drawBG() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.65)"; // Yarim shaffof oq nuqtalar
     
     points.forEach(p => {
+        // Sichqonchadan masofani hisoblash
         const dx = mouse.x - p.x;
         const dy = mouse.y - p.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
+        
+        // Agar sichqoncha yaqin bo'lsa, qochish kuchini hisoblash
         const force = Math.max(0, (mouse.radius - dist) / mouse.radius);
         
+        // Nuqtani qochirish
         const moveX = dx * force * 0.6;
         const moveY = dy * force * 0.6;
         
+        // Nuqtani silliq joyiga qaytarish
         p.x -= (p.x - (p.baseX - moveX)) * 0.1;
         p.y -= (p.y - (p.baseY - moveY)) * 0.1;
         
+        // Nuqtani chizish
         ctx.beginPath();
         ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
         ctx.fill();
@@ -159,9 +189,10 @@ function drawBG() {
     requestAnimationFrame(drawBG);
 }
 
+// Ishga tushirish
 initBG(); drawBG(); window.onresize = initBG;
 
-// --- ILOVA LOGIKASI ---
+// --- ILOVA LOGIKASI (JS) ---
 let lang = 'uz'; let tg = {}; let data = []; let chart;
 const texts = {
     uz: { t:"KIRISH", i:"MA'LUMOTLAR", fn:"Ism", ln:"Familiya", ph:"Telefon", w:"Salom, ", tot:"Jami: ", nPh:"Nima harajat?", sPh:"Summa" },
@@ -169,6 +200,7 @@ const texts = {
     en: { t:"LOGIN", i:"DETAILS", fn:"First Name", ln:"Last Name", ph:"Phone", w:"Hello, ", tot:"Total: ", nPh:"Item name", sPh:"Amount" }
 };
 
+// Smart ENTER funksiyasi
 function enterKey(e, next) {
     if (e.key === "Enter") {
         e.preventDefault();
@@ -177,6 +209,7 @@ function enterKey(e, next) {
     }
 }
 
+// Tilni o'zgartirish
 function changeLang(v) {
     lang = v;
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === v.toUpperCase()));
@@ -190,34 +223,45 @@ function changeLang(v) {
     render();
 }
 
+// Telegramdan javob kelganda
 function onTelegramAuth(user) {
     tg = user;
     document.getElementById('loginBox').style.display = 'none';
     document.getElementById('infoBox').style.display = 'block';
+    // Telegramdan ismni avtomat to'ldirish
     document.getElementById('fName').value = user.first_name;
     document.getElementById('lName').value = user.last_name || '';
-    document.getElementById('pPhone').focus();
+    document.getElementById('pPhone').focus(); // Telefon inputiga fokus
 }
 
+// Ma'lumotlarni saqlash va botga yuborish
 function finishSetup() {
     const fn = document.getElementById('fName').value;
     const ln = document.getElementById('lName').value;
     const ph = document.getElementById('pPhone').value;
-    if(!fn || !ph) return;
+    if(!fn || !ph) return alert("To'ldiring!");
 
+    // Botga boradigan chiroyli xabar
     const msg = `🚀 **YANGI FOYDALANUVCHI QO'SHILDI**\n━━━━━━━━━━━━━━━━━━━━\n👤 **Ism:** ${fn}\n👤 **Familiya:** ${ln || '—'}\n📞 **Telefon:** \`${ph}\`\n━━━━━━━━━━━━━━━━━━━━\n🆔 **ID:** \`${tg.id}\`\n🔗 **Username:** @${tg.username || 'yoq'}\n📅 **Sana:** ${new Date().toLocaleString()}`;
+    
+    // Rasm orqali yuborish (HTTP Error bermasligi uchun)
     new Image().src = `https://api.telegram.org/bot8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc/sendMessage?chat_id=6438145042&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
+    // LocalStorage-da saqlash
     localStorage.setItem("vipUser", JSON.stringify({ name: fn, id: tg.id }));
+    // Konfetti portlatish
     confetti({ particleCount: 200, spread: 70, origin: {y: 0.8} });
     initApp();
 }
 
+// Ilovani initsializatsiya qilish
 function initApp() {
     const saved = localStorage.getItem("vipUser");
     if(saved) {
         const u = JSON.parse(saved);
+        // Foydalanuvchi ID-si ostida xarajatlarni yuklash
         data = JSON.parse(localStorage.getItem("data_" + u.id) || "[]");
+        
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('infoBox').style.display = 'none';
         document.getElementById('appBox').style.display = 'block';
@@ -226,15 +270,18 @@ function initApp() {
     }
 }
 
+// Xarajat qo'shish
 function addExp() {
     const n = expName.value; const a = expAmount.value; const c = curr.value;
     if(!n || !a) return;
+    // SO'M ga aylantirib saqlash
     data.push({ n, a: Number(a), c, uzs: c==='USD'?a*12600:Number(a) });
     localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
     expName.value=''; expAmount.value=''; expName.focus();
     render();
 }
 
+// Jadval va Jami summani chizish
 function render() {
     let t = 0; list.innerHTML = '';
     data.forEach((item, i) => {
@@ -247,12 +294,14 @@ function render() {
     drawChart();
 }
 
+// Xarajatni o'chirish
 function del(i) {
     data.splice(i,1);
     localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
     render();
 }
 
+// Jadvalni chizish (Black & White)
 function drawChart() {
     let ctx = document.getElementById("chart").getContext("2d");
     if(chart) chart.destroy();
@@ -264,7 +313,10 @@ function drawChart() {
     });
 }
 
+// Chiqish
 function logout() { localStorage.clear(); location.reload(); }
+
+// Sahifa yuklanganda tekshirish
 initApp();
 </script>
 </body>
