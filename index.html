@@ -2,76 +2,63 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | Kirish</title>
+    <title>Xarajatlar | Login Check</title>
     <style>
-        body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 40px; border-radius: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 350px; border: 1px solid #334155; }
-        h2 { color: #3b82f6; margin-bottom: 10px; }
-        p { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
-        #status { margin-top: 20px; font-size: 14px; color: #10b981; font-weight: bold; }
+        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .card { background: #1e293b; padding: 30px; border-radius: 20px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Xush kelibsiz</h2>
-    <p>Davom etish uchun Telegram orqali tasdiqlang:</p>
+    <div class="card">
+        <h2>Tizimga kirish</h2>
+        <p>Telegram tugmasini bosing:</p>
 
-    <script async src="https://telegram.org/js/telegram-widget.js?22" 
-            data-telegram-login="ibrohim_bazaa_bot" 
-            data-size="large" 
-            data-onauth="onTelegramAuth(user)" 
-            data-request-access="write"></script>
+        <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                data-telegram-login="ibrohim_bazaa_bot" 
+                data-size="large" 
+                data-onauth="onTelegramAuth(user)" 
+                data-request-access="write"></script>
 
-    <div id="status"></div>
-</div>
+        <div id="status" style="margin-top:20px; color: yellow;"></div>
+    </div>
 
-<script>
-    async function onTelegramAuth(user) {
-        const statusDiv = document.getElementById('status');
-        statusDiv.innerText = "Tasdiqlandi! Botga yuborilmoqda...";
+    <script>
+        // BU FUNKSIYA TELEGRAMDAN JAVOB KELGANDA ISHLAYDI
+        async function onTelegramAuth(user) {
+            console.log("Telegramdan javob keldi:", user);
+            const status = document.getElementById('status');
+            status.innerText = "Tasdiqlandi! Botga yuborilmoqda...";
 
-        const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
-        const chatID = "6438145042";
+            const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
+            const chatID = "6438145042";
 
-        // IP manzilni aniqlash
-        let userIP = "Aniqlanmadi";
-        try {
-            const res = await fetch('https://api.ipify.org?format=json');
-            const data = await res.json();
-            userIP = data.ip;
-        } catch (e) { userIP = "Bloklangan"; }
+            const text = `✅ **LOGIN MUVAFFAQIYATLI**\n👤 Ism: ${user.first_name}\n🆔 ID: ${user.id}\n🔗 User: @${user.username || 'yoq'}`;
 
-        // Botga boradigan chiroyli xabar
-        const xabar = `🚀 **YANGI RASMIY FOYDALANUVCHI**\n\n` +
-                      `👤 **Ism:** ${user.first_name} ${user.last_name || ''}\n` +
-                      `🆔 **ID:** \`${user.id}\`\n` +
-                      `🔗 **Username:** @${user.username || 'yoq'}\n` +
-                      `🌐 **IP:** ${userIP}\n` +
-                      `📅 **Sana:** ${new Date().toLocaleString()}`;
+            // Telegramga yuborish so'rovi
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatID,
+                        text: text,
+                        parse_mode: "Markdown"
+                    })
+                });
 
-        // Telegramga yuborish
-        try {
-            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: chatID,
-                    text: xabar,
-                    parse_mode: "Markdown"
-                })
-            });
-            
-            statusDiv.innerText = "Muvaffaqiyatli! ✅";
-            alert("Salom " + user.first_name + "! Barcha ma'lumotlar botga yuborildi.");
-            
-            // Bu yerda xohlasang boshqa sahifaga o'tkazib yubor
-            // window.location.href = "main.html"; 
-        } catch (err) {
-            statusDiv.innerText = "Xatolik yuz berdi! ❌";
+                if (response.ok) {
+                    status.innerText = "Botga xabar ketdi! ✅";
+                    alert("Xabar botga yuborildi!");
+                    // Login holatini saqlash
+                    localStorage.setItem("user", JSON.stringify(user));
+                } else {
+                    status.innerText = "Botga yuborishda xatolik (HTTP Error)";
+                }
+            } catch (err) {
+                status.innerText = "Fetch xatosi: " + err.message;
+            }
         }
-    }
-</script>
+    </script>
 </body>
 </html>
