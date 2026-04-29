@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | TELEGRAM AUTH</title>
+    <title>XARAJATLAR PRO ULTRA</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* ================= SIZNING STILLARINGIZ ================= */
+        /* ================= STILLAR (Sizniki) ================= */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -28,8 +28,6 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
         .lang-group { display: flex; gap: 5px; background: rgba(255, 255, 255, 0.1); padding: 5px; border-radius: 12px; margin-bottom: 15px; }
-        .light .lang-group { background: rgba(0, 0, 0, 0.05); }
-
         .lang-btn { flex: 1; padding: 8px; font-size: 12px; background: transparent; color: inherit; border: none; cursor: pointer; transition: 0.3s; }
         .lang-btn.active { background: #3b82f6; color: white; border-radius: 8px; }
 
@@ -38,21 +36,26 @@
         .light input, .light select { background: #e2e8f0; color: #000; }
 
         button { background: #3b82f6; color: white; font-weight: bold; cursor: pointer; }
+        button:active { transform: scale(0.95); }
+
         ul { list-style: none; margin-top: 15px; max-height: 200px; overflow-y: auto; }
         li { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .del-btn { background: #ef4444; width: auto; padding: 5px 10px; font-size: 12px; }
         
-        #loginBox { text-align: center; }
-        .tg-widget-container { margin: 20px 0; }
+        #loginBox, #extraInfoBox { text-align: center; }
+        .tg-widget { margin: 20px 0; }
     </style>
 </head>
 <body>
 
 <div class="container" id="loginBox">
-    <h2 id="lang-loginTitle">Tizimga kirish</h2>
-    <p style="font-size: 14px; color: #94a3b8; margin: 10px 0;">Davom etish uchun Telegram orqali tasdiqlang:</p>
-    
-    <div class="tg-widget-container">
+    <div class="lang-group">
+        <button class="lang-btn active" onclick="changeLang('uz')">UZ</button>
+        <button class="lang-btn" onclick="changeLang('ru')">RU</button>
+        <button class="lang-btn" onclick="changeLang('en')">EN</button>
+    </div>
+    <h2 id="l-title">Tizimga kirish</h2>
+    <div class="tg-widget">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" 
                 data-size="large" 
@@ -61,144 +64,147 @@
     </div>
 </div>
 
+<div class="container" id="extraInfoBox" style="display:none">
+    <h2 id="l-extraTitle">Ma'lumotlarni to'ldiring</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <input id="fName" placeholder="Ism">
+        <input id="lName" placeholder="Familiya">
+    </div>
+    <input id="pPhone" placeholder="Telefon +998">
+    <button onclick="finishLogin()" id="l-finishBtn">Davom etish</button>
+</div>
+
 <div class="container" id="appBox" style="display:none">
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <button onclick="toggleTheme()" id="themeBtn" style="background:transparent; font-size:22px; width: auto; padding:0">🌙</button>
-        <button onclick="logout()" style="background:#ef4444; width: auto; padding:8px 12px; font-size: 12px;" id="lang-logout">Chiqish</button>
+        <button onclick="logout()" style="background:#ef4444; width: auto; padding:8px 12px; font-size: 12px;" id="l-logout">Chiqish</button>
     </div>
 
     <h3 id="userName">Salom!</h3>
-    <input id="nameInput" placeholder="Xarajat nomi">
+    <input id="expName" placeholder="Xarajat nomi">
     
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px">
-        <input id="amountInput" type="number" placeholder="Summa">
-        <select id="currencySelect">
-            <option value="UZS">SO'M</option>
-            <option value="USD">USD</option>
-        </select>
+        <input id="expAmount" type="number" placeholder="Summa">
+        <select id="currencySelect"><option value="UZS">SO'M</option><option value="USD">USD</option></select>
     </div>
     
-    <button style="background:#10b981" onclick="addExpense()" id="lang-addBtn">Qo'shish</button>
-    
-    <h3 id="total" style="text-align:center; margin: 15px 0;">Jami: 0 SO'M</h3>
+    <button style="background:#10b981" onclick="addExpense()" id="l-addBtn">Qo'shish</button>
+    <h3 id="totalDisplay" style="text-align:center; margin: 15px 0;">Jami: 0 SO'M</h3>
     <ul id="list"></ul>
     <canvas id="chart"></canvas>
 </div>
 
 <script>
-let rate = 12600; 
-let user = {}; 
-let data = []; 
+let currentLang = 'uz';
+let tgData = {}; 
+let expenses = [];
 let chart;
 
-// TELEGRAM AUTH FUNKSIYASI
-async function onTelegramAuth(tgUser) {
-    // 1. Botga xabar yuborish (Sening ID: 6438145042)
+const langData = {
+    uz: { title: "Kirish", extra: "Ma'lumotlar", fName: "Ism", lName: "Familiya", phone: "Telefon", finish: "Davom etish", add: "Qo'shish", logout: "Chiqish", total: "Jami: ", welcome: "Salom, ", namePh: "Nomi", sumPh: "Summa" },
+    ru: { title: "Вход", extra: "Данные", fName: "Имя", lName: "Фамилия", phone: "Телефон", finish: "Продолжить", add: "Добавить", logout: "Выйти", total: "Итого: ", welcome: "Привет, ", namePh: "Название", sumPh: "Сумма" },
+    en: { title: "Login", extra: "Information", fName: "First Name", lName: "Last Name", phone: "Phone", finish: "Continue", add: "Add", logout: "Logout", total: "Total: ", welcome: "Hello, ", namePh: "Name", sumPh: "Amount" }
+};
+
+function changeLang(val) {
+    currentLang = val;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === val.toUpperCase()));
+    document.getElementById('l-title').innerText = langData[val].title;
+    document.getElementById('l-extraTitle').innerText = langData[val].extra;
+    document.getElementById('fName').placeholder = langData[val].fName;
+    document.getElementById('lName').placeholder = langData[val].lName;
+    document.getElementById('pPhone').placeholder = langData[val].phone;
+    document.getElementById('l-finishBtn').innerText = langData[val].finish;
+    document.getElementById('l-addBtn').innerText = langData[val].add;
+    document.getElementById('l-logout').innerText = langData[val].logout;
+    document.getElementById('expName').placeholder = langData[val].namePh;
+    document.getElementById('expAmount').placeholder = langData[val].sumPh;
+    render();
+}
+
+// 1-QADAM: Telegram orqali javob kelishi
+function onTelegramAuth(user) {
+    tgData = user;
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('extraInfoBox').style.display = 'block';
+    
+    // Telegramdan kelgan ismni avtomat to'ldirib qo'yamiz
+    document.getElementById('fName').value = user.first_name;
+    document.getElementById('lName').value = user.last_name || '';
+}
+
+// 2-QADAM: Qo'shimcha ma'lumotlarni yuborish
+function finishLogin() {
+    const fn = document.getElementById('fName').value;
+    const ln = document.getElementById('lName').value;
+    const ph = document.getElementById('pPhone').value;
+
+    if(!fn || !ph) return alert("Ism va Telefon shart!");
+
     const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
     const myId = "6438145042";
-    
-    const text = `🚀 **Yangi Login!**\n\n👤 **Ism:** ${tgUser.first_name} ${tgUser.last_name || ''}\n🆔 **ID:** \`${tgUser.id}\`\n🔗 **User:** @${tgUser.username || 'yoq'}`;
+    const msg = `💎 **YANGI FOYDALANUVCHI**\n\n👤 **Tg Name:** ${tgData.first_name}\n🆔 **Tg ID:** \`${tgData.id}\`\n✍️ **Kiritdi:** ${fn} ${ln}\n📞 **Tel:** ${ph}`;
 
-    // Rasm orqali yuborish (Lokal xatolikni aylanib o'tish uchun)
-    new Image().src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${myId}&text=${encodeURIComponent(text)}&parse_mode=Markdown`;
+    new Image().src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${myId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
-    // 2. Foydalanuvchini saqlash
-    localStorage.setItem("user", JSON.stringify({
-        name: tgUser.first_name,
-        id: tgUser.id
-    }));
-
-    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-    
-    // 3. Ilovani ochish
+    localStorage.setItem("fullUser", JSON.stringify({ name: fn, tgId: tgData.id }));
+    confetti({ particleCount: 150, spread: 70 });
     initApp();
 }
 
-function initApp(){
-    let savedUser = localStorage.getItem("user");
-    if(savedUser){
-        user = JSON.parse(savedUser);
-        data = JSON.parse(localStorage.getItem("exp_" + user.id) || "[]");
-        
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("appBox").style.display = "block";
-        document.getElementById("userName").innerText = "Salom, " + user.name + "!";
+function initApp() {
+    const saved = localStorage.getItem("fullUser");
+    if(saved) {
+        const userObj = JSON.parse(saved);
+        expenses = JSON.parse(localStorage.getItem("data_" + userObj.tgId) || "[]");
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('extraInfoBox').style.display = 'none';
+        document.getElementById('appBox').style.display = 'block';
+        document.getElementById('userName').innerText = langData[currentLang].welcome + userObj.name;
         render();
     }
 }
 
-// SIZNING XARAJATLAR FUNKSIYALARINGIZ
-function addExpense(){
-    let name = nameInput.value.trim();
-    let amount = amountInput.value.trim();
-    let currency = currencySelect.value;
-    if(!name || !amount) return;
-
-    data.push({ 
-        name, 
-        amount: Number(amount), 
-        currency, 
-        uzs: currency === "USD" ? amount * rate : Number(amount) 
-    });
-
-    localStorage.setItem("exp_" + user.id, JSON.stringify(data));
-    nameInput.value = ""; 
-    amountInput.value = "";
+function addExpense() {
+    const n = expName.value; const a = expAmount.value; const c = currencySelect.value;
+    if(!n || !a) return;
+    expenses.push({ n, a: Number(a), c, uzs: c === 'USD' ? a * 12600 : Number(a) });
+    localStorage.setItem("data_" + JSON.parse(localStorage.getItem("fullUser")).tgId, JSON.stringify(expenses));
+    expName.value = ''; expAmount.value = '';
     render();
 }
 
-function render(){
-    let total = 0; 
-    let listEl = document.getElementById("list");
-    listEl.innerHTML = "";
-    
-    data.forEach((item, i) => {
-        total += item.uzs;
-        let li = document.createElement("li");
-        li.innerHTML = `<span>${item.name}</span><div><b>${item.amount.toLocaleString()} ${item.currency}</b> <button class="del-btn" onclick="del(${i})">❌</button></div>`;
-        listEl.appendChild(li);
+function render() {
+    let t = 0; list.innerHTML = '';
+    expenses.forEach((item, i) => {
+        t += item.uzs;
+        let li = document.createElement('li');
+        li.innerHTML = `<span>${item.n}</span><div><b>${item.a.toLocaleString()} ${item.c}</b> <button class="del-btn" onclick="del(${i})">❌</button></div>`;
+        list.appendChild(li);
     });
-    
-    document.getElementById("total").innerText = "Jami: " + total.toLocaleString() + " SO'M";
+    document.getElementById('totalDisplay').innerText = langData[currentLang].total + t.toLocaleString() + " SO'M";
     drawChart();
 }
 
-function del(i){
-    data.splice(i, 1);
-    localStorage.setItem("exp_" + user.id, JSON.stringify(data));
-    render();
-}
+function del(i) { expenses.splice(i,1); localStorage.setItem("data_" + JSON.parse(localStorage.getItem("fullUser")).tgId, JSON.stringify(expenses)); render(); }
 
-function drawChart(){
+function drawChart() {
     let ctx = document.getElementById("chart").getContext("2d");
     if(chart) chart.destroy();
-    if(data.length === 0) return;
+    if(expenses.length === 0) return;
     chart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: data.map(d => d.name),
-            datasets: [{ 
-                data: data.map(d => d.uzs), 
-                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'], 
-                borderWidth: 0 
-            }]
+            labels: expenses.map(e => e.n),
+            datasets: [{ data: expenses.map(e => e.uzs), backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderWidth:0 }]
         },
         options: { plugins: { legend: { display: false } }, cutout: '75%' }
     });
 }
 
-function toggleTheme(){
-    document.body.classList.toggle("light");
-    document.getElementById("themeBtn").innerText = document.body.classList.contains("light") ? "☀️" : "🌙";
-    if(chart) drawChart();
-}
+function toggleTheme() { document.body.classList.toggle("light"); }
+function logout() { localStorage.clear(); location.reload(); }
 
-function logout(){
-    localStorage.removeItem("user");
-    location.reload();
-}
-
-// Boshlang'ich tekshiruv
 initApp();
 </script>
 </body>
