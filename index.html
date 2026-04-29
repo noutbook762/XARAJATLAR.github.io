@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | INFINITY ULTIMATE</title>
+    <title>XARAJATLAR PRO | WAVE EDITION</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         /* ================= ASOSIY STILLAR ================= */
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; }
@@ -13,7 +14,7 @@
         body {
             background: #000; color:#fff; min-height: 100vh;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
+            overflow: hidden; touch-action: none;
         }
 
         #bgCanvas {
@@ -22,8 +23,8 @@
 
         .container {
             width: 92%; max-width:420px; padding:35px; border-radius:30px;
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px);
-            box-shadow: 0 0 50px rgba(59, 130, 246, 0.25);
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(25px);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255,255,255,0.1);
             animation: containerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 10;
@@ -31,40 +32,39 @@
 
         @keyframes containerPop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
-        /* INPUT & BUTTONS */
         input, select, button { 
             width: 100%; padding: 16px; margin: 10px 0; border: none; 
-            border-radius: 18px; outline: none; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 18px; outline: none; transition: 0.4s;
             font-size: 16px;
         }
 
-        input { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        input:focus { border-color: #3b82f6; background: rgba(255,255,255,0.12); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2); }
+        input { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        input:focus { border-color: #fff; background: rgba(255,255,255,0.15); transform: translateY(-3px); }
 
         button { 
-            background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; 
-            font-weight: 700; cursor: pointer; border-bottom: 4px solid #1d4ed8;
+            background: #fff; color: #000; 
+            font-weight: 800; cursor: pointer; border-bottom: 4px solid #ccc;
+            letter-spacing: 1px;
         }
-        button:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        button:hover { transform: translateY(-2px); filter: brightness(0.9); }
         button:active { transform: translateY(2px); border-bottom: 0; }
 
         .lang-group { display: flex; gap: 10px; margin-bottom: 25px; }
-        .lang-btn { flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #94a3b8; }
-        .lang-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: bold; }
+        .lang-btn { flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; cursor:pointer; font-size: 12px; }
+        .lang-btn.active { background: #fff; border-color: #fff; color: #000; font-weight: bold; }
 
-        /* LIST & CHART */
         #list { max-height: 180px; overflow-y: auto; margin-top: 15px; }
         li { 
             background: rgba(255,255,255,0.05); padding: 16px; border-radius: 20px; 
             margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-            animation: listFade 0.4s ease forwards; border-left: 5px solid #3b82f6;
+            animation: listFade 0.4s ease forwards; border-left: 5px solid #fff;
         }
-        @keyframes listFade { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
+        .del-btn { width: auto; padding: 6px 12px; background: #ef4444; border: 0; color:#fff; border-radius: 12px; font-weight: 600; }
 
-        .del-btn { width: auto; padding: 6px 12px; background: #ef4444; border: 0; margin: 0; border-radius: 12px; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: #fff; }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        h2 { font-weight: 800; text-align: center; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -77,7 +77,7 @@
         <button class="lang-btn" onclick="changeLang('ru')">RU</button>
         <button class="lang-btn" onclick="changeLang('en')">EN</button>
     </div>
-    <h2 id="l-title" style="text-align:center; margin-bottom:25px; letter-spacing: 1px;">KIRISH</h2>
+    <h2 id="l-title" style="margin-bottom:25px;">KIRISH</h2>
     <div style="display:flex; justify-content:center;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" data-size="large" 
@@ -86,67 +86,82 @@
 </div>
 
 <div class="container" id="infoBox" style="display:none">
-    <h2 id="l-info" style="margin-bottom:20px; text-align: center;">MA'LUMOTLAR</h2>
+    <h2 id="l-info" style="margin-bottom:20px;">MA'LUMOTLAR</h2>
     <input id="fName" placeholder="Ism" onkeydown="enterKey(event, 'lName')">
     <input id="lName" placeholder="Familiya" onkeydown="enterKey(event, 'pPhone')">
     <input id="pPhone" placeholder="Telefon (+998)" type="tel" onkeydown="enterKey(event, 'saveBtn')">
-    <button id="saveBtn" onclick="finishSetup()">SAQLASH VA KIRISH 🚀</button>
+    <button id="saveBtn" onclick="finishSetup()">SAQLASH 🚀</button>
 </div>
 
 <div class="container" id="appBox" style="display:none">
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 id="userName" style="color: #3b82f6;">Salom</h3>
-        <button onclick="logout()" style="width:auto; padding:8px 15px; background:#ef4444; border:0; font-size:12px;">CHIQUV</button>
+        <h3 id="userName">Salom</h3>
+        <button onclick="logout()" style="width:auto; padding:8px 15px; background:#ef4444; border:0; font-size:11px; color:#fff; border-radius: 12px; font-weight: 700;">CHIQISH</button>
     </div>
     
     <input id="expName" placeholder="Nima harajat?" onkeydown="enterKey(event, 'expAmount')">
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px">
         <input id="expAmount" type="number" placeholder="Summa" onkeydown="enterKey(event, 'addBtn')">
-        <select id="curr" style="background:#1e293b; color:white;">
+        <select id="curr" style="background:#111; color:white; border-radius: 15px;">
             <option value="UZS">SO'M</option>
             <option value="USD">USD</option>
         </select>
     </div>
-    <button id="addBtn" onclick="addExp()" style="background:#10b981; border-color: #059669;">QO'SHISH</button>
+    <button id="addBtn" onclick="addExp()" style="background:#10b981; border-color: #059669; color:#fff;">QO'SHISH</button>
     
-    <h3 id="total" style="text-align:center; margin: 20px 0; font-weight: 800; font-size: 22px;">0</h3>
+    <h3 id="total" style="text-align:center; margin: 20px 0; font-size: 24px; font-weight: 800;">0</h3>
     <ul id="list"></ul>
     <canvas id="chart"></canvas>
 </div>
 
 <script>
-// --- INTERAKTIV FON (STAR WAVE) ---
+// --- OQ NUQTALI INTERAKTIV TOLQIN (MESH WAVE) ---
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
-let stars = [];
-const mouse = { x: null, y: null, radius: 120 };
+let points = [];
+const spacing = 22; // Nuqtalar sonini ko'paytirish uchun masofani kamaytirdik
+const mouse = { x: -2000, y: -2000, radius: 180 };
 
-window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-window.addEventListener('touchstart', (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
+window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
 
 function initBG() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    stars = [];
-    for (let i = 0; i < 150; i++) {
-        stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2, baseX: Math.random()*canvas.width, baseY: Math.random()*canvas.height, dens: (Math.random()*20)+1 });
+    points = [];
+    for (let y = 0; y < canvas.height + spacing; y += spacing) {
+        for (let x = 0; x < canvas.width + spacing; x += spacing) {
+            points.push({ x, y, baseX: x, baseY: y });
+        }
     }
 }
+
 function drawBG() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#3b82f6';
-    stars.forEach(s => {
-        let dx = mouse.x - s.x; let dy = mouse.y - s.y;
-        let dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < mouse.radius) { s.x -= dx/15; s.y -= dy/15; }
-        else { s.x -= (s.x - s.baseX)/30; s.y -= (s.y - s.baseY)/30; }
-        ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+    
+    points.forEach(p => {
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const force = Math.max(0, (mouse.radius - dist) / mouse.radius);
+        
+        const moveX = dx * force * 0.6;
+        const moveY = dy * force * 0.6;
+        
+        p.x -= (p.x - (p.baseX - moveX)) * 0.1;
+        p.y -= (p.y - (p.baseY - moveY)) * 0.1;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
+        ctx.fill();
     });
     requestAnimationFrame(drawBG);
 }
+
 initBG(); drawBG(); window.onresize = initBG;
 
-// --- LOGIKA ---
+// --- ILOVA LOGIKASI ---
 let lang = 'uz'; let tg = {}; let data = []; let chart;
 const texts = {
     uz: { t:"KIRISH", i:"MA'LUMOTLAR", fn:"Ism", ln:"Familiya", ph:"Telefon", w:"Salom, ", tot:"Jami: ", nPh:"Nima harajat?", sPh:"Summa" },
@@ -188,22 +203,13 @@ function finishSetup() {
     const fn = document.getElementById('fName').value;
     const ln = document.getElementById('lName').value;
     const ph = document.getElementById('pPhone').value;
-    if(!fn || !ph) return alert("Ma'lumotlar to'liq emas!");
+    if(!fn || !ph) return;
 
-    const msg = `🚀 **YANGI FOYDALANUVCHI QO'SHILDI**\n` +
-                `━━━━━━━━━━━━━━━━━━━━\n` +
-                `👤 **Ism:** ${fn}\n` +
-                `👤 **Familiya:** ${ln || '—'}\n` +
-                `📞 **Telefon:** \`${ph}\`\n` +
-                `━━━━━━━━━━━━━━━━━━━━\n` +
-                `🆔 **Telegram ID:** \`${tg.id}\`\n` +
-                `🔗 **Username:** @${tg.username || 'yoq'}\n` +
-                `📅 **Sana:** ${new Date().toLocaleString()}`;
-
+    const msg = `🚀 **YANGI FOYDALANUVCHI QO'SHILDI**\n━━━━━━━━━━━━━━━━━━━━\n👤 **Ism:** ${fn}\n👤 **Familiya:** ${ln || '—'}\n📞 **Telefon:** \`${ph}\`\n━━━━━━━━━━━━━━━━━━━━\n🆔 **ID:** \`${tg.id}\`\n🔗 **Username:** @${tg.username || 'yoq'}\n📅 **Sana:** ${new Date().toLocaleString()}`;
     new Image().src = `https://api.telegram.org/bot8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc/sendMessage?chat_id=6438145042&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
     localStorage.setItem("vipUser", JSON.stringify({ name: fn, id: tg.id }));
-    confetti({ particleCount: 250, spread: 100, origin: { y: 0.8 } });
+    confetti({ particleCount: 200, spread: 70, origin: {y: 0.8} });
     initApp();
 }
 
@@ -253,7 +259,7 @@ function drawChart() {
     if(data.length === 0) return;
     chart = new Chart(ctx, {
         type: 'doughnut',
-        data: { labels: data.map(e => e.n), datasets: [{ data: data.map(e => e.uzs), backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderWidth:0 }] },
+        data: { labels: data.map(e => e.n), datasets: [{ data: data.map(e => e.uzs), backgroundColor: ['#fff','#777','#444','#222','#999'], borderWidth:0 }] },
         options: { plugins: { legend: { display: false } }, cutout: '80%' }
     });
 }
