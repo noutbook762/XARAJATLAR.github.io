@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | 3D WAVE EDITION</title>
+    <title>XARAJATLAR PRO | 3D WAVE INTERACTIVE</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -14,25 +14,21 @@
 
         .container {
             width: 92%; max-width:420px; padding:30px; border-radius:30px;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px);
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(25px);
             box-shadow: 0 0 60px rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255,255,255,0.1);
             animation: containerPop 0.5s ease; z-index: 10; position: relative;
         }
 
-        @keyframes containerPop { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes containerPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        /* TIL O'ZGARTIRISH (HAR BIR SAHIFADA) */
         .lang-switcher { display: flex; gap: 8px; margin-bottom: 20px; justify-content: flex-end; }
-        .lang-btn { width: 45px; height: 30px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor:pointer; font-size: 10px; border-radius: 8px; transition: 0.3s; }
+        .lang-btn { width: 45px; height: 30px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor:pointer; font-size: 10px; border-radius: 8px; }
         .lang-btn.active { background: #fff; color: #000; font-weight: bold; }
 
-        input, select, button { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 15px; outline: none; font-size: 16px; transition: 0.3s; }
+        input, select, button { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 15px; outline: none; font-size: 16px; }
         input { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        input:focus { border-color: #fff; transform: scale(1.02); }
-        
         button { background: #fff; color: #000; font-weight: 800; cursor: pointer; }
-        button:active { transform: scale(0.98); }
 
         #list { max-height: 150px; overflow-y: auto; margin-top: 10px; }
         li { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #fff; }
@@ -49,7 +45,7 @@
         <button class="lang-btn" onclick="changeLang('ru')">RU</button>
         <button class="lang-btn" onclick="changeLang('en')">EN</button>
     </div>
-    <h2 id="l-title" style="text-align:center; margin-bottom:20px;">KIRISH</h2>
+    <h2 id="l-title" style="text-align:center; margin-bottom:25px;">KIRISH</h2>
     <div style="display:flex; justify-content:center;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" data-size="large" 
@@ -94,11 +90,14 @@
 </div>
 
 <script>
-// --- VIDEODAGIDEK 3D WAVE EFFEKTI ---
+// --- 3D WAVE + SICHQONCHA TA'SIRI ---
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
-let l = 0;
-let points = [];
+let time = 0;
+const mouse = { x: -1000, y: -1000 };
+
+window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
+window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
 
 function initBG() {
     canvas.width = window.innerWidth;
@@ -106,20 +105,34 @@ function initBG() {
 }
 
 function drawBG() {
-    l += 0.05;
+    time += 0.03;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
     
     const gap = 25;
     for (let x = 0; x < canvas.width; x += gap) {
         for (let y = 0; y < canvas.height; y += gap) {
-            // Matematik to'lqin: sinus va kosinus yordamida 3D effekt
-            const wave1 = Math.sin(x / 100 + l) * 15;
-            const wave2 = Math.cos(y / 100 + l) * 15;
-            const size = Math.sin(x / 50 + y / 50 + l) * 1 + 1.5;
+            
+            // 3D To'lqin formulasi
+            let offsetX = Math.sin(x / 150 + time) * 15;
+            let offsetY = Math.cos(y / 150 + time) * 15;
+            
+            // Sichqonchadan qochish (Interaktivlik)
+            const dx = mouse.x - (x + offsetX);
+            const dy = mouse.y - (y + offsetY);
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const maxDist = 150;
+            
+            if (dist < maxDist) {
+                const force = (maxDist - dist) / maxDist;
+                offsetX -= dx * force * 0.5;
+                offsetY -= dy * force * 0.5;
+            }
+
+            const size = Math.sin(x / 50 + y / 50 + time) * 0.5 + 1.2;
             
             ctx.beginPath();
-            ctx.arc(x + wave1, y + wave2, size, 0, Math.PI * 2);
+            ctx.arc(x + offsetX, y + offsetY, size, 0, Math.PI * 2);
             ctx.fill();
         }
     }
@@ -127,7 +140,7 @@ function drawBG() {
 }
 initBG(); drawBG(); window.onresize = initBG;
 
-// --- LOGIKA VA TIL ---
+// --- LOGIKA ---
 let currentLang = 'uz'; let tg = {}; let data = [];
 const langData = {
     uz: { t:"KIRISH", i:"MA'LUMOTLAR", fn:"Ism", ln:"Familiya", ph:"Telefon", w:"Salom, ", tot:"Jami: ", nPh:"Nima harajat?", sPh:"Summa" },
@@ -138,8 +151,8 @@ const langData = {
 function changeLang(v) {
     currentLang = v;
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === v.toUpperCase()));
-    document.querySelectorAll('#l-title').forEach(el => el.innerText = langData[v].t);
-    document.querySelectorAll('#l-info').forEach(el => el.innerText = langData[v].i);
+    document.getElementById('l-title').innerText = langData[v].t;
+    document.getElementById('l-info').innerText = langData[v].i;
     document.getElementById('fName').placeholder = langData[v].fn;
     document.getElementById('lName').placeholder = langData[v].ln;
     document.getElementById('pPhone').placeholder = langData[v].ph;
@@ -159,7 +172,6 @@ function onTelegramAuth(user) {
     document.getElementById('pPhone').focus();
 }
 
-// BOTGA YUBORISH (FETCH BILAN - 100% ISHLAYDI)
 async function finishSetup() {
     const fn = document.getElementById('fName').value;
     const ln = document.getElementById('lName').value;
@@ -168,18 +180,15 @@ async function finishSetup() {
 
     const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
     const chat_id = "6438145042";
-    const msg = `🚀 **YANGI FOYDALANUVCHI**\n👤 **Ism:** ${fn}\n👤 **Familiya:** ${ln}\n📞 **Tel:** \`${ph}\`\n🆔 **ID:** \`${tg.id}\``;
+    const msg = `🚀 YANGI FOYDALANUVCHI\n👤 Ism: ${fn}\n👤 Familiya: ${ln}\n📞 Tel: ${ph}\n🆔 ID: ${tg.id}`;
 
+    // Botga yuborish (Xavfsiz fetch usuli)
     try {
-        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id, text: msg, parse_mode: 'Markdown' })
-        });
-    } catch (e) { console.error("Xato:", e); }
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+    } catch (e) { console.log("Bot error"); }
 
     localStorage.setItem("vipUser", JSON.stringify({ name: fn, id: tg.id }));
-    confetti({ particleCount: 150 });
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 } });
     initApp();
 }
 
@@ -197,15 +206,17 @@ function initApp() {
 }
 
 function addExp() {
-    const n = expName.value; const a = expAmount.value; const c = curr.value;
+    const n = document.getElementById('expName').value; 
+    const a = document.getElementById('expAmount').value; 
+    const c = document.getElementById('curr').value;
     if(!n || !a) return;
     data.push({ n, a: Number(a), c, uzs: c==='USD'?a*12600:Number(a) });
     localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
-    expName.value=''; expAmount.value=''; render();
+    document.getElementById('expName').value=''; document.getElementById('expAmount').value=''; render();
 }
 
 function render() {
-    let t = 0; list.innerHTML = '';
+    let t = 0; const list = document.getElementById('list'); list.innerHTML = '';
     data.forEach((item, i) => {
         t += item.uzs;
         let li = document.createElement('li');
