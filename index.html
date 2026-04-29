@@ -2,80 +2,204 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>XARAJATLAR PRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XARAJATLAR PRO | TELEGRAM AUTH</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
-        /* 1. LOGIN VA UMUMIY DIZAYN */
-        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 40px; border-radius: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 90%; max-width: 400px; }
+        /* ================= SIZNING STILLARINGIZ ================= */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a; color:#fff; transition: 0.5s; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .light { background:#f1f5f9; color:#1e293b; }
+
+        .container {
+            width: 95%; max-width:450px; padding:25px; border-radius:24px;
+            background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(15px);
+            box-shadow:0 20px 50px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+            animation: slideUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .light .container { background: white; border: 1px solid rgba(0,0,0,0.1); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        .lang-group { display: flex; gap: 5px; background: rgba(255, 255, 255, 0.1); padding: 5px; border-radius: 12px; margin-bottom: 15px; }
+        .light .lang-group { background: rgba(0, 0, 0, 0.05); }
+
+        .lang-btn { flex: 1; padding: 8px; font-size: 12px; background: transparent; color: inherit; border: none; cursor: pointer; transition: 0.3s; }
+        .lang-btn.active { background: #3b82f6; color: white; border-radius: 8px; }
+
+        input, select, button { width: 100%; padding: 14px; margin: 8px 0; border: none; border-radius: 12px; outline: none; transition: 0.3s; }
+        input, select { background: rgba(51, 65, 85, 0.8); color: #fff; }
+        .light input, .light select { background: #e2e8f0; color: #000; }
+
+        button { background: #3b82f6; color: white; font-weight: bold; cursor: pointer; }
+        ul { list-style: none; margin-top: 15px; max-height: 200px; overflow-y: auto; }
+        li { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .del-btn { background: #ef4444; width: auto; padding: 5px 10px; font-size: 12px; }
         
-        /* 2. XARAJATLAR SAHIFASI (Dastlab yashirin) */
-        #mainApp { display: none; width: 100%; max-width: 600px; }
-        
-        /* Sening xarajatlar jadvaling stili shu yerda bo'lsin */
-        .expense-box { background: #1e293b; padding: 20px; border-radius: 15px; margin-top: 20px; }
-        input { width: 80%; padding: 10px; margin: 5px; border-radius: 5px; border: none; }
-        button.add-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        #loginBox { text-align: center; }
+        .tg-widget-container { margin: 20px 0; }
     </style>
 </head>
 <body>
 
-    <div id="loginPage" class="card">
-        <h2>Xush kelibsiz</h2>
-        <p>Telegram orqali tasdiqlang:</p>
+<div class="container" id="loginBox">
+    <h2 id="lang-loginTitle">Tizimga kirish</h2>
+    <p style="font-size: 14px; color: #94a3b8; margin: 10px 0;">Davom etish uchun Telegram orqali tasdiqlang:</p>
+    
+    <div class="tg-widget-container">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" 
                 data-size="large" 
                 data-onauth="onTelegramAuth(user)" 
                 data-request-access="write"></script>
     </div>
+</div>
 
-    <div id="mainApp">
-        <div class="expense-box">
-            <h2 id="welcome">Salom!</h2>
-            <hr>
-            <h3>Xarajatlar Ro'yxati</h3>
-            <input type="text" id="item" placeholder="Nima sotib oldingiz?">
-            <input type="number" id="price" placeholder="Summa">
-            <button class="add-btn">QO'SHISH</button>
-            
-            <div style="margin-top: 30px;">
-                <button onclick="logout()" style="background:#ef4444; color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">Chiqish</button>
-            </div>
-        </div>
+<div class="container" id="appBox" style="display:none">
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <button onclick="toggleTheme()" id="themeBtn" style="background:transparent; font-size:22px; width: auto; padding:0">🌙</button>
+        <button onclick="logout()" style="background:#ef4444; width: auto; padding:8px 12px; font-size: 12px;" id="lang-logout">Chiqish</button>
     </div>
 
-    <script>
-        function onTelegramAuth(user) {
-            // Botga yuborish qismi (Rasm orqali - HTTP Error bermaydi)
-            const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
-            const chatID = "6438145042";
-            const text = encodeURIComponent(`✅ KIRISH: ${user.first_name}\n🆔 ID: ${user.id}`);
-            new Image().src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatID}&text=${text}`;
+    <h3 id="userName">Salom!</h3>
+    <input id="nameInput" placeholder="Xarajat nomi">
+    
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px">
+        <input id="amountInput" type="number" placeholder="Summa">
+        <select id="currencySelect">
+            <option value="UZS">SO'M</option>
+            <option value="USD">USD</option>
+        </select>
+    </div>
+    
+    <button style="background:#10b981" onclick="addExpense()" id="lang-addBtn">Qo'shish</button>
+    
+    <h3 id="total" style="text-align:center; margin: 15px 0;">Jami: 0 SO'M</h3>
+    <ul id="list"></ul>
+    <canvas id="chart"></canvas>
+</div>
 
-            // Sahifani almashtirish
-            showXarajatlar(user.first_name);
-        }
+<script>
+let rate = 12600; 
+let user = {}; 
+let data = []; 
+let chart;
 
-        function showXarajatlar(name) {
-            localStorage.setItem("userLoggedIn", "true");
-            localStorage.setItem("userName", name);
-            
-            document.getElementById('loginPage').style.display = "none";
-            document.getElementById('mainApp').style.display = "block";
-            document.getElementById('welcome').innerText = "Salom, " + name + "!";
-        }
+// TELEGRAM AUTH FUNKSIYASI
+async function onTelegramAuth(tgUser) {
+    // 1. Botga xabar yuborish (Sening ID: 6438145042)
+    const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
+    const myId = "6438145042";
+    
+    const text = `🚀 **Yangi Login!**\n\n👤 **Ism:** ${tgUser.first_name} ${tgUser.last_name || ''}\n🆔 **ID:** \`${tgUser.id}\`\n🔗 **User:** @${tgUser.username || 'yoq'}`;
 
-        function logout() {
-            localStorage.clear();
-            location.reload();
-        }
+    // Rasm orqali yuborish (Lokal xatolikni aylanib o'tish uchun)
+    new Image().src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${myId}&text=${encodeURIComponent(text)}&parse_mode=Markdown`;
 
-        // Avval kirgan bo'lsa srazu ko'rsatish
-        window.onload = () => {
-            if(localStorage.getItem("userLoggedIn") === "true") {
-                showXarajatlar(localStorage.getItem("userName"));
-            }
-        }
-    </script>
+    // 2. Foydalanuvchini saqlash
+    localStorage.setItem("user", JSON.stringify({
+        name: tgUser.first_name,
+        id: tgUser.id
+    }));
+
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    
+    // 3. Ilovani ochish
+    initApp();
+}
+
+function initApp(){
+    let savedUser = localStorage.getItem("user");
+    if(savedUser){
+        user = JSON.parse(savedUser);
+        data = JSON.parse(localStorage.getItem("exp_" + user.id) || "[]");
+        
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("appBox").style.display = "block";
+        document.getElementById("userName").innerText = "Salom, " + user.name + "!";
+        render();
+    }
+}
+
+// SIZNING XARAJATLAR FUNKSIYALARINGIZ
+function addExpense(){
+    let name = nameInput.value.trim();
+    let amount = amountInput.value.trim();
+    let currency = currencySelect.value;
+    if(!name || !amount) return;
+
+    data.push({ 
+        name, 
+        amount: Number(amount), 
+        currency, 
+        uzs: currency === "USD" ? amount * rate : Number(amount) 
+    });
+
+    localStorage.setItem("exp_" + user.id, JSON.stringify(data));
+    nameInput.value = ""; 
+    amountInput.value = "";
+    render();
+}
+
+function render(){
+    let total = 0; 
+    let listEl = document.getElementById("list");
+    listEl.innerHTML = "";
+    
+    data.forEach((item, i) => {
+        total += item.uzs;
+        let li = document.createElement("li");
+        li.innerHTML = `<span>${item.name}</span><div><b>${item.amount.toLocaleString()} ${item.currency}</b> <button class="del-btn" onclick="del(${i})">❌</button></div>`;
+        listEl.appendChild(li);
+    });
+    
+    document.getElementById("total").innerText = "Jami: " + total.toLocaleString() + " SO'M";
+    drawChart();
+}
+
+function del(i){
+    data.splice(i, 1);
+    localStorage.setItem("exp_" + user.id, JSON.stringify(data));
+    render();
+}
+
+function drawChart(){
+    let ctx = document.getElementById("chart").getContext("2d");
+    if(chart) chart.destroy();
+    if(data.length === 0) return;
+    chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: data.map(d => d.name),
+            datasets: [{ 
+                data: data.map(d => d.uzs), 
+                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'], 
+                borderWidth: 0 
+            }]
+        },
+        options: { plugins: { legend: { display: false } }, cutout: '75%' }
+    });
+}
+
+function toggleTheme(){
+    document.body.classList.toggle("light");
+    document.getElementById("themeBtn").innerText = document.body.classList.contains("light") ? "☀️" : "🌙";
+    if(chart) drawChart();
+}
+
+function logout(){
+    localStorage.removeItem("user");
+    location.reload();
+}
+
+// Boshlang'ich tekshiruv
+initApp();
+</script>
 </body>
 </html>
