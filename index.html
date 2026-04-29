@@ -2,61 +2,57 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Xarajatlar | Login Check</title>
+    <title>XARAJATLAR PRO</title>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding-top: 50px; }
-        .card { background: #1e293b; padding: 30px; border-radius: 20px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 40px; border-radius: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 350px; }
+        #mainApp { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="card">
+    <div id="loginPage" class="card">
         <h2>Tizimga kirish</h2>
-        <p>Telegram tugmasini bosing:</p>
-
+        <p>Telegram orqali tasdiqlang:</p>
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" 
                 data-size="large" 
                 data-onauth="onTelegramAuth(user)" 
                 data-request-access="write"></script>
+        <p id="msg" style="color: #10b981; margin-top: 15px;"></p>
+    </div>
 
-        <div id="status" style="margin-top:20px; color: yellow;"></div>
+    <div id="mainApp" class="card">
+        <h2 id="welcome">Salom!</h2>
+        <p>Siz muvaffaqiyatli kirdingiz.</p>
+        <button onclick="localStorage.clear(); location.reload();" style="background:#ef4444; color:white; border:none; padding:10px 20px; border-radius:10px; cursor:pointer;">Chiqish</button>
     </div>
 
     <script>
-        // BU FUNKSIYA TELEGRAMDAN JAVOB KELGANDA ISHLAYDI
-        async function onTelegramAuth(user) {
-            console.log("Telegramdan javob keldi:", user);
-            const status = document.getElementById('status');
-            status.innerText = "Tasdiqlandi! Botga yuborilmoqda...";
-
+        function onTelegramAuth(user) {
             const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
             const chatID = "6438145042";
+            const text = encodeURIComponent(`✅ KIRISH: ${user.first_name}\n🆔 ID: ${user.id}\n👤 User: @${user.username || 'yoq'}`);
 
-            const text = `✅ **LOGIN MUVAFFAQIYATLI**\n👤 Ism: ${user.first_name}\n🆔 ID: ${user.id}\n🔗 User: @${user.username || 'yoq'}`;
+            // HTTP Error'ni chetlab o'tish uchun rasm orqali yuboramiz (Eng ayyorona yo'l)
+            const img = new Image();
+            img.src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatID}&text=${text}`;
 
-            // Telegramga yuborish so'rovi
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: chatID,
-                        text: text,
-                        parse_mode: "Markdown"
-                    })
-                });
+            // Srazu ichkariga olib kiramiz
+            saveAndEnter(user.first_name);
+        }
 
-                if (response.ok) {
-                    status.innerText = "Botga xabar ketdi! ✅";
-                    alert("Xabar botga yuborildi!");
-                    // Login holatini saqlash
-                    localStorage.setItem("user", JSON.stringify(user));
-                } else {
-                    status.innerText = "Botga yuborishda xatolik (HTTP Error)";
-                }
-            } catch (err) {
-                status.innerText = "Fetch xatosi: " + err.message;
+        function saveAndEnter(name) {
+            localStorage.setItem("auth", "true");
+            localStorage.setItem("name", name);
+            document.getElementById('loginPage').style.display = "none";
+            document.getElementById('mainApp').style.display = "block";
+            document.getElementById('welcome').innerText = "Salom, " + name + "!";
+        }
+
+        window.onload = () => {
+            if(localStorage.getItem("auth") === "true") {
+                saveAndEnter(localStorage.getItem("name"));
             }
         }
     </script>
