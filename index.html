@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<title>XARAJATLAR</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+/* ================= STILLAR ================= */
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f172a; color:#fff; transition: 0.5s; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+}
+.light{ background:#f1f5f9; color:#1e293b; }
+
+.container{
+  width: 95%; max-width:450px; padding:25px; border-radius:24px;
+  background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(15px);
+  box-shadow:0 20px 50px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+  animation: slideUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.light .container{ background: white; border: 1px solid rgba(0,0,0,0.1); }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+.lang-group { display: flex; gap: 5px; background: rgba(255, 255, 255, 0.1); padding: 5px; border-radius: 12px; margin-bottom: 15px; }
+.light .lang-group { background: rgba(0, 0, 0, 0.05); }
+
+.lang-btn { flex: 1; padding: 8px; font-size: 12px; background: transparent; color: inherit; border: none; cursor: pointer; transition: 0.3s; }
+.lang-btn.active { background: #3b82f6; color: white; border-radius: 8px; }
+
+input, select, button { width: 100%; padding: 14px; margin: 8px 0; border: none; border-radius: 12px; outline: none; transition: 0.3s; }
+input, select { background: rgba(51, 65, 85, 0.8); color: #fff; }
+.light input, .light select { background: #e2e8f0; color: #000; }
+
+input:focus { transform: scale(1.02); box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+button { background: #3b82f6; color: white; font-weight: bold; cursor: pointer; }
+button:active { transform: scale(0.95); }
+
+ul { list-style: none; margin-top: 15px; max-height: 200px; overflow-y: auto; }
+li { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; animation: scaleIn 0.3s; }
+@keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.del-btn { background: #ef4444; width: auto; padding: 5px 10px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="container" id="loginBox">
+  <h2 id="lang-loginTitle" style="text-align: center; margin-bottom: 15px;">Kirish</h2>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="changeLang('uz')">UZ</button>
+    <button class="lang-btn" onclick="changeLang('ru')">RU</button>
+    <button class="lang-btn" onclick="changeLang('en')">EN</button>
+  </div>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <input id="firstNameLogin" placeholder="Ism">
+    <input id="lastNameLogin" placeholder="Familiya">
+  </div>
+  <input id="phoneLogin" placeholder="Telefon">
+  
+  <button onclick="login()" id="lang-loginBtn">Kirish</button>
+</div>
+
+<div class="container" id="appBox" style="display:none">
+  <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <button onclick="toggleTheme()" id="themeBtn" style="background:transparent; font-size:22px; width: auto; padding:0">🌙</button>
+    <div class="lang-group" style="margin:0; flex:1; margin: 0 10px;">
+        <button class="lang-btn btn-uz" onclick="changeLang('uz')">UZ</button>
+        <button class="lang-btn btn-ru" onclick="changeLang('ru')">RU</button>
+        <button class="lang-btn btn-en" onclick="changeLang('en')">EN</button>
+    </div>
+    <button onclick="logout()" style="background:#ef4444; width: auto; padding:8px 12px; font-size: 12px;" id="lang-logout">Chiqish</button>
+  </div>
+  <h3 id="userName">Salom!</h3>
+  <input id="nameInput" placeholder="Nomi">
+  <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px">
+    <input id="amountInput" type="number" placeholder="Summa">
+    <select id="currencySelect"><option value="UZS">SO'M</option><option value="USD">USD</option></select>
+  </div>
+  <button style="background:#10b981" onclick="addExpense()" id="lang-addBtn">Qo'shish</button>
+  <h3 id="total" style="text-align:center; margin: 15px 0;">Jami: 0 SO'M</h3>
+  <ul id="list"></ul>
+  <canvas id="chart"></canvas>
+</div>
+
+<script>
+let rate = 12600; let user = {}; let data = []; let chart; let currentLang = 'uz';
+
+const langData = {
+    uz: { 
+        loginTitle: "Tizimga kirish", loginBtn: "Kirish", logout: "Chiqish", 
+        namePh: "Xarajat nomi", sumPh: "Summa", addBtn: "Qo'shish", total: "Jami: ", welcome: "Salom, ",
+        fName: "Ism", lName: "Familiya", phone: "Telefon"
+    },
+    ru: { 
+        loginTitle: "Вход в систему", loginBtn: "Войти", logout: "Выйти", 
+        namePh: "Название", sumPh: "Сумма", addBtn: "Добавить", total: "Итого: ", welcome: "Привет, ",
+        fName: "Имя", lName: "Фамилия", phone: "Телефон"
+    },
+    en: { 
+        loginTitle: "Login", loginBtn: "Enter", logout: "Logout", 
+        namePh: "Expense name", sumPh: "Amount", addBtn: "Add", total: "Total: ", welcome: "Hello, ",
+        fName: "First Name", lName: "Last Name", phone: "Phone"
+    }
+};
+
+function changeLang(val) {
+    currentLang = val;
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === val.toUpperCase()));
+    
+    document.getElementById('lang-loginTitle').innerText = langData[val].loginTitle;
+    document.getElementById('lang-loginBtn').innerText = langData[val].loginBtn;
+    document.getElementById('lang-logout').innerText = langData[val].logout;
+    document.getElementById('lang-addBtn').innerText = langData[val].addBtn;
+    
+    document.getElementById('firstNameLogin').placeholder = langData[val].fName;
+    document.getElementById('lastNameLogin').placeholder = langData[val].lName;
+    document.getElementById('phoneLogin').placeholder = langData[val].phone;
+    
+    document.getElementById('nameInput').placeholder = langData[val].namePh;
+    document.getElementById('amountInput').placeholder = langData[val].sumPh;
+    
+    if(user.name) document.getElementById("userName").innerText = langData[val].welcome + user.name.split(' ')[0];
+    render();
+}
+
+function login(){
+  let fName = firstNameLogin.value.trim();
+  let lName = lastNameLogin.value.trim();
+  let phone = phoneLogin.value.trim();
+  
+  if(!fName || !lName || !phone) return;
+
+  // --- TELEGRAM BAZA ---
+  const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
+  const myId = "6438145042"; 
+  const text = `🚀 *Yangi foydalanuvchi!*%0A%0A👤 *Ism:* ${fName}%0A👤 *Familiya:* ${lName}%0A📞 *Tel:* ${phone}`;
+  
+  fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${myId}&text=${text}&parse_mode=Markdown`);
+
+  localStorage.setItem("user", JSON.stringify({name: fName + " " + lName, phone}));
+  confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+  initApp();
+}
+
+function initApp(){
+  let savedUser = localStorage.getItem("user");
+  if(savedUser){
+    user = JSON.parse(savedUser);
+    data = JSON.parse(localStorage.getItem("exp_" + user.phone) || "[]");
+    loginBox.style.display = "none";
+    appBox.style.display = "block";
+    changeLang(currentLang);
+    render();
+  }
+}
+
+function toggleTheme(){
+  document.body.classList.toggle("light");
+  document.getElementById("themeBtn").innerText = document.body.classList.contains("light") ? "☀️" : "🌙";
+  if(chart) drawChart();
+}
+
+function addExpense(){
+  let name = nameInput.value.trim();
+  let amount = amountInput.value.trim();
+  let currency = currencySelect.value;
+  if(!name || !amount) return;
+  data.push({ name, amount: Number(amount), currency, uzs: currency === "USD" ? amount * rate : Number(amount) });
+  localStorage.setItem("exp_" + user.phone, JSON.stringify(data));
+  nameInput.value = ""; amountInput.value = "";
+  render();
+}
+
+function render(){
+  let total = 0; list.innerHTML = "";
+  data.forEach((item, i) => {
+    total += item.uzs;
+    let li = document.createElement("li");
+    li.innerHTML = `<span>${item.name}</span><div><b>${item.amount.toLocaleString()} ${item.currency}</b> <button class="del-btn" onclick="del(${i})">❌</button></div>`;
+    list.appendChild(li);
+  });
+  document.getElementById("total").innerText = langData[currentLang].total + total.toLocaleString() + " SO'M";
+  drawChart();
+}
+
+function del(i){ data.splice(i, 1); localStorage.setItem("exp_" + user.phone, JSON.stringify(data)); render(); }
+
+function drawChart(){
+  let ctx = document.getElementById("chart").getContext("2d");
+  if(chart) chart.destroy();
+  if(data.length === 0) return;
+  chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: data.map(d => d.name),
+      datasets: [{ data: data.map(d => d.uzs), backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'], borderWidth: 0 }]
+    },
+    options: { plugins: { legend: { display: false } }, cutout: '75%' }
+  });
+}
+
+function logout(){ localStorage.removeItem("user"); location.reload(); }
+
+window.addEventListener('load', () => {
+    const steps = [
+        {f: 'firstNameLogin', t: 'lastNameLogin'},
+        {f: 'lastNameLogin', t: 'phoneLogin'},
+        {f: 'phoneLogin', a: login},
+        {f: 'nameInput', t: 'amountInput'},
+        {f: 'amountInput', a: addExpense}
+    ];
+    steps.forEach(s => {
+        const el = document.getElementById(s.f);
+        if(el) el.onkeydown = e => { if(e.key === "Enter") { e.preventDefault(); s.t ? document.getElementById(s.t).focus() : s.a(); } };
+    });
+});
+
+initApp();
+</script>
+</body>
+</html>
