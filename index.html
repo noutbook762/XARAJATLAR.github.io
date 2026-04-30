@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Pro V14</title>
-    
+    <title>Finance Pro V15</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
-    
     <style>
         :root { --neon: #00ff88; --error: #ff4d4d; --bg: #0f172a; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Outfit', sans-serif; }
@@ -16,16 +14,16 @@
         .card { width: 92%; max-width: 400px; padding: 25px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         h1 { color: var(--neon); margin-bottom: 20px; font-weight: 900; text-transform: uppercase; }
         input, select { width: 100%; padding: 15px; margin: 8px 0; background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 15px; color: white; outline: none; transition: 0.3s; }
-        input.invalid { border-color: var(--error); box-shadow: 0 0 10px rgba(255, 77, 77, 0.2); }
+        input.invalid { border-color: var(--error) !important; box-shadow: 0 0 10px rgba(255, 77, 77, 0.2); }
         input:focus { border-color: var(--neon); }
         button { width: 100%; padding: 15px; background: var(--neon); color: #064e3b; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
-        .chart-container { width: 170px; height: 170px; margin: 0 auto 15px; position: relative; }
+        .chart-container { width: 160px; height: 160px; margin: 0 auto 15px; position: relative; }
         #total-display { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; font-weight: 900; color: var(--neon); }
-        #history { max-height: 100px; overflow-y: auto; margin-top: 15px; }
-        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; font-size: 13px; border-left: 4px solid var(--neon); }
-        .del-btn { color: var(--error); font-weight: bold; cursor: pointer; margin-left: 12px; font-size: 20px; line-height: 1; }
+        #history { max-height: 90px; overflow-y: auto; margin-top: 10px; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 6px; font-size: 13px; border-left: 4px solid var(--neon); }
+        .del-btn { color: var(--error); font-weight: bold; cursor: pointer; margin-left: 12px; font-size: 20px; }
         .lang-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
-        .lang-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-size: 11px; transition: 0.3s; }
+        .lang-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-size: 11px; }
         .lang-btn.active { background: var(--neon); color: black; font-weight: bold; }
     </style>
 </head>
@@ -38,33 +36,28 @@
         <button class="lang-btn" onclick="updateLang('en')">EN</button>
     </div>
 
-    <!-- 1. LOGIN SECTION -->
     <div id="step-login">
         <h1 data-tr="login_title">KIRISH</h1>
         <div id="tg-widget" style="display: flex; justify-content: center;"></div>
     </div>
 
-    <!-- 2. SETUP SECTION -->
     <div id="step-setup" style="display:none;">
         <h1 data-tr="profile_title">PROFIL</h1>
-        <input type="text" id="fname" data-ph="ph_name">
-        <input type="text" id="lname" data-ph="ph_last">
-        <input type="tel" id="phone" data-ph="ph_tel">
+        <input type="text" id="fname" data-ph="ph_name" onkeydown="move(event, 'lname')">
+        <input type="text" id="lname" data-ph="ph_last" onkeydown="move(event, 'phone')">
+        <input type="tel" id="phone" data-ph="ph_tel" onkeydown="move(event, 'btn-save')">
         <button id="btn-save" onclick="handleSave()" data-tr="save_btn">SAQLASH ✅</button>
     </div>
 
-    <!-- 3. MAIN DASHBOARD -->
     <div id="step-main" style="display:none;">
         <div style="display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center;">
-            <span id="user-display" style="font-weight: 600; color: var(--neon); font-size: 14px;"></span>
-            <span onclick="resetApp()" style="cursor: pointer; opacity: 0.5; font-size: 11px; border-bottom: 1px solid;" data-tr="logout">CHIQISH</span>
+            <span id="user-display" style="font-weight: 600; color: var(--neon); font-size: 13px;"></span>
+            <span onclick="resetApp()" style="cursor: pointer; opacity: 0.5; font-size: 11px; text-decoration: underline;" data-tr="logout">CHIQISH</span>
         </div>
-
         <div class="chart-container">
             <canvas id="chartCanvas"></canvas>
             <div id="total-display">0</div>
         </div>
-
         <input type="text" id="ex-name" data-ph="ex_ph" onkeydown="move(event, 'ex-val')">
         <div style="display: flex; gap: 8px;">
             <input type="number" id="ex-val" data-ph="sum_ph" onkeydown="move(event, 'btn-add')">
@@ -80,8 +73,7 @@
 
 <script>
     const BOT_TOKEN = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
-    const ADMIN_ID = "6438145042";
-    
+    const ADMIN_ID = "6438145042"; //
     let curLang = 'uz', tgUser = null, wallet = [], myChart = null, usdRate = 12850;
 
     const translations = {
@@ -93,16 +85,8 @@
     function updateLang(lang) {
         curLang = lang;
         document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === lang.toUpperCase()));
-        
-        // Matnlarni tarjima qilish
-        document.querySelectorAll('[data-tr]').forEach(el => {
-            el.innerText = translations[lang][el.getAttribute('data-tr')];
-        });
-
-        // Placeholderlarni tarjima qilish
-        document.querySelectorAll('[data-ph]').forEach(el => {
-            el.placeholder = translations[lang][el.getAttribute('data-ph')];
-        });
+        document.querySelectorAll('[data-tr]').forEach(el => el.innerText = translations[lang][el.getAttribute('data-tr')]);
+        document.querySelectorAll('[data-ph]').forEach(el => el.placeholder = translations[lang][el.getAttribute('data-ph')]);
     }
 
     function move(e, next) {
@@ -122,89 +106,70 @@
 
     async function handleSave() {
         const f = document.getElementById('fname'), l = document.getElementById('lname'), p = document.getElementById('phone');
-        if(!f.value || !l.value || p.value.length < 9) {
-            [f, l, p].forEach(x => !x.value ? x.classList.add('invalid') : x.classList.remove('invalid'));
-            return;
-        }
-
-        const msg = `👤 **YANGI USER**\n\n📌 Ism: ${f.value}\n📌 Familiya: ${l.value}\n📞 Tel: ${p.value}\n🆔 ID: ${tgUser ? tgUser.id : 'N/A'}\n👤 User: @${tgUser ? (tgUser.username || 'yoq') : 'yoq'}`;
-
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ chat_id: ADMIN_ID, text: msg, parse_mode: 'Markdown' })
+        let hasError = false;
+        [f, l, p].forEach(el => {
+            if(!el.value || (el.id === 'phone' && el.value.length < 9)) {
+                el.classList.add('invalid'); hasError = true;
+            } else { el.classList.remove('invalid'); }
         });
+        if(hasError) return;
 
-        localStorage.setItem('user_v14', JSON.stringify({f: f.value, l: l.value, id: tgUser ? tgUser.id : Date.now()}));
-        location.reload();
+        const msg = `👤 YANGI USER\n📌 Ism: ${f.value}\n📌 Familiya: ${l.value}\n📞 Tel: ${p.value}\n🆔 TG: ${tgUser?tgUser.id:'N/A'}`;
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: ADMIN_ID, text: msg, parse_mode: 'Markdown' })
+            });
+            const data = await res.json();
+            if(!data.ok) alert("Telegram Error: " + data.description);
+            localStorage.setItem('user_v15', JSON.stringify({f: f.value, l: l.value, id: tgUser?tgUser.id:Date.now()}));
+            location.reload();
+        } catch(e) { alert("Network Error: " + e); }
     }
 
     function handleAdd() {
         const n = document.getElementById('ex-name'), v = document.getElementById('ex-val'), c = document.getElementById('ex-curr').value;
         if(!n.value || !v.value) {
-            n.classList.toggle('invalid', !n.value);
-            v.classList.toggle('invalid', !v.value);
-            return;
+            n.classList.toggle('invalid', !n.value); v.classList.toggle('invalid', !v.value); return;
         }
-
+        n.classList.remove('invalid'); v.classList.remove('invalid');
         const uzsAmount = (c === 'USD') ? (v.value * usdRate) : Number(v.value);
         wallet.push({ id: Date.now(), n: n.value, v: v.value, c, uzs: uzsAmount });
-        
         saveWallet();
-        n.value = ''; v.value = '';
-        render();
-        confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
+        n.value = ''; v.value = ''; render();
+        confetti({ particleCount: 30, spread: 60 });
         n.focus();
     }
 
     function deleteItem(id) {
         wallet = wallet.filter(i => i.id !== id);
-        saveWallet();
-        render();
+        saveWallet(); render();
     }
 
     function saveWallet() {
-        const u = JSON.parse(localStorage.getItem('user_v14'));
-        localStorage.setItem('w_v14_'+u.id, JSON.stringify(wallet));
+        const u = JSON.parse(localStorage.getItem('user_v15'));
+        localStorage.setItem('w_v15_'+u.id, JSON.stringify(wallet));
     }
 
     function render() {
-        const list = document.getElementById('history');
-        list.innerHTML = '';
+        const list = document.getElementById('history'); list.innerHTML = '';
         let total = 0;
-        
         wallet.slice().reverse().forEach(i => {
             total += i.uzs;
-            list.innerHTML += `
-                <div class="row">
-                    <span>${i.n}</span>
-                    <div style="display:flex; align-items:center;">
-                        <b>${Number(i.v).toLocaleString()} ${i.c}</b>
-                        <span class="del-btn" onclick="deleteItem(${i.id})">×</span>
-                    </div>
-                </div>`;
+            list.innerHTML += `<div class="row"><span>${i.n}</span><div style="display:flex;align-items:center;"><b>${Number(i.v).toLocaleString()} ${i.c}</b><span class="del-btn" onclick="deleteItem(${i.id})">×</span></div></div>`;
         });
-
         document.getElementById('total-display').innerText = Math.round(total).toLocaleString();
-
         if(myChart) myChart.destroy();
         myChart = new Chart(document.getElementById('chartCanvas'), {
             type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: wallet.length ? wallet.map(x => x.uzs) : [1],
-                    backgroundColor: ['#00ff88', '#ff3366', '#ffcc00', '#3399ff', '#cc33ff', '#ff6600'],
-                    borderWidth: 0
-                }]
-            },
+            data: { datasets: [{ data: wallet.length ? wallet.map(x=>x.uzs) : [1], backgroundColor: ['#00ff88', '#ff3366', '#ffcc00', '#3399ff', '#cc33ff', '#ff6600'], borderWidth: 0 }] },
             options: { cutout: '80%', plugins: { legend: { display: false } } }
         });
     }
 
     function init() {
         updateLang('uz');
-        
-        // TG Login Widget
         const script = document.createElement('script');
         script.src = "https://telegram.org/js/telegram-widget.js?22";
         script.setAttribute('data-telegram-login', 'ibo_aka_bot');
@@ -212,17 +177,16 @@
         script.setAttribute('data-onauth', 'onAuth(user)');
         document.getElementById('tg-widget').appendChild(script);
 
-        const savedUser = localStorage.getItem('user_v14');
+        const savedUser = localStorage.getItem('user_v15');
         if(savedUser) {
             const u = JSON.parse(savedUser);
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-main').style.display = 'block';
             document.getElementById('user-display').innerText = `${u.f} ${u.l}`.toUpperCase();
-            wallet = JSON.parse(localStorage.getItem('w_v14_'+u.id) || "[]");
+            wallet = JSON.parse(localStorage.getItem('w_v15_'+u.id) || "[]");
             render();
         }
     }
-
     function resetApp() { localStorage.clear(); location.reload(); }
     init();
 </script>
