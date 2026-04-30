@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Pro V13</title>
+    <title>Finance Pro V14</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -12,53 +12,20 @@
     <style>
         :root { --neon: #00ff88; --error: #ff4d4d; --bg: #0f172a; }
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Outfit', sans-serif; }
-
-        body { 
-            height: 100vh; display: flex; align-items: center; justify-content: center; 
-            background: var(--bg); color: white; overflow: hidden;
-        }
-
-        .card {
-            width: 90%; max-width: 400px; padding: 25px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px); border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        h1 { color: var(--neon); margin-bottom: 20px; font-weight: 900; }
-
-        input, select {
-            width: 100%; padding: 15px; margin: 10px 0;
-            background: rgba(0,0,0,0.3); border: 2px solid transparent;
-            border-radius: 15px; color: white; outline: none; transition: 0.3s;
-        }
-        
+        body { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); color: white; overflow: hidden; }
+        .card { width: 92%; max-width: 400px; padding: 25px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        h1 { color: var(--neon); margin-bottom: 20px; font-weight: 900; text-transform: uppercase; }
+        input, select { width: 100%; padding: 15px; margin: 8px 0; background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 15px; color: white; outline: none; transition: 0.3s; }
         input.invalid { border-color: var(--error); box-shadow: 0 0 10px rgba(255, 77, 77, 0.2); }
         input:focus { border-color: var(--neon); }
-
-        button {
-            width: 100%; padding: 15px; background: var(--neon);
-            color: #064e3b; border: none; border-radius: 15px;
-            font-weight: 900; cursor: pointer; margin-top: 10px; text-transform: uppercase;
-        }
-
-        .chart-container { width: 180px; height: 180px; margin: 0 auto 15px; position: relative; }
-        #total-display { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 18px; font-weight: 900; color: var(--neon);
-        }
-
-        #history { max-height: 110px; overflow-y: auto; margin-top: 15px; }
-        .row { 
-            display: flex; justify-content: space-between; align-items: center; padding: 10px;
-            background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px;
-            font-size: 14px; border-left: 4px solid var(--neon);
-        }
-        .del-btn { color: var(--error); font-weight: bold; cursor: pointer; margin-left: 10px; font-size: 18px; }
-
+        button { width: 100%; padding: 15px; background: var(--neon); color: #064e3b; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .chart-container { width: 170px; height: 170px; margin: 0 auto 15px; position: relative; }
+        #total-display { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; font-weight: 900; color: var(--neon); }
+        #history { max-height: 100px; overflow-y: auto; margin-top: 15px; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; font-size: 13px; border-left: 4px solid var(--neon); }
+        .del-btn { color: var(--error); font-weight: bold; cursor: pointer; margin-left: 12px; font-size: 20px; line-height: 1; }
         .lang-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
-        .lang-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-size: 11px; }
+        .lang-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-size: 11px; transition: 0.3s; }
         .lang-btn.active { background: var(--neon); color: black; font-weight: bold; }
     </style>
 </head>
@@ -66,28 +33,31 @@
 
 <div class="card">
     <div class="lang-box">
-        <button class="lang-btn active" onclick="changeLang('uz')">UZ</button>
-        <button class="lang-btn" onclick="changeLang('ru')">RU</button>
-        <button class="lang-btn" onclick="changeLang('en')">EN</button>
+        <button class="lang-btn active" onclick="updateLang('uz')">UZ</button>
+        <button class="lang-btn" onclick="updateLang('ru')">RU</button>
+        <button class="lang-btn" onclick="updateLang('en')">EN</button>
     </div>
 
+    <!-- 1. LOGIN SECTION -->
     <div id="step-login">
         <h1 data-tr="login_title">KIRISH</h1>
         <div id="tg-widget" style="display: flex; justify-content: center;"></div>
     </div>
 
+    <!-- 2. SETUP SECTION -->
     <div id="step-setup" style="display:none;">
         <h1 data-tr="profile_title">PROFIL</h1>
-        <input type="text" id="fname" placeholder="Ism" onkeydown="move(event, 'lname')">
-        <input type="text" id="lname" placeholder="Familiya" onkeydown="move(event, 'phone')">
-        <input type="tel" id="phone" placeholder="+998XXXXXXXXX" onkeydown="move(event, 'btn-save')">
+        <input type="text" id="fname" data-ph="ph_name">
+        <input type="text" id="lname" data-ph="ph_last">
+        <input type="tel" id="phone" data-ph="ph_tel">
         <button id="btn-save" onclick="handleSave()" data-tr="save_btn">SAQLASH ✅</button>
     </div>
 
+    <!-- 3. MAIN DASHBOARD -->
     <div id="step-main" style="display:none;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span id="user-display" style="font-weight: 600; color: var(--neon);"></span>
-            <span onclick="resetApp()" style="cursor: pointer; opacity: 0.5; font-size: 11px;" data-tr="logout">CHIQISH</span>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center;">
+            <span id="user-display" style="font-weight: 600; color: var(--neon); font-size: 14px;"></span>
+            <span onclick="resetApp()" style="cursor: pointer; opacity: 0.5; font-size: 11px; border-bottom: 1px solid;" data-tr="logout">CHIQISH</span>
         </div>
 
         <div class="chart-container">
@@ -95,9 +65,9 @@
             <div id="total-display">0</div>
         </div>
 
-        <input type="text" id="ex-name" data-ph="ex_ph" placeholder="Nima xarid?" onkeydown="move(event, 'ex-val')">
+        <input type="text" id="ex-name" data-ph="ex_ph" onkeydown="move(event, 'ex-val')">
         <div style="display: flex; gap: 8px;">
-            <input type="number" id="ex-val" data-ph="sum_ph" placeholder="Summa" onkeydown="move(event, 'btn-add')">
+            <input type="number" id="ex-val" data-ph="sum_ph" onkeydown="move(event, 'btn-add')">
             <select id="ex-curr" style="width: 85px;">
                 <option value="UZS">UZS</option>
                 <option value="USD">USD</option>
@@ -115,23 +85,24 @@
     let curLang = 'uz', tgUser = null, wallet = [], myChart = null, usdRate = 12850;
 
     const translations = {
-        uz: { login_title: "KIRISH", profile_title: "PROFIL", save_btn: "SAQLASH ✅", logout: "CHIQISH", add_btn: "QO'SHISH +", ex_ph: "Nima xarid?", sum_ph: "Summa", ph_name: "Ism", ph_last: "Familiya" },
-        ru: { login_title: "ВХОД", profile_title: "ПРОФИЛЬ", save_btn: "СОХРАНИТЬ ✅", logout: "ВЫХОД", add_btn: "ДОБАВИТЬ +", ex_ph: "Что купили?", sum_ph: "Сумма", ph_name: "Имя", ph_last: "Фамилия" },
-        en: { login_title: "LOGIN", profile_title: "PROFILE", save_btn: "SAVE ✅", logout: "LOGOUT", add_btn: "ADD +", ex_ph: "Expense name", sum_ph: "Amount", ph_name: "Name", ph_last: "Lastname" }
+        uz: { login_title: "KIRISH", profile_title: "PROFIL", save_btn: "SAQLASH ✅", logout: "CHIQISH", add_btn: "QO'SHISH +", ex_ph: "Nima xarid?", sum_ph: "Summa", ph_name: "Ism", ph_last: "Familiya", ph_tel: "+998XXXXXXXXX" },
+        ru: { login_title: "ВХОД", profile_title: "ПРОФИЛЬ", save_btn: "СОХРАНИТЬ ✅", logout: "ВЫХОД", add_btn: "ДОБАВИТЬ +", ex_ph: "Что купили?", sum_ph: "Сумма", ph_name: "Имя", ph_last: "Фамилия", ph_tel: "+998XXXXXXXXX" },
+        en: { login_title: "LOGIN", profile_title: "PROFILE", save_btn: "SAVE ✅", logout: "LOGOUT", add_btn: "ADD +", ex_ph: "Expense name", sum_ph: "Amount", ph_name: "Name", ph_last: "Lastname", ph_tel: "+998XXXXXXXXX" }
     };
 
-    function changeLang(lang) {
+    function updateLang(lang) {
         curLang = lang;
         document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === lang.toUpperCase()));
         
+        // Matnlarni tarjima qilish
         document.querySelectorAll('[data-tr]').forEach(el => {
             el.innerText = translations[lang][el.getAttribute('data-tr')];
         });
 
-        document.getElementById('fname').placeholder = translations[lang].ph_name;
-        document.getElementById('lname').placeholder = translations[lang].ph_last;
-        document.getElementById('ex-name').placeholder = translations[lang].ex_ph;
-        document.getElementById('ex-val').placeholder = translations[lang].sum_ph;
+        // Placeholderlarni tarjima qilish
+        document.querySelectorAll('[data-ph]').forEach(el => {
+            el.placeholder = translations[lang][el.getAttribute('data-ph')];
+        });
     }
 
     function move(e, next) {
@@ -164,21 +135,17 @@
             body: JSON.stringify({ chat_id: ADMIN_ID, text: msg, parse_mode: 'Markdown' })
         });
 
-        localStorage.setItem('user_v13', JSON.stringify({f: f.value, l: l.value, id: tgUser ? tgUser.id : Date.now()}));
+        localStorage.setItem('user_v14', JSON.stringify({f: f.value, l: l.value, id: tgUser ? tgUser.id : Date.now()}));
         location.reload();
-    }
-
-    async function getRate() {
-        try {
-            const r = await fetch('https://cbu.uz/uz/arkhiv-kursov-valyut/json/');
-            const d = await r.json();
-            usdRate = parseFloat(d.find(x => x.code === "USD").Rate);
-        } catch(e) {}
     }
 
     function handleAdd() {
         const n = document.getElementById('ex-name'), v = document.getElementById('ex-val'), c = document.getElementById('ex-curr').value;
-        if(!n.value || !v.value) return;
+        if(!n.value || !v.value) {
+            n.classList.toggle('invalid', !n.value);
+            v.classList.toggle('invalid', !v.value);
+            return;
+        }
 
         const uzsAmount = (c === 'USD') ? (v.value * usdRate) : Number(v.value);
         wallet.push({ id: Date.now(), n: n.value, v: v.value, c, uzs: uzsAmount });
@@ -186,7 +153,7 @@
         saveWallet();
         n.value = ''; v.value = '';
         render();
-        confetti({ particleCount: 40, spread: 70 });
+        confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
         n.focus();
     }
 
@@ -197,8 +164,8 @@
     }
 
     function saveWallet() {
-        const u = JSON.parse(localStorage.getItem('user_v13'));
-        localStorage.setItem('w_v13_'+u.id, JSON.stringify(wallet));
+        const u = JSON.parse(localStorage.getItem('user_v14'));
+        localStorage.setItem('w_v14_'+u.id, JSON.stringify(wallet));
     }
 
     function render() {
@@ -235,9 +202,9 @@
     }
 
     function init() {
-        getRate();
-        changeLang('uz');
+        updateLang('uz');
         
+        // TG Login Widget
         const script = document.createElement('script');
         script.src = "https://telegram.org/js/telegram-widget.js?22";
         script.setAttribute('data-telegram-login', 'ibo_aka_bot');
@@ -245,13 +212,13 @@
         script.setAttribute('data-onauth', 'onAuth(user)');
         document.getElementById('tg-widget').appendChild(script);
 
-        const savedUser = localStorage.getItem('user_v13');
+        const savedUser = localStorage.getItem('user_v14');
         if(savedUser) {
             const u = JSON.parse(savedUser);
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-main').style.display = 'block';
             document.getElementById('user-display').innerText = `${u.f} ${u.l}`.toUpperCase();
-            wallet = JSON.parse(localStorage.getItem('w_v13_'+u.id) || "[]");
+            wallet = JSON.parse(localStorage.getItem('w_v14_'+u.id) || "[]");
             render();
         }
     }
