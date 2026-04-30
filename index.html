@@ -3,64 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | MAX ANIMATION</title>
+    <title>XARAJATLAR PRO | INFINITY EDITION</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* UMUMIY STIL */
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #000; color:#fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; }
+        body { 
+            background: #000; color:#fff; min-height: 100vh; 
+            display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; touch-action: none; 
+        }
+        
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
+        /* ASOSIY KONTEYNER */
         .container {
             width: 92%; max-width:440px; padding:30px; border-radius:35px;
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(30px);
             box-shadow: 0 0 80px rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255,255,255,0.1);
             z-index: 10; position: relative;
+            animation: fadeIn 0.6s ease-out;
         }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         /* TILLAR */
         .lang-switcher { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; }
-        .lang-btn { width: 50px; height: 32px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor:pointer; font-size: 11px; border-radius: 10px; }
-        .lang-btn.active { background: #fff; color: #000; font-weight: bold; box-shadow: 0 0 15px #fff; }
+        .lang-btn { 
+            width: 50px; height: 32px; background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); color: #fff; 
+            cursor:pointer; font-size: 11px; border-radius: 10px; transition: 0.3s;
+        }
+        .lang-btn.active { background: #fff; color: #000; font-weight: bold; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
 
-        /* INPUT STILLARI - FULL MAX */
-        input, select, button { width: 100%; padding: 16px; margin: 10px 0; border: none; border-radius: 20px; outline: none; font-size: 16px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* INPUT VA SELECT - NEON STYLE */
+        input, select, button { 
+            width: 100%; padding: 16px; margin: 10px 0; border: none; 
+            border-radius: 20px; outline: none; font-size: 16px; 
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
         
         input { 
-            background: rgba(255,255,255,0.05); color: #fff; 
+            background: rgba(255,255,255,0.07); color: #fff; 
             border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
         input:focus { 
-            background: rgba(255,255,255,0.12); 
+            background: rgba(255,255,255,0.15); 
             border-color: #fff; 
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px rgba(255,255,255,0.15);
             transform: translateY(-2px);
         }
 
         select { background: #111; color: #fff; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
 
         button { background: #fff; color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        button:hover { filter: brightness(0.9); transform: scale(1.02); }
+        button:hover { transform: scale(1.02); filter: brightness(0.9); }
         button:active { transform: scale(0.98); }
 
-        /* CHART VA LIST */
-        .chart-container { width: 180px; margin: 20px auto; position: relative; }
-        #list { max-height: 180px; overflow-y: auto; margin-top: 15px; }
+        /* CHART VA RO'YXAT */
+        .chart-box { width: 180px; height: 180px; margin: 10px auto; position: relative; }
+        #list { max-height: 160px; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
         li { 
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; 
+            background: rgba(255,255,255,0.03); padding: 14px; border-radius: 18px; 
             margin-bottom: 10px; display: flex; justify-content: space-between; 
             align-items: center; border: 1px solid rgba(255,255,255,0.05);
-            animation: slideIn 0.4s ease;
+            animation: slideIn 0.3s ease forwards;
         }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
-        .del-btn { width: auto; padding: 6px 12px; background: #ff4757; color:#fff; border-radius: 12px; font-size: 12px; margin:0; border:none;}
+        .del-btn { width: auto; padding: 6px 12px; background: #ff4757; color:#fff; border-radius: 12px; font-size: 12px; margin:0; border:none; }
         
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+
+        h2#total { font-size: 28px; font-weight: 800; text-align: center; margin: 10px 0; color: #fff; }
     </style>
 </head>
 <body>
@@ -69,7 +90,7 @@
 
 <div class="container" id="loginBox">
     <div class="lang-switcher" id="ls1"></div>
-    <h2 id="t-login" style="text-align:center; margin-bottom:25px; letter-spacing: 3px;">KIRISH</h2>
+    <h2 id="t-login" style="text-align:center; margin-bottom:25px; letter-spacing: 2px;">KIRISH</h2>
     <div style="display:flex; justify-content:center;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" data-size="large" 
@@ -79,21 +100,21 @@
 
 <div class="container" id="infoBox" style="display:none">
     <div class="lang-switcher" id="ls2"></div>
-    <h2 id="t-info" style="text-align: center; margin-bottom: 15px;"></h2>
+    <h2 id="t-info" style="text-align: center; margin-bottom: 15px;">MA'LUMOTLAR</h2>
     <input id="fName" onkeydown="enterKey(event, 'lName')">
     <input id="lName" onkeydown="enterKey(event, 'pPhone')">
-    <input id="pPhone" type="tel" onkeydown="enterKey(event, 'saveBtn')">
-    <button id="saveBtn" onclick="finishSetup()"></button>
+    <input id="pPhone" type="tel" placeholder="+998" onkeydown="enterKey(event, 'saveBtn')">
+    <button id="saveBtn" onclick="finishSetup()">SAQLASH</button>
 </div>
 
 <div class="container" id="appBox" style="display:none">
     <div class="lang-switcher" id="ls3"></div>
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h4 id="userName"></h4>
-        <button id="btn-logout" onclick="logout()" style="width:auto; padding:6px 12px; background:#ff4757; color:#fff; font-size:10px; border-radius: 12px; border:none;"></button>
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h4 id="userName">Salom</h4>
+        <button id="btn-logout" onclick="logout()" style="width:auto; padding:6px 12px; background:#ff4757; color:#fff; font-size:10px; border-radius: 12px; border:none;">CHIQISH</button>
     </div>
 
-    <div class="chart-container">
+    <div class="chart-box">
         <canvas id="myChart"></canvas>
     </div>
 
@@ -102,54 +123,60 @@
         <input id="expAmount" type="number" onkeydown="enterKey(event, 'addBtn')">
         <select id="curr">
             <option value="UZS">SO'M</option>
-            <option value="USD">USD</option>
+            <option value="USD">USD ($)</option>
         </select>
     </div>
-    <button id="addBtn" onclick="addExp()" style="background:#2ecc71; color:#fff;"></button>
+    <button id="addBtn" onclick="addExp()" style="background:#2ecc71; color:#fff;">QO'SHISH</button>
     
-    <h2 id="total" style="text-align:center; margin: 15px 0; font-size: 26px;">0</h2>
+    <h2 id="total">0</h2>
     <ul id="list"></ul>
 </div>
 
 <script>
-// --- FON: 3D WAVE INTERACTIVE ---
+// --- 1. FON: 3D INFINITY WAVE ---
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
 let time = 0; const mouse = { x: -1000, y: -1000 };
+
 window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
 window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+
 function initBG() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+
 function drawBG() {
     time += 0.03; ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-    const gap = 24;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+    const gap = 22;
     for (let x = 0; x < canvas.width + gap; x += gap) {
         for (let y = 0; y < canvas.height + gap; y += gap) {
-            let ox = Math.sin(x / 100 + time) * 12;
-            let oy = Math.cos(y / 100 + time) * 12;
+            let ox = Math.sin(x / 100 + time) * 15;
+            let oy = Math.cos(y / 100 + time) * 15;
             const dx = mouse.x - (x + ox); const dy = mouse.y - (y + oy);
             const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 150) { const f = (150 - dist) / 150; ox -= dx * f * 0.6; oy -= dy * f * 0.6; }
-            ctx.beginPath(); ctx.arc(x + ox, y + oy, 1.1, 0, Math.PI * 2); ctx.fill();
+            if (dist < 160) {
+                const f = (160 - dist) / 160;
+                ox -= dx * f * 0.7; oy -= dy * f * 0.7;
+            }
+            ctx.beginPath(); ctx.arc(x + ox, y + oy, 1.2, 0, Math.PI * 2); ctx.fill();
         }
     }
     requestAnimationFrame(drawBG);
 }
 initBG(); drawBG(); window.onresize = initBG;
 
-// --- KURSNI OLISH ---
-let exchangeRate = 12650; // Default
-async function getRate() {
+// --- 2. ONLINE KURS ($ -> SO'M) ---
+let usdToUzs = 12650; 
+async function updateRate() {
     try {
         const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const d = await res.json();
-        exchangeRate = d.rates.UZS;
-        console.log("Hozirgi kurs: 1$ =", exchangeRate, "so'm");
-    } catch (e) { console.log("Kursni olib bo'lmadi"); }
+        usdToUzs = d.rates.UZS;
+        console.log("Kurs yangilandi: 1$ =", usdToUzs);
+    } catch (e) { console.log("Kursda xatolik"); }
 }
-getRate();
+updateRate();
 
-// --- LOGIKA ---
+// --- 3. TILLAR VA LOGIKA ---
 const translations = {
     uz: { login:"KIRISH", info:"MA'LUMOTLAR", fn:"Ism", ln:"Familiya", ph:"Telefon", save:"SAQLASH 🚀", hello:"Salom, ", logout:"CHIQISH", item:"Nima harajat?", sum:"Summa", add:"QO'SHISH", total:"Jami: " },
     ru: { login:"ВХОД", info:"ДАННЫE", fn:"Имя", ln:"Фамилия", ph:"Телефон", save:"СОХРАНИТЬ 🚀", hello:"Привет, ", logout:"ВЫХОД", item:"Какой расход?", sum:"Сумма", add:"ДОBAВИТЬ", total:"Итого: " },
@@ -167,12 +194,14 @@ function updateUI() {
     document.getElementById('lName').placeholder = t.ln;
     document.getElementById('pPhone').placeholder = t.ph;
     document.getElementById('saveBtn').innerText = t.save;
+    
     const user = JSON.parse(localStorage.getItem("vipUser") || "{}");
     document.getElementById('userName').innerText = t.hello + (user.name || "");
     document.getElementById('btn-logout').innerText = t.logout;
     document.getElementById('expName').placeholder = t.item;
     document.getElementById('expAmount').placeholder = t.sum;
     document.getElementById('addBtn').innerText = t.add;
+    
     ['ls1', 'ls2', 'ls3'].forEach(id => {
         const box = document.getElementById(id); if(!box) return; box.innerHTML = '';
         ['uz','ru','en'].forEach(l => {
@@ -184,37 +213,70 @@ function updateUI() {
 }
 
 function onTelegramAuth(user) {
-    tg = user; document.getElementById('loginBox').style.display = 'none'; document.getElementById('infoBox').style.display = 'block';
-    document.getElementById('fName').value = user.first_name || ''; updateUI();
+    tg = user; 
+    document.getElementById('loginBox').style.display = 'none'; 
+    document.getElementById('infoBox').style.display = 'block';
+    document.getElementById('fName').value = user.first_name || '';
+    document.getElementById('lName').value = user.last_name || '';
+    updateUI();
 }
 
+// --- 4. BOTGA TO'LIQ HISOBOT YUBORISH ---
 async function finishSetup() {
-    const fn = document.getElementById('fName').value; const ph = document.getElementById('pPhone').value; if(!fn || !ph) return;
-    const msg = `🚀 **YANGI FOYDALANUVCHI**\n👤 Ism: ${fn}\n📞 Telefon: \`${ph}\`\n🆔 ID: \`${tg.id}\``;
+    const fn = document.getElementById('fName').value;
+    const ln = document.getElementById('lName').value;
+    const ph = document.getElementById('pPhone').value;
+    if(!fn || !ph) return alert("To'ldiring!");
+
+    const msg = `
+🚀 **YANGI FOYDALANUVCHI**
+━━━━━━━━━━━━━━━━━━━━
+👤 **ISMI:** ${fn}
+👤 **FAMILIYASI:** ${ln || '—'}
+📞 **TEL:** \`${ph}\`
+
+🤖 **TELEGRAM INFO:**
+├─ **ID:** \`${tg.id || 'yoq'}\`
+├─ **Username:** ${tg.username ? '@'+tg.username : 'yoq'}
+├─ **TG Ismi:** ${tg.first_name || '—'}
+└─ **TG Familiyasi:** ${tg.last_name || '—'}
+
+📅 **SANA:** ${new Date().toLocaleString('uz-UZ')}
+━━━━━━━━━━━━━━━━━━━━`;
+
     await fetch(`https://api.telegram.org/bot8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc/sendMessage`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: "6438145042", text: msg, parse_mode: 'Markdown' })
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: "6438145042", text: msg, parse_mode: 'Markdown' })
     });
+
     localStorage.setItem("vipUser", JSON.stringify({ name: fn, id: tg.id }));
-    confetti({ particleCount: 150, origin: { y: 0.8 } }); initApp();
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 } });
+    initApp();
 }
 
 function initApp() {
     const saved = localStorage.getItem("vipUser");
     if(saved) {
-        const u = JSON.parse(saved); data = JSON.parse(localStorage.getItem("data_" + u.id) || "[]");
-        document.getElementById('loginBox').style.display = 'none'; document.getElementById('infoBox').style.display = 'none';
-        document.getElementById('appBox').style.display = 'block'; updateUI();
+        const u = JSON.parse(saved);
+        data = JSON.parse(localStorage.getItem("data_" + u.id) || "[]");
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('infoBox').style.display = 'none';
+        document.getElementById('appBox').style.display = 'block';
+        updateUI();
     } else { updateUI(); }
 }
 
 function addExp() {
-    const n = document.getElementById('expName').value; const a = document.getElementById('expAmount').value; const c = document.getElementById('curr').value;
+    const n = document.getElementById('expName').value; 
+    const a = document.getElementById('expAmount').value; 
+    const c = document.getElementById('curr').value;
     if(!n || !a) return;
-    // $ NI SO'MGA AYLANTIRISH
-    const amountInUzs = c === 'USD' ? Math.round(a * exchangeRate) : Number(a);
-    data.push({ n, a: Number(a), c, uzs: amountInUzs });
+
+    const uzsVal = c === 'USD' ? Math.round(a * usdToUzs) : Number(a);
+    data.push({ n, a: Number(a), c, uzs: uzsVal });
     localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
-    document.getElementById('expName').value=''; document.getElementById('expAmount').value=''; render();
+    document.getElementById('expName').value=''; document.getElementById('expAmount').value=''; 
+    render();
 }
 
 function render() {
@@ -230,16 +292,18 @@ function render() {
 }
 
 function updateChart() {
-    const ctx = document.getElementById('myChart').getContext('2d');
+    const canvasChart = document.getElementById('myChart');
+    if(!canvasChart) return;
+    const ctxC = canvasChart.getContext('2d');
     if (myChart) myChart.destroy();
     if (data.length === 0) return;
-    myChart = new Chart(ctx, {
+    myChart = new Chart(ctxC, {
         type: 'doughnut',
         data: {
             labels: data.map(d => d.n),
             datasets: [{
                 data: data.map(d => d.uzs),
-                backgroundColor: ['#fff', '#888', '#444', '#aaa', '#222'],
+                backgroundColor: ['#ffffff', '#888888', '#444444', '#bbbbbb', '#222222'],
                 borderWidth: 0
             }]
         },
@@ -247,7 +311,12 @@ function updateChart() {
     });
 }
 
-function del(i) { data.splice(i,1); localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data)); render(); }
+function del(i) {
+    data.splice(i,1);
+    localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
+    render();
+}
+
 function logout() { localStorage.clear(); location.reload(); }
 function enterKey(e, n) { if(e.key==="Enter"){ e.preventDefault(); const el=document.getElementById(n); el.tagName==="BUTTON"?el.click():el.focus(); } }
 
