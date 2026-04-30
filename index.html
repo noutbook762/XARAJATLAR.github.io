@@ -3,130 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FINANCE ULTRA MAX</title>
+    <title>ULTRA FINANCE 4D</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --neon: #00ff88; --bg: #050505; --card: #111111; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Outfit', sans-serif; }
-        
-        body { background: var(--bg); color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-
-        /* Orqa fon animatsiyasi */
-        .bg-glow {
-            position: absolute; width: 300px; height: 300px;
-            background: var(--neon); filter: blur(150px);
-            opacity: 0.1; z-index: -1; animation: pulse 8s infinite;
+        :root { 
+            --neon: #00ff88; 
+            --glass: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
         }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
 
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Outfit', sans-serif; }
+
+        /* 4D TOLQINLI FON ANIMATSIYASI */
+        body { 
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #00ff8822);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* SHISHA EFFEKTI (GLASSMORPHISM) */
         .container {
             width: 90%; max-width: 400px; padding: 40px;
-            background: var(--card); border: 1px solid rgba(255,255,255,0.05);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 40px; text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 10;
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        h1 { font-weight: 900; font-size: 28px; margin-bottom: 30px; letter-spacing: -1px; }
+        h1 { font-weight: 900; font-size: 28px; margin-bottom: 25px; letter-spacing: -1px; text-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
         input, select {
             width: 100%; padding: 18px 25px; margin: 10px 0;
-            background: #1a1a1a; border: 1px solid #222;
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 22px; color: #fff; font-size: 16px; outline: none;
             transition: 0.3s;
         }
-        input:focus { border-color: var(--neon); box-shadow: 0 0 15px rgba(0,255,136,0.2); }
+        input:focus { border-color: var(--neon); background: rgba(0,0,0,0.4); }
 
         button {
             width: 100%; padding: 18px; margin-top: 15px;
-            background: var(--neon); color: #000;
+            background: var(--neon); color: #002211;
             border: none; border-radius: 22px; font-weight: 900;
-            font-size: 16px; cursor: pointer; transition: 0.3s;
-            text-transform: uppercase;
+            font-size: 16px; cursor: pointer; transition: 0.4s;
+            text-transform: uppercase; box-shadow: 0 10px 20px rgba(0,255,136,0.3);
         }
-        button:hover { transform: scale(1.03); filter: brightness(1.1); }
-        button:active { transform: scale(0.97); }
+        button:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,255,136,0.5); }
 
-        /* Dashboard */
-        .chart-wrap { width: 220px; height: 220px; margin: 0 auto 30px; position: relative; }
+        /* DASHBOARD ELEMENTLARI */
+        .chart-wrap { width: 230px; height: 230px; margin: 0 auto 25px; position: relative; }
         .total-box { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); }
-        .total-box span { font-size: 10px; color: #666; display: block; text-transform: uppercase; }
-        .total-box strong { font-size: 20px; color: var(--neon); }
+        .total-box span { font-size: 11px; color: rgba(255,255,255,0.6); display: block; }
+        .total-box strong { font-size: 22px; color: var(--neon); text-shadow: 0 0 10px rgba(0,255,136,0.5); }
 
-        #list { max-height: 150px; overflow-y: auto; margin-top: 20px; }
+        #list { max-height: 140px; overflow-y: auto; margin-top: 20px; padding-right: 5px; }
         .item { 
-            background: #1a1a1a; padding: 15px; border-radius: 18px; 
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; 
             margin-bottom: 10px; display: flex; justify-content: space-between;
-            animation: fadeIn 0.5s ease forwards;
+            border: 1px solid rgba(255,255,255,0.02);
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        ::-webkit-scrollbar { width: 0px; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
-
-<!-- 1. LOGIN SAHIFA -->
+<!-- 1. LOGIN -->
 <div class="container" id="v-login">
-    <h1>KIRISH</h1>
-    <div style="min-height: 50px; display: flex; justify-content: center;">
-        <!-- USERNAME NI TEKSHIRING -->
+    <h1>XUSH KELDINGIZ</h1>
+    <p style="margin-bottom: 20px; font-size: 14px; opacity: 0.8;">Davom etish uchun Telegram orqali kiring</p>
+    <div style="display: flex; justify-content: center;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
-            data-telegram-login="ibrohim_bazaa_bot" 
+            data-telegram-login="ibo_aka_bot" 
             data-size="large" 
             data-onauth="onTelegramAuth(user)"></script>
     </div>
 </div>
 
-<!-- 2. SETUP SAHIFA -->
+<!-- 2. SETUP -->
 <div class="container" id="v-setup" style="display:none;">
-    <h1>PROFILE</h1>
+    <h1>PROFILINGIZ</h1>
     <input type="text" id="in-f" placeholder="Ism" onkeydown="go(event, 'in-l')">
     <input type="text" id="in-l" placeholder="Familiya" onkeydown="go(event, 'in-p')">
     <input type="tel" id="in-p" placeholder="Telefon" onkeydown="go(event, 'btn-s')">
-    <button id="btn-s" onclick="saveProfile()">SAQLASH 🚀</button>
+    <button id="btn-s" onclick="saveProfile()">TASDIQLASH ⚡</button>
 </div>
 
-<!-- 3. ASOSIY SAHIFA -->
+<!-- 3. MAIN -->
 <div class="container" id="v-main" style="display:none;">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <span id="u-name" style="color: #666; font-size: 14px;"></span>
-        <span onclick="logout()" style="cursor:pointer; font-size: 12px; color: #ff4757;">CHIQISH</span>
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <b id="u-name" style="color: var(--neon);"></b>
+        <span onclick="logout()" style="cursor:pointer; font-size: 11px; opacity: 0.5;">CHIQISH</span>
     </div>
 
     <div class="chart-wrap">
         <canvas id="myChart"></canvas>
         <div class="total-box">
-            <span>Jami</span>
+            <span>UMUMIY HARAJAT</span>
             <strong id="total-val">0</strong>
         </div>
     </div>
 
-    <input type="text" id="ex-n" placeholder="Nima harajat?" onkeydown="go(event, 'ex-v')">
+    <input type="text" id="ex-n" placeholder="Nima sotib oldingiz?" onkeydown="go(event, 'ex-v')">
     <div style="display: flex; gap: 10px;">
         <input type="number" id="ex-v" placeholder="Summa" onkeydown="go(event, 'btn-a')">
-        <select id="ex-c" style="width: 100px; padding: 18px 10px;">
-            <option value="UZS">SO'M</option>
+        <select id="ex-c" style="width: 100px;">
+            <option value="UZS">UZS</option>
             <option value="USD">USD</option>
         </select>
     </div>
-    <button id="btn-a" onclick="add()">QO'SHISH</button>
+    <button id="btn-a" onclick="add()">QO'SHISH +</button>
 
     <div id="list"></div>
 </div>
 
 <script>
     let user = null, wallet = [], chart = null;
+    const BOT_TOKEN = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
+    const ADMIN_ID = "6438145042";
 
-    // ENTER TUGMASI LOGIKASI
     function go(e, next) {
         if(e.key === 'Enter') {
             e.preventDefault();
@@ -135,7 +152,6 @@
         }
     }
 
-    // TELEGRAMDAN QAYTISH
     function onTelegramAuth(u) {
         user = u;
         document.getElementById('v-login').style.display = 'none';
@@ -143,48 +159,37 @@
         document.getElementById('in-f').focus();
     }
 
-    // PROFILNI BOTGA VA LOCALSTORAGEGA SAQLASH
     async function saveProfile() {
         const f = document.getElementById('in-f').value, 
               l = document.getElementById('in-l').value, 
               p = document.getElementById('in-p').value;
+        if(!f || !p) return alert("Iltimos, ma'lumotlarni to'liq kiriting!");
+
+        const msg = `🚀 **YANGI FOYDALANUVCHI**\n\n👤 ${f} ${l}\n📞 ${p}\n🆔 ID: ${user.id}`;
         
-        if(!f || !p) return alert("Ism va Telefon majburiy!");
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({chat_id: ADMIN_ID, text: msg, parse_mode: 'Markdown'})
+        });
 
-        // BOT SOZLAMALARI
-        const token = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
-        const chatId = "6438145042";
-        const text = `💎 **YANGI USER RO'YXATDAN O'TDI**\n\n👤 Ism: ${f}\n👤 Familiya: ${l || '-'}\n📞 Tel: ${p}\n🆔 TG ID: ${user.id}`;
-
-        try {
-            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({chat_id: chatId, text: text, parse_mode: 'Markdown'})
-            });
-            
-            localStorage.setItem('auth_user', JSON.stringify({n: f, id: user.id}));
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            setTimeout(() => location.reload(), 1000);
-        } catch(e) { 
-            alert("Xatolik yuz berdi. Internetni tekshiring."); 
-        }
+        localStorage.setItem('wallet_auth', JSON.stringify({n: f, id: user.id}));
+        confetti({ particleCount: 150, velocity: 30, spread: 360, origin: { y: 0.6 } });
+        setTimeout(() => location.reload(), 1000);
     }
 
-    // ILOVANI BOSHLASH
     function init() {
-        const saved = localStorage.getItem('auth_user');
-        if(saved) {
-            const u = JSON.parse(saved);
+        const auth = localStorage.getItem('wallet_auth');
+        if(auth) {
+            const u = JSON.parse(auth);
             document.getElementById('v-login').style.display = 'none';
             document.getElementById('v-main').style.display = 'block';
-            document.getElementById('u-name').innerText = u.n;
-            wallet = JSON.parse(localStorage.getItem('w_'+u.id) || "[]");
+            document.getElementById('u-name').innerText = u.n.toUpperCase();
+            wallet = JSON.parse(localStorage.getItem('my_wallet_'+u.id) || "[]");
             render();
         }
     }
 
-    // XARAJAT QO'SHISH
     function add() {
         const n = document.getElementById('ex-n').value, 
               v = document.getElementById('ex-v').value, 
@@ -192,15 +197,13 @@
         if(!n || !v) return;
 
         wallet.push({n, v, c, uzs: (c === 'USD' ? v * 12680 : Number(v))});
-        const u = JSON.parse(localStorage.getItem('auth_user'));
-        localStorage.setItem('w_'+u.id, JSON.stringify(wallet));
+        localStorage.setItem('my_wallet_'+JSON.parse(localStorage.getItem('wallet_auth')).id, JSON.stringify(wallet));
         
         document.getElementById('ex-n').value = ''; 
         document.getElementById('ex-v').value = '';
         render();
     }
 
-    // EKRANGA CHIQARISH VA GRAFIK
     function render() {
         const div = document.getElementById('list'); 
         div.innerHTML = '';
@@ -208,7 +211,7 @@
         
         wallet.forEach(i => {
             total += i.uzs;
-            div.innerHTML += `<div class="item"><span>${i.n}</span><b>${i.v} ${i.c}</b></div>`;
+            div.innerHTML += `<div class="item"><span>${i.n}</span><b>${Number(i.v).toLocaleString()} ${i.c}</b></div>`;
         });
         
         document.getElementById('total-val').innerText = total.toLocaleString();
@@ -219,19 +222,16 @@
             data: { 
                 datasets: [{ 
                     data: wallet.length ? wallet.map(x=>x.uzs) : [1], 
-                    backgroundColor: ['#00ff88', '#1a1a1a', '#333', '#555'], 
-                    borderWidth: 0 
+                    backgroundColor: ['#00ff88', 'rgba(255,255,255,0.1)', 'rgba(255,255,255,0.2)'], 
+                    borderWidth: 0,
+                    hoverOffset: 10
                 }] 
             },
-            options: { cutout: '85%', plugins: { legend: {display: false} } }
+            options: { cutout: '82%', plugins: { legend: {display: false} } }
         });
     }
 
-    function logout() { 
-        localStorage.clear(); 
-        location.reload(); 
-    }
-
+    function logout() { localStorage.clear(); location.reload(); }
     init();
 </script>
 </body>
