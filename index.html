@@ -3,44 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Pro V15</title>
+    <title>Finance Pro V18 - Ultra Glass</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00ff88; --error: #ff4d4d; --bg: #0f172a; }
+        :root { 
+            --accent: #ffffff; 
+            --error: #ff4757; 
+            --glass: rgba(255, 255, 255, 0.15);
+            --border: rgba(255, 255, 255, 0.2);
+        }
+
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Outfit', sans-serif; }
-        body { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); color: white; overflow: hidden; }
-        .card { width: 92%; max-width: 400px; padding: 25px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        h1 { color: var(--neon); margin-bottom: 20px; font-weight: 900; text-transform: uppercase; }
-        input, select { width: 100%; padding: 15px; margin: 8px 0; background: rgba(0,0,0,0.3); border: 2px solid transparent; border-radius: 15px; color: white; outline: none; transition: 0.3s; }
-        input.invalid { border-color: var(--error) !important; box-shadow: 0 0 10px rgba(255, 77, 77, 0.2); }
-        input:focus { border-color: var(--neon); }
-        button { width: 100%; padding: 15px; background: var(--neon); color: #064e3b; border: none; border-radius: 15px; font-weight: 900; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
-        .chart-container { width: 160px; height: 160px; margin: 0 auto 15px; position: relative; }
-        #total-display { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; font-weight: 900; color: var(--neon); }
-        #history { max-height: 90px; overflow-y: auto; margin-top: 10px; }
-        .row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 6px; font-size: 13px; border-left: 4px solid var(--neon); }
-        .del-btn { color: var(--error); font-weight: bold; cursor: pointer; margin-left: 12px; font-size: 20px; }
-        .lang-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
-        .lang-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-size: 11px; }
-        .lang-btn.active { background: var(--neon); color: black; font-weight: bold; }
+        
+        body { 
+            height: 100vh; display: flex; align-items: center; justify-content: center; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite; /* Fon animatsiyasi */
+            color: white; overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card { 
+            width: 92%; max-width: 400px; padding: 30px; 
+            background: var(--glass);
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 35px; 
+            border: 1px solid var(--border); 
+            text-align: center; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: slideUp 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake { animation: shake 0.4s ease-in-out; }
+
+        h1 { font-weight: 900; letter-spacing: 2px; margin-bottom: 25px; text-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        input, select { 
+            width: 100%; padding: 16px; margin: 10px 0; 
+            background: rgba(255, 255, 255, 0.1); 
+            border: 1px solid var(--border); 
+            border-radius: 20px; color: white; outline: none; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        input:focus { 
+            background: rgba(255, 255, 255, 0.25); 
+            border-color: white; 
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            transform: scale(1.02);
+        }
+
+        input.invalid { 
+            border-color: var(--error) !important; 
+            background: rgba(255, 71, 87, 0.15) !important; 
+        }
+
+        button { 
+            width: 100%; padding: 18px; 
+            background: white; color: #e73c7e; 
+            border: none; border-radius: 20px; 
+            font-weight: 900; cursor: pointer; margin-top: 15px; 
+            text-transform: uppercase; transition: 0.4s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        button:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        button:active { transform: scale(0.95); }
+
+        .chart-container { width: 170px; height: 170px; margin: 0 auto 20px; position: relative; }
+        #total-display { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; font-weight: 900; }
+
+        #history { max-height: 120px; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
+        .row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 18px; background: rgba(255, 255, 255, 0.1); 
+            border-radius: 18px; margin-bottom: 10px; font-size: 14px;
+            animation: fadeIn 0.5s ease backwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .del-btn { color: var(--error); font-weight: bold; cursor: pointer; margin-left: 15px; font-size: 24px; transition: 0.3s; }
+        .del-btn:hover { transform: scale(1.3) rotate(90deg); }
+
+        .lang-box { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .lang-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; padding: 8px 15px; border-radius: 14px; cursor: pointer; transition: 0.3s; }
+        .lang-btn.active { background: white; color: #e73c7e; font-weight: bold; transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="card" id="main-card">
     <div class="lang-box">
         <button class="lang-btn active" onclick="updateLang('uz')">UZ</button>
         <button class="lang-btn" onclick="updateLang('ru')">RU</button>
         <button class="lang-btn" onclick="updateLang('en')">EN</button>
     </div>
 
+    <!-- Login Step -->
     <div id="step-login">
         <h1 data-tr="login_title">KIRISH</h1>
         <div id="tg-widget" style="display: flex; justify-content: center;"></div>
     </div>
 
+    <!-- Profile Setup Step -->
     <div id="step-setup" style="display:none;">
         <h1 data-tr="profile_title">PROFIL</h1>
         <input type="text" id="fname" data-ph="ph_name" onkeydown="move(event, 'lname')">
@@ -49,19 +135,20 @@
         <button id="btn-save" onclick="handleSave()" data-tr="save_btn">SAQLASH ✅</button>
     </div>
 
+    <!-- Main Step -->
     <div id="step-main" style="display:none;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center;">
-            <span id="user-display" style="font-weight: 600; color: var(--neon); font-size: 13px;"></span>
-            <span onclick="resetApp()" style="cursor: pointer; opacity: 0.5; font-size: 11px; text-decoration: underline;" data-tr="logout">CHIQISH</span>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
+            <span id="user-display" style="font-weight: 600; font-size: 14px;"></span>
+            <span onclick="resetApp()" style="cursor: pointer; opacity: 0.6; font-size: 12px; text-decoration: underline;" data-tr="logout">CHIQISH</span>
         </div>
         <div class="chart-container">
             <canvas id="chartCanvas"></canvas>
             <div id="total-display">0</div>
         </div>
         <input type="text" id="ex-name" data-ph="ex_ph" onkeydown="move(event, 'ex-val')">
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 10px;">
             <input type="number" id="ex-val" data-ph="sum_ph" onkeydown="move(event, 'btn-add')">
-            <select id="ex-curr" style="width: 85px;">
+            <select id="ex-curr" style="width: 90px;">
                 <option value="UZS">UZS</option>
                 <option value="USD">USD</option>
             </select>
@@ -73,13 +160,13 @@
 
 <script>
     const BOT_TOKEN = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
-    const ADMIN_ID = "6438145042"; //
+    const ADMIN_ID = "6438145042";
     let curLang = 'uz', tgUser = null, wallet = [], myChart = null, usdRate = 12850;
 
     const translations = {
-        uz: { login_title: "KIRISH", profile_title: "PROFIL", save_btn: "SAQLASH ✅", logout: "CHIQISH", add_btn: "QO'SHISH +", ex_ph: "Nima xarid?", sum_ph: "Summa", ph_name: "Ism", ph_last: "Familiya", ph_tel: "+998XXXXXXXXX" },
-        ru: { login_title: "ВХОД", profile_title: "ПРОФИЛЬ", save_btn: "СОХРАНИТЬ ✅", logout: "ВЫХОД", add_btn: "ДОБАВИТЬ +", ex_ph: "Что купили?", sum_ph: "Сумма", ph_name: "Имя", ph_last: "Фамилия", ph_tel: "+998XXXXXXXXX" },
-        en: { login_title: "LOGIN", profile_title: "PROFILE", save_btn: "SAVE ✅", logout: "LOGOUT", add_btn: "ADD +", ex_ph: "Expense name", sum_ph: "Amount", ph_name: "Name", ph_last: "Lastname", ph_tel: "+998XXXXXXXXX" }
+        uz: { login_title: "KIRISH", profile_title: "PROFIL", save_btn: "SAQLASH ✅", logout: "CHIQISH", add_btn: "QO'SHISH +", ex_ph: "Nima xarid?", sum_ph: "Summa", ph_name: "Ism", ph_last: "Familiya", ph_tel: "Telefon" },
+        ru: { login_title: "ВХОД", profile_title: "ПРОФИЛЬ", save_btn: "СОХРАНИТЬ ✅", logout: "ВЫХОД", add_btn: "ДОБАВИТЬ +", ex_ph: "Что купили?", sum_ph: "Сумма", ph_name: "Имя", ph_last: "Фамилия", ph_tel: "Телефон" },
+        en: { login_title: "LOGIN", profile_title: "PROFILE", save_btn: "SAVE ✅", logout: "LOGOUT", add_btn: "ADD +", ex_ph: "Expense name", sum_ph: "Amount", ph_name: "Name", ph_last: "Lastname", ph_tel: "Phone" }
     };
 
     function updateLang(lang) {
@@ -101,44 +188,50 @@
         tgUser = user;
         document.getElementById('step-login').style.display = 'none';
         document.getElementById('step-setup').style.display = 'block';
-        document.getElementById('fname').focus();
     }
 
     async function handleSave() {
-        const f = document.getElementById('fname'), l = document.getElementById('lname'), p = document.getElementById('phone');
-        let hasError = false;
-        [f, l, p].forEach(el => {
-            if(!el.value || (el.id === 'phone' && el.value.length < 9)) {
-                el.classList.add('invalid'); hasError = true;
-            } else { el.classList.remove('invalid'); }
+        const fields = [document.getElementById('fname'), document.getElementById('lname'), document.getElementById('phone')];
+        let valid = true;
+        
+        fields.forEach(f => {
+            if(!f.value || (f.id==='phone' && f.value.length < 9)) {
+                f.classList.add('invalid');
+                document.getElementById('main-card').classList.add('shake');
+                setTimeout(() => document.getElementById('main-card').classList.remove('shake'), 400);
+                valid = false;
+            } else { f.classList.remove('invalid'); }
         });
-        if(hasError) return;
 
-        const msg = `👤 YANGI USER\n📌 Ism: ${f.value}\n📌 Familiya: ${l.value}\n📞 Tel: ${p.value}\n🆔 TG: ${tgUser?tgUser.id:'N/A'}`;
+        if(!valid) return;
+
+        const username = tgUser?.username ? `@${tgUser.username}` : "Yo'q";
+        const msg = `🚀 **YANGI FOYDALANUVCHI**\n\n👤 **Ism:** ${fields[0].value}\n👤 **Fam:** ${fields[1].value}\n📞 **Tel:** ${fields[2].value}\n🆔 **ID:** \`${tgUser?.id || 'N/A'}\`\n🔗 **User:** ${username}`;
+
         try {
-            const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ chat_id: ADMIN_ID, text: msg, parse_mode: 'Markdown' })
             });
-            const data = await res.json();
-            if(!data.ok) alert("Telegram Error: " + data.description);
-            localStorage.setItem('user_v15', JSON.stringify({f: f.value, l: l.value, id: tgUser?tgUser.id:Date.now()}));
+            localStorage.setItem('user_v18', JSON.stringify({f: fields[0].value, l: fields[1].value, id: tgUser?.id || Date.now()}));
             location.reload();
-        } catch(e) { alert("Network Error: " + e); }
+        } catch(e) { alert("Xatolik!"); }
     }
 
     function handleAdd() {
         const n = document.getElementById('ex-name'), v = document.getElementById('ex-val'), c = document.getElementById('ex-curr').value;
         if(!n.value || !v.value) {
-            n.classList.toggle('invalid', !n.value); v.classList.toggle('invalid', !v.value); return;
+            [n, v].forEach(i => !i.value ? i.classList.add('invalid') : i.classList.remove('invalid'));
+            document.getElementById('main-card').classList.add('shake');
+            setTimeout(() => document.getElementById('main-card').classList.remove('shake'), 400);
+            return;
         }
-        n.classList.remove('invalid'); v.classList.remove('invalid');
-        const uzsAmount = (c === 'USD') ? (v.value * usdRate) : Number(v.value);
-        wallet.push({ id: Date.now(), n: n.value, v: v.value, c, uzs: uzsAmount });
+        const uzs = (c === 'USD') ? (v.value * usdRate) : Number(v.value);
+        wallet.push({ id: Date.now(), n: n.value, v: v.value, c, uzs });
         saveWallet();
         n.value = ''; v.value = ''; render();
-        confetti({ particleCount: 30, spread: 60 });
+        confetti({ particleCount: 40, spread: 70, origin: { y: 0.8 } });
         n.focus();
     }
 
@@ -148,23 +241,23 @@
     }
 
     function saveWallet() {
-        const u = JSON.parse(localStorage.getItem('user_v15'));
-        localStorage.setItem('w_v15_'+u.id, JSON.stringify(wallet));
+        const u = JSON.parse(localStorage.getItem('user_v18'));
+        localStorage.setItem('w_v18_'+u.id, JSON.stringify(wallet));
     }
 
     function render() {
         const list = document.getElementById('history'); list.innerHTML = '';
         let total = 0;
-        wallet.slice().reverse().forEach(i => {
+        wallet.slice().reverse().forEach((i, idx) => {
             total += i.uzs;
-            list.innerHTML += `<div class="row"><span>${i.n}</span><div style="display:flex;align-items:center;"><b>${Number(i.v).toLocaleString()} ${i.c}</b><span class="del-btn" onclick="deleteItem(${i.id})">×</span></div></div>`;
+            list.innerHTML += `<div class="row" style="animation-delay: ${idx * 0.1}s"><span>${i.n}</span><div><b>${Number(i.v).toLocaleString()} ${i.c}</b><span class="del-btn" onclick="deleteItem(${i.id})">×</span></div></div>`;
         });
         document.getElementById('total-display').innerText = Math.round(total).toLocaleString();
         if(myChart) myChart.destroy();
         myChart = new Chart(document.getElementById('chartCanvas'), {
             type: 'doughnut',
-            data: { datasets: [{ data: wallet.length ? wallet.map(x=>x.uzs) : [1], backgroundColor: ['#00ff88', '#ff3366', '#ffcc00', '#3399ff', '#cc33ff', '#ff6600'], borderWidth: 0 }] },
-            options: { cutout: '80%', plugins: { legend: { display: false } } }
+            data: { datasets: [{ data: wallet.length ? wallet.map(x=>x.uzs) : [1], backgroundColor: ['#ffffff', 'rgba(255,255,255,0.6)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.1)'], borderWidth: 0 }] },
+            options: { cutout: '80%', animation: { animateScale: true }, plugins: { legend: { display: false } } }
         });
     }
 
@@ -173,17 +266,16 @@
         const script = document.createElement('script');
         script.src = "https://telegram.org/js/telegram-widget.js?22";
         script.setAttribute('data-telegram-login', 'ibo_aka_bot');
-        script.setAttribute('data-size', 'large');
         script.setAttribute('data-onauth', 'onAuth(user)');
         document.getElementById('tg-widget').appendChild(script);
 
-        const savedUser = localStorage.getItem('user_v15');
-        if(savedUser) {
-            const u = JSON.parse(savedUser);
+        const saved = localStorage.getItem('user_v18');
+        if(saved) {
+            const u = JSON.parse(saved);
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-main').style.display = 'block';
             document.getElementById('user-display').innerText = `${u.f} ${u.l}`.toUpperCase();
-            wallet = JSON.parse(localStorage.getItem('w_v15_'+u.id) || "[]");
+            wallet = JSON.parse(localStorage.getItem('w_v18_'+u.id) || "[]");
             render();
         }
     }
