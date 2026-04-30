@@ -3,114 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FINANCE PRO | STABLE EDITION</title>
+    <title>ULTRA FINANCE 2026</title>
     
+    <!-- Kutubxonalar -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap" rel="stylesheet">
     
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Inter', sans-serif; }
-        body { background: #000; color: #fff; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        :root { --accent: #ffffff; --bg: #000000; --card: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.1); }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        #bgCanvas { position: fixed; top:0; left:0; z-index: -1; }
+        body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        
+        /* Dinamik Background */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
-        .card {
-            width: 90%; max-width: 400px; padding: 35px;
-            background: rgba(15, 15, 15, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
+        .container {
+            width: 90%; max-width: 420px; padding: 40px;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(30px);
+            border-radius: 40px;
+            border: 1px solid var(--border);
             text-align: center;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            animation: fadeIn 0.8s ease-out;
         }
 
-        input, select, button {
-            width: 100%; padding: 16px; margin: 8px 0;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 15px; color: #fff; font-size: 16px; outline: none;
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-weight: 800; font-size: 24px; letter-spacing: -1px; margin-bottom: 25px; }
+
+        /* Inputlar */
+        input, select {
+            width: 100%; padding: 18px 22px; margin: 10px 0;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 20px; color: #fff; font-size: 16px; outline: none;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        input:focus { border-color: #fff; background: rgba(255,255,255,0.1); }
+        input:focus { border-color: var(--accent); background: rgba(255,255,255,0.08); transform: translateY(-2px); }
 
-        button { background: #fff; color: #000; font-weight: 900; cursor: pointer; border: none; text-transform: uppercase; }
-        button:hover { opacity: 0.9; }
+        button {
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            background: #fff; color: #000; font-weight: 800; font-size: 15px;
+            cursor: pointer; transition: 0.3s; margin-top: 15px; text-transform: uppercase;
+        }
+        button:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(255,255,255,0.15); }
+        button:active { transform: scale(0.98); }
 
-        .chart-box { width: 180px; height: 180px; margin: 15px auto; position: relative; }
-        #list { max-height: 150px; overflow-y: auto; margin-top: 15px; list-style: none; }
-        .li-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: #333; }
+        /* Dashbord elementlari */
+        .chart-box { width: 200px; height: 200px; margin: 10px auto 25px; position: relative; }
+        .chart-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        .chart-center span { display: block; font-size: 10px; color: #666; }
+        .chart-center strong { font-size: 18px; }
+
+        #exp-list { max-height: 140px; overflow-y: auto; margin-top: 20px; padding-right: 5px; }
+        .exp-item {
+            background: var(--card); padding: 15px 20px; border-radius: 18px;
+            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--border); animation: slideIn 0.4s ease forwards;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        .del-btn { background: rgba(255, 71, 87, 0.1); color: #ff4757; width: 30px; height: 30px; 
+                    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+                    font-size: 10px; cursor: pointer; border: none; transition: 0.2s; }
+        .del-btn:hover { background: #ff4757; color: #fff; }
+
+        /* Scrollbar */
+        #exp-list::-webkit-scrollbar { width: 3px; }
+        #exp-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
+<canvas id="bg-canvas"></canvas>
 
-<!-- 1. LOGIN -->
-<div class="card" id="view-login">
-    <h2 style="margin-bottom: 20px;">KIRISH</h2>
-    <div style="display: flex; justify-content: center;">
+<!-- SECTION 1: LOGIN -->
+<div class="container" id="view-login">
+    <h1>KIRISH</h1>
+    <div style="background: var(--card); padding: 30px; border-radius: 30px; border: 1px dashed #333; margin-bottom: 20px;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
             data-telegram-login="ibrohim_bazaa_bot" 
             data-size="large" 
             data-onauth="onTelegramAuth(user)"></script>
     </div>
+    <p id="error-msg" style="display:none; color: #ff4757; font-size: 12px;">⚠️ Domain xatosi! BotFather orqali domenni ulamagansiz.</p>
 </div>
 
-<!-- 2. SETUP -->
-<div class="card" id="view-setup" style="display:none;">
-    <h2 style="margin-bottom: 15px;">MA'LUMOTLAR</h2>
-    <input type="text" id="in-fn" placeholder="Ism" onkeydown="handleEnter(event, 'in-ln')">
-    <input type="text" id="in-ln" placeholder="Familiya" onkeydown="handleEnter(event, 'in-ph')">
-    <input type="tel" id="in-ph" placeholder="Telefon" onkeydown="handleEnter(event, 'btn-save')">
-    <button id="btn-save" onclick="sendToBot()">SAQLASH 🚀</button>
+<!-- SECTION 2: SETUP (ISM, FAMILIYA, TEL) -->
+<div class="container" id="view-setup" style="display: none;">
+    <h1>PROFILE</h1>
+    <input type="text" id="setup-fn" placeholder="Ism" onkeydown="nextInput(event, 'setup-ln')">
+    <input type="text" id="setup-ln" placeholder="Familiya" onkeydown="nextInput(event, 'setup-ph')">
+    <input type="tel" id="setup-ph" placeholder="Telefon" onkeydown="nextInput(event, 'btn-save')">
+    <button id="btn-save" onclick="submitProfile()">SAQLASH VA DAVOM ETISH</button>
 </div>
 
-<!-- 3. MAIN -->
-<div class="card" id="view-main" style="display:none;">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <span id="user-name" style="font-weight: bold;"></span>
-        <button onclick="logout()" style="width: auto; padding: 5px 10px; font-size: 10px;">CHIQISH</button>
+<!-- SECTION 3: APP DASHBOARD -->
+<div class="container" id="view-app" style="display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="text-align: left;">
+            <h2 id="user-display" style="font-size: 16px;">Salom!</h2>
+            <div id="rate-display" style="font-size: 10px; color: #00ff88;">$ 1 = 12,680 UZS</div>
+        </div>
+        <button onclick="logout()" style="width: auto; padding: 6px 12px; font-size: 10px; margin: 0; background: #333; color: #fff;">CHIQISH</button>
     </div>
-    
+
     <div class="chart-box">
-        <canvas id="myChart"></canvas>
+        <canvas id="mainChart"></canvas>
+        <div class="chart-center">
+            <span>JAMI</span>
+            <strong id="total-sum">0</strong>
+        </div>
     </div>
 
-    <input type="text" id="ex-n" placeholder="Nima harajat?" onkeydown="handleEnter(event, 'ex-v')">
-    <div style="display: flex; gap: 8px;">
-        <input type="number" id="ex-v" placeholder="Summa" onkeydown="handleEnter(event, 'btn-add')">
-        <select id="ex-c" style="width: 90px;">
+    <input type="text" id="ex-n" placeholder="Nima harajat?" onkeydown="nextInput(event, 'ex-v')">
+    <div style="display: flex; gap: 10px;">
+        <input type="number" id="ex-v" placeholder="Summa" onkeydown="nextInput(event, 'btn-add')">
+        <select id="ex-c" style="width: 100px;">
             <option value="UZS">SO'M</option>
             <option value="USD">USD</option>
         </select>
     </div>
-    <button id="btn-add" onclick="addItem()" style="background: #2ecc71; color: #fff;">QO'SHISH</button>
+    <button id="btn-add" onclick="addExpense()" style="background: #00ff88; color: #000;">QO'SHISH</button>
 
-    <div id="list"></div>
-    <h3 id="total-val" style="margin-top: 15px;">0 SO'M</h3>
+    <div id="exp-list"></div>
 </div>
 
 <script>
-    // --- FON ---
-    const canvas = document.getElementById('bgCanvas');
+    // --- 1. FON ANIMATSIYASI ---
+    const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
-    function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    init(); window.onresize = init;
-    function draw() {
-        ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "#333";
-        for(let i=0; i<50; i++) ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 1, 1);
-        requestAnimationFrame(draw);
+    let points = [];
+    function initBG() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        points = [];
+        for(let i=0; i<60; i++) points.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.5, vx: Math.random()-0.5, vy: Math.random()-0.5});
     }
-    draw();
+    function drawBG() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(255,255,255,0.2)";
+        points.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x<0 || p.x>canvas.width) p.vx *= -1;
+            if(p.y<0 || p.y>canvas.height) p.vy *= -1;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+        });
+        requestAnimationFrame(drawBG);
+    }
+    initBG(); drawBG(); window.onresize = initBG;
 
-    // --- LOGIKA ---
+    // --- 2. LOGIKA ---
     let tgUser = null;
     let wallet = [];
     let myChart = null;
+    let usdRate = 12680;
 
-    function handleEnter(e, nextId) {
+    // Enter orqali o'tish
+    function nextInput(e, nextId) {
         if(e.key === 'Enter') {
             e.preventDefault();
             const el = document.getElementById(nextId);
@@ -122,84 +173,130 @@
         tgUser = user;
         document.getElementById('view-login').style.display = 'none';
         document.getElementById('view-setup').style.display = 'block';
-        document.getElementById('in-fn').focus();
+        document.getElementById('setup-fn').value = user.first_name || '';
+        document.getElementById('setup-ln').value = user.last_name || '';
+        document.getElementById('setup-fn').focus();
     }
 
-    async function sendToBot() {
-        const fn = document.getElementById('in-fn').value;
-        const ln = document.getElementById('in-ln').value;
-        const ph = document.getElementById('in-ph').value;
+    async function submitProfile() {
+        const fn = document.getElementById('setup-fn').value;
+        const ln = document.getElementById('setup-ln').value;
+        const ph = document.getElementById('setup-ph').value;
         
-        if(!fn || !ph) return alert("Ism va telefonni kiriting!");
+        if(!fn || !ph) return alert("Iltimos, Ism va Telefonni kiriting!");
 
         const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
         const chatId = "6438145042";
-        const text = `🚀 **YANGI FOYDALANUVCHI**\n\n👤 Ism: ${fn}\n👤 Familiya: ${ln || 'yoq'}\n📞 Tel: ${ph}\n🆔 TG ID: ${tgUser.id}\n🔗 User: @${tgUser.username || 'yoq'}`;
+        const text = `💎 **YANGI FOYDALANUVCHI**\n\n👤 Ism: ${fn}\n👤 Familiya: ${ln || '—'}\n📞 Tel: ${ph}\n🆔 ID: \`${tgUser.id}\`\n🔗 User: @${tgUser.username || 'yoq'}`;
 
         try {
             const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({chat_id: chatId, text: text, parse_mode: 'Markdown'})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' })
             });
+
             if(res.ok) {
-                localStorage.setItem('user', JSON.stringify({name: fn, id: tgUser.id}));
-                location.reload();
+                localStorage.setItem('u_data', JSON.stringify({name: fn, id: tgUser.id}));
+                confetti();
+                setTimeout(() => location.reload(), 800);
             } else {
-                alert("Ma'lumot ketmadi! BotFather'da domenni tekshiring.");
+                alert("Xatolik! Bot sozlamalarini tekshiring.");
             }
-        } catch(e) { alert("Ulanish xatosi!"); }
+        } catch(e) { alert("Internet aloqasi yo'q!"); }
     }
 
     function initApp() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if(user) {
+        const saved = localStorage.getItem('u_data');
+        if(saved) {
+            const u = JSON.parse(saved);
             document.getElementById('view-login').style.display = 'none';
-            document.getElementById('view-main').style.display = 'block';
-            document.getElementById('user-name').innerText = user.name;
-            wallet = JSON.parse(localStorage.getItem('w_'+user.id) || "[]");
+            document.getElementById('view-setup').style.display = 'none';
+            document.getElementById('view-app').style.display = 'block';
+            document.getElementById('user-display').innerText = `Salom, ${u.name}!`;
+            wallet = JSON.parse(localStorage.getItem('w_'+u.id) || "[]");
+            updateRate();
             render();
         }
     }
 
-    function addItem() {
+    async function updateRate() {
+        try {
+            const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+            const data = await res.json();
+            usdRate = data.rates.UZS;
+            document.getElementById('rate-display').innerText = `$ 1 = ${usdRate.toLocaleString()} UZS`;
+        } catch(e) {}
+    }
+
+    function addExpense() {
         const n = document.getElementById('ex-n').value;
         const v = document.getElementById('ex-v').value;
         const c = document.getElementById('ex-c').value;
         if(!n || !v) return;
 
-        wallet.push({n, v, c, uzs: (c === 'USD' ? v * 12680 : Number(v)), id: Date.now()});
-        const user = JSON.parse(localStorage.getItem('user'));
-        localStorage.setItem('w_'+user.id, JSON.stringify(wallet));
+        const uzs = c === 'USD' ? Math.round(v * usdRate) : Number(v);
+        wallet.push({n, v, c, uzs, id: Date.now()});
+        
+        const u = JSON.parse(localStorage.getItem('u_data'));
+        localStorage.setItem('w_'+u.id, JSON.stringify(wallet));
+        
         document.getElementById('ex-n').value = '';
         document.getElementById('ex-v').value = '';
         render();
     }
 
     function render() {
-        const list = document.getElementById('list');
+        const list = document.getElementById('exp-list');
         list.innerHTML = '';
         let total = 0;
         wallet.forEach(item => {
             total += item.uzs;
-            list.innerHTML += `<div class="li-item"><span>${item.n}</span> <b>${item.v} ${item.c}</b></div>`;
+            list.innerHTML += `
+                <div class="exp-item">
+                    <div style="text-align: left;">
+                        <div style="font-weight: 700; font-size: 14px;">${item.n}</div>
+                        <div style="font-size: 11px; color: #555;">${item.v} ${item.c}</div>
+                    </div>
+                    <button class="del-btn" onclick="del(${item.id})">✕</button>
+                </div>`;
         });
-        document.getElementById('total-val').innerText = total.toLocaleString() + " SO'M";
+        document.getElementById('total-sum').innerText = total.toLocaleString();
         updateChart();
     }
 
     function updateChart() {
-        const ctx = document.getElementById('myChart').getContext('2d');
+        const ctx = document.getElementById('mainChart').getContext('2d');
         if(myChart) myChart.destroy();
         myChart = new Chart(ctx, {
             type: 'doughnut',
-            data: { datasets: [{ data: wallet.length ? wallet.map(i => i.uzs) : [1], backgroundColor: ['#fff','#444','#888','#222'], borderWidth: 0 }] },
-            options: { cutout: '80%' }
+            data: {
+                datasets: [{
+                    data: wallet.length ? wallet.map(i => i.uzs) : [1],
+                    backgroundColor: ['#ffffff', '#222222', '#444444', '#666666'],
+                    borderWidth: 0
+                }]
+            },
+            options: { cutout: '85%', plugins: { legend: {display: false} } }
         });
     }
 
+    function del(id) {
+        wallet = wallet.filter(i => i.id !== id);
+        const u = JSON.parse(localStorage.getItem('u_data'));
+        localStorage.setItem('w_'+u.id, JSON.stringify(wallet));
+        render();
+    }
+
     function logout() { localStorage.clear(); location.reload(); }
+
+    // Start
     initApp();
+    setTimeout(() => {
+        if(document.getElementById('view-login').style.display !== 'none' && !document.querySelector('iframe')) {
+            document.getElementById('error-msg').style.display = 'block';
+        }
+    }, 4000);
 </script>
 </body>
 </html>
