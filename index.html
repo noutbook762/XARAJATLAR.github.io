@@ -3,85 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | INFINITY EDITION</title>
-    
+    <title>XARAJATLAR PRO | FIX EDITION</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
     <style>
-        /* UMUMIY STIL */
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; }
-        body { 
-            background: #000; color:#fff; min-height: 100vh; 
-            display: flex; align-items: center; justify-content: center; 
-            overflow: hidden; touch-action: none; 
-        }
-        
+        body { background: #000; color:#fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-
-        /* ASOSIY KONTEYNER */
         .container {
             width: 92%; max-width:440px; padding:30px; border-radius:35px;
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(30px);
             box-shadow: 0 0 80px rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            z-index: 10; position: relative;
-            animation: fadeIn 0.6s ease-out;
+            border: 1px solid rgba(255,255,255,0.1); z-index: 10; position: relative;
         }
-
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        /* TILLAR */
         .lang-switcher { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; }
-        .lang-btn { 
-            width: 50px; height: 32px; background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); color: #fff; 
-            cursor:pointer; font-size: 11px; border-radius: 10px; transition: 0.3s;
-        }
+        .lang-btn { width: 50px; height: 32px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor:pointer; font-size: 11px; border-radius: 10px; }
         .lang-btn.active { background: #fff; color: #000; font-weight: bold; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
-
-        /* INPUT VA SELECT - NEON STYLE */
-        input, select, button { 
-            width: 100%; padding: 16px; margin: 10px 0; border: none; 
-            border-radius: 20px; outline: none; font-size: 16px; 
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        
-        input { 
-            background: rgba(255,255,255,0.07); color: #fff; 
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        input:focus { 
-            background: rgba(255,255,255,0.15); 
-            border-color: #fff; 
-            box-shadow: 0 0 20px rgba(255,255,255,0.15);
-            transform: translateY(-2px);
-        }
-
-        select { background: #111; color: #fff; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-
-        button { background: #fff; color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        button:hover { transform: scale(1.02); filter: brightness(0.9); }
-        button:active { transform: scale(0.98); }
-
-        /* CHART VA RO'YXAT */
-        .chart-box { width: 180px; height: 180px; margin: 10px auto; position: relative; }
-        #list { max-height: 160px; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
-        li { 
-            background: rgba(255,255,255,0.03); padding: 14px; border-radius: 18px; 
-            margin-bottom: 10px; display: flex; justify-content: space-between; 
-            align-items: center; border: 1px solid rgba(255,255,255,0.05);
-            animation: slideIn 0.3s ease forwards;
-        }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
-        .del-btn { width: auto; padding: 6px 12px; background: #ff4757; color:#fff; border-radius: 12px; font-size: 12px; margin:0; border:none; }
-        
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
-
-        h2#total { font-size: 28px; font-weight: 800; text-align: center; margin: 10px 0; color: #fff; }
+        input, select, button { width: 100%; padding: 16px; margin: 10px 0; border: none; border-radius: 20px; outline: none; font-size: 16px; }
+        input { background: rgba(255,255,255,0.07); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        input:focus { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.15); }
+        button { background: #fff; color: #000; font-weight: 800; cursor: pointer; }
+        .chart-box { width: 180px; height: 180px; margin: 10px auto; }
+        #list { max-height: 160px; overflow-y: auto; margin-top: 15px; list-style: none; }
+        li { background: rgba(255,255,255,0.03); padding: 14px; border-radius: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .del-btn { width: auto; padding: 6px 12px; background: #ff4757; color:#fff; border-radius: 12px; font-size: 10px; margin:0; }
     </style>
 </head>
 <body>
@@ -90,8 +36,9 @@
 
 <div class="container" id="loginBox">
     <div class="lang-switcher" id="ls1"></div>
-    <h2 id="t-login" style="text-align:center; margin-bottom:25px; letter-spacing: 2px;">KIRISH</h2>
+    <h2 style="text-align:center; margin-bottom:25px;">KIRISH</h2>
     <div style="display:flex; justify-content:center;">
+        <!-- TELEGRAM WIDGET -->
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
                 data-telegram-login="ibrohim_bazaa_bot" data-size="large" 
                 data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
@@ -101,224 +48,148 @@
 <div class="container" id="infoBox" style="display:none">
     <div class="lang-switcher" id="ls2"></div>
     <h2 id="t-info" style="text-align: center; margin-bottom: 15px;">MA'LUMOTLAR</h2>
-    <input id="fName" onkeydown="enterKey(event, 'lName')">
-    <input id="lName" onkeydown="enterKey(event, 'pPhone')">
-    <input id="pPhone" type="tel" placeholder="+998" onkeydown="enterKey(event, 'saveBtn')">
-    <button id="saveBtn" onclick="finishSetup()">SAQLASH</button>
+    <input id="fName" placeholder="Ism">
+    <input id="lName" placeholder="Familiya">
+    <input id="pPhone" type="tel" placeholder="+998">
+    <button onclick="finishSetup()">SAQLASH 🚀</button>
 </div>
 
 <div class="container" id="appBox" style="display:none">
     <div class="lang-switcher" id="ls3"></div>
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <h4 id="userName">Salom</h4>
-        <button id="btn-logout" onclick="logout()" style="width:auto; padding:6px 12px; background:#ff4757; color:#fff; font-size:10px; border-radius: 12px; border:none;">CHIQISH</button>
+        <h4 id="userName"></h4>
+        <button onclick="logout()" style="width:auto; padding:6px 12px; background:#ff4757; color:#fff; font-size:10px; border-radius:12px;">CHIQISH</button>
     </div>
-
-    <div class="chart-box">
-        <canvas id="myChart"></canvas>
-    </div>
-
-    <input id="expName" onkeydown="enterKey(event, 'expAmount')">
+    <div class="chart-box"><canvas id="myChart"></canvas></div>
+    <input id="expName" placeholder="Nima harajat?">
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px">
-        <input id="expAmount" type="number" onkeydown="enterKey(event, 'addBtn')">
-        <select id="curr">
+        <input id="expAmount" type="number" placeholder="Summa">
+        <select id="curr" style="background:#111; color:#fff; border-radius:20px;">
             <option value="UZS">SO'M</option>
-            <option value="USD">USD ($)</option>
+            <option value="USD">USD</option>
         </select>
     </div>
-    <button id="addBtn" onclick="addExp()" style="background:#2ecc71; color:#fff;">QO'SHISH</button>
-    
-    <h2 id="total">0</h2>
+    <button onclick="addExp()" style="background:#2ecc71; color:#fff;">QO'SHISH</button>
+    <h2 id="total" style="text-align:center; margin:10px 0;">0</h2>
     <ul id="list"></ul>
 </div>
 
 <script>
-// --- 1. FON: 3D INFINITY WAVE ---
+// --- FON VA KURS ---
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
-let time = 0; const mouse = { x: -1000, y: -1000 };
-
-window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
-window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
-
+let time = 0; let usdRate = 12650;
 function initBG() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-
+window.onresize = initBG; initBG();
 function drawBG() {
-    time += 0.03; ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-    const gap = 22;
-    for (let x = 0; x < canvas.width + gap; x += gap) {
-        for (let y = 0; y < canvas.height + gap; y += gap) {
-            let ox = Math.sin(x / 100 + time) * 15;
-            let oy = Math.cos(y / 100 + time) * 15;
-            const dx = mouse.x - (x + ox); const dy = mouse.y - (y + oy);
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 160) {
-                const f = (160 - dist) / 160;
-                ox -= dx * f * 0.7; oy -= dy * f * 0.7;
-            }
-            ctx.beginPath(); ctx.arc(x + ox, y + oy, 1.2, 0, Math.PI * 2); ctx.fill();
+    time += 0.02; ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "white";
+    for(let x=0; x<canvas.width; x+=25) {
+        for(let y=0; y<canvas.height; y+=25) {
+            let ox = Math.sin(x/100+time)*10; let oy = Math.cos(y/100+time)*10;
+            ctx.beginPath(); ctx.arc(x+ox, y+oy, 1, 0, Math.PI*2); ctx.fill();
         }
     }
     requestAnimationFrame(drawBG);
 }
-initBG(); drawBG(); window.onresize = initBG;
+drawBG();
 
-// --- 2. ONLINE KURS ($ -> SO'M) ---
-let usdToUzs = 12650; 
-async function updateRate() {
-    try {
-        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-        const d = await res.json();
-        usdToUzs = d.rates.UZS;
-        console.log("Kurs yangilandi: 1$ =", usdToUzs);
-    } catch (e) { console.log("Kursda xatolik"); }
-}
-updateRate();
-
-// --- 3. TILLAR VA LOGIKA ---
-const translations = {
-    uz: { login:"KIRISH", info:"MA'LUMOTLAR", fn:"Ism", ln:"Familiya", ph:"Telefon", save:"SAQLASH 🚀", hello:"Salom, ", logout:"CHIQISH", item:"Nima harajat?", sum:"Summa", add:"QO'SHISH", total:"Jami: " },
-    ru: { login:"ВХОД", info:"ДАННЫE", fn:"Имя", ln:"Фамилия", ph:"Телефон", save:"СОХРАНИТЬ 🚀", hello:"Привет, ", logout:"ВЫХОД", item:"Какой расход?", sum:"Сумма", add:"ДОBAВИТЬ", total:"Итого: " },
-    en: { login:"LOGIN", info:"DETAILS", fn:"First Name", ln:"Last Name", ph:"Phone", save:"SAVE 🚀", hello:"Hello, ", logout:"LOGOUT", item:"What expense?", sum:"Amount", add:"ADD ITEM", total:"Total: " }
-};
-
-let currentLang = localStorage.getItem('lang') || 'uz';
-let tg = {}; let data = []; let myChart = null;
-
-function updateUI() {
-    const t = translations[currentLang];
-    document.getElementById('t-login').innerText = t.login;
-    document.getElementById('t-info').innerText = t.info;
-    document.getElementById('fName').placeholder = t.fn;
-    document.getElementById('lName').placeholder = t.ln;
-    document.getElementById('pPhone').placeholder = t.ph;
-    document.getElementById('saveBtn').innerText = t.save;
-    
-    const user = JSON.parse(localStorage.getItem("vipUser") || "{}");
-    document.getElementById('userName').innerText = t.hello + (user.name || "");
-    document.getElementById('btn-logout').innerText = t.logout;
-    document.getElementById('expName').placeholder = t.item;
-    document.getElementById('expAmount').placeholder = t.sum;
-    document.getElementById('addBtn').innerText = t.add;
-    
-    ['ls1', 'ls2', 'ls3'].forEach(id => {
-        const box = document.getElementById(id); if(!box) return; box.innerHTML = '';
-        ['uz','ru','en'].forEach(l => {
-            const btn = document.createElement('button'); btn.className = `lang-btn ${currentLang === l ? 'active' : ''}`;
-            btn.innerText = l.toUpperCase(); btn.onclick = () => { currentLang = l; localStorage.setItem('lang', l); updateUI(); }; box.appendChild(btn);
-        });
-    });
-    render();
-}
+// --- LOGIKA ---
+let tgData = {}; let expenses = []; let myChart = null;
 
 function onTelegramAuth(user) {
-    tg = user; 
-    document.getElementById('loginBox').style.display = 'none'; 
+    tgData = user;
+    document.getElementById('loginBox').style.display = 'none';
     document.getElementById('infoBox').style.display = 'block';
     document.getElementById('fName').value = user.first_name || '';
     document.getElementById('lName').value = user.last_name || '';
-    updateUI();
 }
 
-// --- 4. BOTGA TO'LIQ HISOBOT YUBORISH ---
 async function finishSetup() {
-    const fn = document.getElementById('fName').value;
-    const ln = document.getElementById('lName').value;
-    const ph = document.getElementById('pPhone').value;
-    if(!fn || !ph) return alert("To'ldiring!");
+    const fName = document.getElementById('fName').value;
+    const lName = document.getElementById('lName').value;
+    const phone = document.getElementById('pPhone').value;
+    
+    if(!fName || !phone) return alert("Ism va telefonni kiriting!");
 
-    const msg = `
-🚀 **YANGI FOYDALANUVCHI**
-━━━━━━━━━━━━━━━━━━━━
-👤 **ISMI:** ${fn}
-👤 **FAMILIYASI:** ${ln || '—'}
-📞 **TEL:** \`${ph}\`
+    const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
+    const chatId = "6438145042";
+    
+    const text = `🚀 **YANGI FOYDALANUVCHI**\n\n👤 Ism: ${fName}\n👤 Familiya: ${lName}\n📞 Tel: ${phone}\n\n🤖 TG ID: ${tgData.id}\n🔗 User: @${tgData.username || 'yoq'}`;
 
-🤖 **TELEGRAM INFO:**
-├─ **ID:** \`${tg.id || 'yoq'}\`
-├─ **Username:** ${tg.username ? '@'+tg.username : 'yoq'}
-├─ **TG Ismi:** ${tg.first_name || '—'}
-└─ **TG Familiyasi:** ${tg.last_name || '—'}
-
-📅 **SANA:** ${new Date().toLocaleString('uz-UZ')}
-━━━━━━━━━━━━━━━━━━━━`;
-
-    await fetch(`https://api.telegram.org/bot8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc/sendMessage`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: "6438145042", text: msg, parse_mode: 'Markdown' })
-    });
-
-    localStorage.setItem("vipUser", JSON.stringify({ name: fn, id: tg.id }));
-    confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 } });
-    initApp();
+    try {
+        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' })
+        });
+        
+        if(res.ok) {
+            localStorage.setItem("vipUser", JSON.stringify({name: fName, id: tgData.id}));
+            initApp();
+            confetti();
+        } else {
+            alert("Botga yuborishda xato! GitHub-ga yuklang va /setdomain qiling.");
+        }
+    } catch(e) {
+        alert("Internet yoki Fetch xatosi!");
+    }
 }
 
 function initApp() {
-    const saved = localStorage.getItem("vipUser");
-    if(saved) {
-        const u = JSON.parse(saved);
-        data = JSON.parse(localStorage.getItem("data_" + u.id) || "[]");
+    const user = JSON.parse(localStorage.getItem("vipUser"));
+    if(user) {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('infoBox').style.display = 'none';
         document.getElementById('appBox').style.display = 'block';
-        updateUI();
-    } else { updateUI(); }
+        document.getElementById('userName').innerText = "Salom, " + user.name;
+        expenses = JSON.parse(localStorage.getItem("ex_"+user.id) || "[]");
+        render();
+    }
 }
 
 function addExp() {
-    const n = document.getElementById('expName').value; 
-    const a = document.getElementById('expAmount').value; 
+    const n = document.getElementById('expName').value;
+    const a = document.getElementById('expAmount').value;
     const c = document.getElementById('curr').value;
     if(!n || !a) return;
-
-    const uzsVal = c === 'USD' ? Math.round(a * usdToUzs) : Number(a);
-    data.push({ n, a: Number(a), c, uzs: uzsVal });
-    localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
-    document.getElementById('expName').value=''; document.getElementById('expAmount').value=''; 
+    const uzs = c === 'USD' ? a * usdRate : Number(a);
+    expenses.push({n, a, c, uzs});
+    const user = JSON.parse(localStorage.getItem("vipUser"));
+    localStorage.setItem("ex_"+user.id, JSON.stringify(expenses));
     render();
 }
 
 function render() {
-    let t = 0; const list = document.getElementById('list'); list.innerHTML = '';
-    data.forEach((item, i) => {
-        t += item.uzs;
-        let li = document.createElement('li');
-        li.innerHTML = `<span>${item.n}</span><div><b>${item.a.toLocaleString()} ${item.c}</b> <button onclick="del(${i})" class="del-btn">❌</button></div>`;
-        list.appendChild(li);
+    const list = document.getElementById('list'); list.innerHTML = '';
+    let total = 0;
+    expenses.forEach((ex, i) => {
+        total += ex.uzs;
+        list.innerHTML += `<li>${ex.n} <b>${ex.a} ${ex.c}</b> <button class="del-btn" onclick="del(${i})">❌</button></li>`;
     });
-    document.getElementById('total').innerText = t.toLocaleString() + " SO'M";
+    document.getElementById('total').innerText = total.toLocaleString() + " SO'M";
     updateChart();
 }
 
 function updateChart() {
-    const canvasChart = document.getElementById('myChart');
-    if(!canvasChart) return;
-    const ctxC = canvasChart.getContext('2d');
-    if (myChart) myChart.destroy();
-    if (data.length === 0) return;
+    const ctxC = document.getElementById('myChart').getContext('2d');
+    if(myChart) myChart.destroy();
     myChart = new Chart(ctxC, {
         type: 'doughnut',
         data: {
-            labels: data.map(d => d.n),
-            datasets: [{
-                data: data.map(d => d.uzs),
-                backgroundColor: ['#ffffff', '#888888', '#444444', '#bbbbbb', '#222222'],
-                borderWidth: 0
-            }]
+            datasets: [{ data: expenses.map(e => e.uzs), backgroundColor: ['#fff','#555','#aaa','#222'] }]
         },
-        options: { plugins: { legend: { display: false } }, cutout: '75%' }
+        options: { cutout: '70%' }
     });
 }
 
 function del(i) {
-    data.splice(i,1);
-    localStorage.setItem("data_"+JSON.parse(localStorage.getItem("vipUser")).id, JSON.stringify(data));
+    expenses.splice(i,1);
+    const user = JSON.parse(localStorage.getItem("vipUser"));
+    localStorage.setItem("ex_"+user.id, JSON.stringify(expenses));
     render();
 }
 
 function logout() { localStorage.clear(); location.reload(); }
-function enterKey(e, n) { if(e.key==="Enter"){ e.preventDefault(); const el=document.getElementById(n); el.tagName==="BUTTON"?el.click():el.focus(); } }
 
 initApp();
 </script>
