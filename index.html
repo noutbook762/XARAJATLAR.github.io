@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ULTRA FINANCE 4D</title>
+    <title>FINANCE ULTRA 4D</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -12,77 +12,75 @@
     <style>
         :root { 
             --neon: #00ff88; 
-            --glass: rgba(255, 255, 255, 0.1);
-            --text: #ffffff;
+            --glass: rgba(255, 255, 255, 0.15);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; font-family: 'Outfit', sans-serif; }
 
-        /* 4D TOLQINLI FON ANIMATSIYASI */
+        /* 4D ANIMATSIYA FON */
         body { 
-            margin: 0;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #00ff8822);
+            background: linear-gradient(-45deg, #0f2027, #2c5364, #203a43, #00ff8844);
             background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
+            animation: waveGradient 12s ease infinite;
         }
 
-        @keyframes gradientBG {
+        @keyframes waveGradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* SHISHA EFFEKTI (GLASSMORPHISM) */
+        /* GLASSMORPHISM CONTAINER */
         .container {
-            width: 90%; max-width: 400px; padding: 40px;
+            width: 92%; max-width: 400px; padding: 40px;
             background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 40px; text-align: center;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 45px; text-align: center;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            animation: slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-            z-index: 10;
+            animation: zoomIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: #fff;
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(50px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
-        h1 { font-weight: 900; font-size: 28px; margin-bottom: 25px; letter-spacing: -1px; text-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        h1 { font-weight: 900; font-size: 30px; margin-bottom: 20px; letter-spacing: -1px; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
         input, select {
             width: 100%; padding: 18px 25px; margin: 10px 0;
-            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 22px; color: #fff; font-size: 16px; outline: none;
-            transition: 0.3s;
+            transition: 0.3s ease;
         }
-        input:focus { border-color: var(--neon); background: rgba(0,0,0,0.4); }
+        input:focus { border-color: var(--neon); background: rgba(0,0,0,0.4); box-shadow: 0 0 15px rgba(0,255,136,0.2); }
 
         button {
             width: 100%; padding: 18px; margin-top: 15px;
-            background: var(--neon); color: #002211;
+            background: var(--neon); color: #003311;
             border: none; border-radius: 22px; font-weight: 900;
             font-size: 16px; cursor: pointer; transition: 0.4s;
             text-transform: uppercase; box-shadow: 0 10px 20px rgba(0,255,136,0.3);
         }
-        button:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,255,136,0.5); }
+        button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px rgba(0,255,136,0.5); }
 
-        /* DASHBOARD ELEMENTLARI */
-        .chart-wrap { width: 230px; height: 230px; margin: 0 auto 25px; position: relative; }
+        /* DASHBOARD */
+        .chart-wrap { width: 220px; height: 220px; margin: 0 auto 25px; position: relative; }
         .total-box { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); }
-        .total-box span { font-size: 11px; color: rgba(255,255,255,0.6); display: block; }
-        .total-box strong { font-size: 22px; color: var(--neon); text-shadow: 0 0 10px rgba(0,255,136,0.5); }
+        .total-box strong { font-size: 24px; color: var(--neon); text-shadow: 0 0 15px rgba(0,255,136,0.6); }
 
-        #list { max-height: 140px; overflow-y: auto; margin-top: 20px; padding-right: 5px; }
+        #list { max-height: 130px; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
         .item { 
-            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; 
+            background: rgba(255,255,255,0.07); padding: 15px; border-radius: 20px; 
             margin-bottom: 10px; display: flex; justify-content: space-between;
-            border: 1px solid rgba(255,255,255,0.02);
+            border-left: 4px solid var(--neon); animation: fadeIn 0.5s ease;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 10px; }
@@ -92,45 +90,45 @@
 
 <!-- 1. LOGIN -->
 <div class="container" id="v-login">
-    <h1>XUSH KELDINGIZ</h1>
-    <p style="margin-bottom: 20px; font-size: 14px; opacity: 0.8;">Davom etish uchun Telegram orqali kiring</p>
+    <h1>KIRISH</h1>
+    <p style="margin-bottom: 25px; font-size: 14px; opacity: 0.8;">Boshlash uchun Telegram orqali kiring</p>
     <div style="display: flex; justify-content: center;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
             data-telegram-login="ibo_aka_bot" 
             data-size="large" 
-            data-onauth="onTelegramAuth(user)"></script>
+            data-onauth="onTelegramAuth(user)"
+            data-request-access="write"></script>
     </div>
 </div>
 
 <!-- 2. SETUP -->
 <div class="container" id="v-setup" style="display:none;">
-    <h1>PROFILINGIZ</h1>
-    <input type="text" id="in-f" placeholder="Ism" onkeydown="go(event, 'in-l')">
-    <input type="text" id="in-l" placeholder="Familiya" onkeydown="go(event, 'in-p')">
-    <input type="tel" id="in-p" placeholder="Telefon" onkeydown="go(event, 'btn-s')">
-    <button id="btn-s" onclick="saveProfile()">TASDIQLASH ⚡</button>
+    <h1>MA'LUMOTLAR</h1>
+    <input type="text" id="in-f" placeholder="Ismingiz" onkeydown="go(event, 'in-l')">
+    <input type="text" id="in-l" placeholder="Familiyangiz" onkeydown="go(event, 'in-p')">
+    <input type="tel" id="in-p" placeholder="+998 90 123 45 67" onkeydown="go(event, 'btn-s')">
+    <button id="btn-s" onclick="save()">SAQLASH ✅</button>
 </div>
 
-<!-- 3. MAIN -->
+<!-- 3. MAIN APP -->
 <div class="container" id="v-main" style="display:none;">
     <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <b id="u-name" style="color: var(--neon);"></b>
+        <span id="u-name" style="color: var(--neon); font-weight: 600;"></span>
         <span onclick="logout()" style="cursor:pointer; font-size: 11px; opacity: 0.5;">CHIQISH</span>
     </div>
 
     <div class="chart-wrap">
         <canvas id="myChart"></canvas>
         <div class="total-box">
-            <span>UMUMIY HARAJAT</span>
             <strong id="total-val">0</strong>
         </div>
     </div>
 
-    <input type="text" id="ex-n" placeholder="Nima sotib oldingiz?" onkeydown="go(event, 'ex-v')">
+    <input type="text" id="ex-n" placeholder="Nima xarid?" onkeydown="go(event, 'ex-v')">
     <div style="display: flex; gap: 10px;">
         <input type="number" id="ex-v" placeholder="Summa" onkeydown="go(event, 'btn-a')">
-        <select id="ex-c" style="width: 100px;">
-            <option value="UZS">UZS</option>
+        <select id="ex-c" style="width: 100px; padding: 18px 10px;">
+            <option value="UZS">SO'M</option>
             <option value="USD">USD</option>
         </select>
     </div>
@@ -141,16 +139,10 @@
 
 <script>
     let user = null, wallet = [], chart = null;
-    const BOT_TOKEN = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
+    const TOKEN = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
     const ADMIN_ID = "6438145042";
 
-    function go(e, next) {
-        if(e.key === 'Enter') {
-            e.preventDefault();
-            const el = document.getElementById(next);
-            if(el.tagName === 'BUTTON') el.click(); else el.focus();
-        }
-    }
+    function go(e, n) { if(e.key==='Enter'){ e.preventDefault(); const el=document.getElementById(n); if(el.tagName==='BUTTON') el.click(); else el.focus(); } }
 
     function onTelegramAuth(u) {
         user = u;
@@ -159,63 +151,54 @@
         document.getElementById('in-f').focus();
     }
 
-    async function saveProfile() {
-        const f = document.getElementById('in-f').value, 
-              l = document.getElementById('in-l').value, 
-              p = document.getElementById('in-p').value;
-        if(!f || !p) return alert("Iltimos, ma'lumotlarni to'liq kiriting!");
-
-        const msg = `🚀 **YANGI FOYDALANUVCHI**\n\n👤 ${f} ${l}\n📞 ${p}\n🆔 ID: ${user.id}`;
+    async function save() {
+        const f = document.getElementById('in-f').value, l = document.getElementById('in-l').value, p = document.getElementById('in-p').value;
+        if(!f || !p) return alert("Majburiy maydonlarni to'ldiring!");
         
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({chat_id: ADMIN_ID, text: msg, parse_mode: 'Markdown'})
-        });
-
-        localStorage.setItem('wallet_auth', JSON.stringify({n: f, id: user.id}));
-        confetti({ particleCount: 150, velocity: 30, spread: 360, origin: { y: 0.6 } });
-        setTimeout(() => location.reload(), 1000);
+        const txt = `🔥 **YANGI FOYDALANUVCHI**\n\n👤 ${f} ${l}\n📞 ${p}\n🆔 ${user.id}\n🔗 @${user.username || 'yoq'}`;
+        
+        try {
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({chat_id: ADMIN_ID, text: txt, parse_mode: 'Markdown'})
+            });
+            localStorage.setItem('wallet_session', JSON.stringify({n: f, id: user.id}));
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            setTimeout(() => location.reload(), 1000);
+        } catch(e) { alert("Internet aloqasini tekshiring!"); }
     }
 
     function init() {
-        const auth = localStorage.getItem('wallet_auth');
-        if(auth) {
-            const u = JSON.parse(auth);
+        const session = localStorage.getItem('wallet_session');
+        if(session) {
+            const u = JSON.parse(session);
             document.getElementById('v-login').style.display = 'none';
             document.getElementById('v-main').style.display = 'block';
             document.getElementById('u-name').innerText = u.n.toUpperCase();
-            wallet = JSON.parse(localStorage.getItem('my_wallet_'+u.id) || "[]");
+            wallet = JSON.parse(localStorage.getItem('my_w_'+u.id) || "[]");
             render();
         }
     }
 
     function add() {
-        const n = document.getElementById('ex-n').value, 
-              v = document.getElementById('ex-v').value, 
-              c = document.getElementById('ex-c').value;
+        const n = document.getElementById('ex-n').value, v = document.getElementById('ex-v').value, c = document.getElementById('ex-c').value;
         if(!n || !v) return;
-
         wallet.push({n, v, c, uzs: (c === 'USD' ? v * 12680 : Number(v))});
-        localStorage.setItem('my_wallet_'+JSON.parse(localStorage.getItem('wallet_auth')).id, JSON.stringify(wallet));
-        
-        document.getElementById('ex-n').value = ''; 
-        document.getElementById('ex-v').value = '';
+        localStorage.setItem('my_w_'+JSON.parse(localStorage.getItem('wallet_session')).id, JSON.stringify(wallet));
+        document.getElementById('ex-n').value = ''; document.getElementById('ex-v').value = '';
         render();
     }
 
     function render() {
-        const div = document.getElementById('list'); 
-        div.innerHTML = '';
+        const div = document.getElementById('list'); div.innerHTML = '';
         let total = 0;
-        
         wallet.forEach(i => {
             total += i.uzs;
             div.innerHTML += `<div class="item"><span>${i.n}</span><b>${Number(i.v).toLocaleString()} ${i.c}</b></div>`;
         });
-        
         document.getElementById('total-val').innerText = total.toLocaleString();
-
+        
         if(chart) chart.destroy();
         chart = new Chart(document.getElementById('myChart'), {
             type: 'doughnut',
@@ -223,11 +206,10 @@
                 datasets: [{ 
                     data: wallet.length ? wallet.map(x=>x.uzs) : [1], 
                     backgroundColor: ['#00ff88', 'rgba(255,255,255,0.1)', 'rgba(255,255,255,0.2)'], 
-                    borderWidth: 0,
-                    hoverOffset: 10
+                    borderWidth: 0 
                 }] 
             },
-            options: { cutout: '82%', plugins: { legend: {display: false} } }
+            options: { cutout: '85%', plugins: { legend: {display: false} } }
         });
     }
 
