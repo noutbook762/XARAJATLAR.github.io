@@ -3,195 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XARAJATLAR PRO | FIX EDITION</title>
+    <title>ULTRA FINANCE | 2026 EDITION</title>
+    
+    <!-- Tashqi Kutubxonalar -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
+    
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #000; color:#fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .container {
-            width: 92%; max-width:440px; padding:30px; border-radius:35px;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(30px);
-            box-shadow: 0 0 80px rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255,255,255,0.1); z-index: 10; position: relative;
+        :root { --accent: #ffffff; --bg: #050505; --card: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        
+        /* Interactive Background */
+        #star-canvas { position: fixed; top:0; left:0; z-index: -1; pointer-events: none; }
+
+        .main-container {
+            width: 92%; max-width: 450px; padding: 40px;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(40px);
+            border-radius: 45px;
+            border: 1px solid var(--border);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            text-align: center;
+            animation: containerFloat 1s ease-out;
         }
-        .lang-switcher { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; }
-        .lang-btn { width: 50px; height: 32px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor:pointer; font-size: 11px; border-radius: 10px; }
-        .lang-btn.active { background: #fff; color: #000; font-weight: bold; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
-        input, select, button { width: 100%; padding: 16px; margin: 10px 0; border: none; border-radius: 20px; outline: none; font-size: 16px; }
-        input { background: rgba(255,255,255,0.07); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        input:focus { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.15); }
-        button { background: #fff; color: #000; font-weight: 800; cursor: pointer; }
-        .chart-box { width: 180px; height: 180px; margin: 10px auto; }
-        #list { max-height: 160px; overflow-y: auto; margin-top: 15px; list-style: none; }
-        li { background: rgba(255,255,255,0.03); padding: 14px; border-radius: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .del-btn { width: auto; padding: 6px 12px; background: #ff4757; color:#fff; border-radius: 12px; font-size: 10px; margin:0; }
+
+        @keyframes containerFloat { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-weight: 800; font-size: 28px; letter-spacing: -1px; margin-bottom: 8px; }
+        p { color: #666; font-size: 13px; margin-bottom: 25px; }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #555; margin-left: 15px; }
+
+        input, select {
+            width: 100%; padding: 18px 22px; margin-top: 5px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 22px; color: #fff; font-size: 15px; outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input:focus { border-color: var(--accent); background: rgba(255,255,255,0.06); transform: scale(1.02); }
+
+        .btn-prime {
+            width: 100%; padding: 20px; border-radius: 22px; border: none;
+            background: #fff; color: #000; font-weight: 800; font-size: 15px;
+            cursor: pointer; transition: 0.4s; margin-top: 15px;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+        }
+        .btn-prime:hover { background: #eee; transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255,255,255,0.2); }
+        .btn-prime:active { transform: scale(0.98); }
+
+        /* App Layout */
+        .dashboard { display: none; }
+        .stats-circle { width: 220px; height: 220px; margin: 0 auto 20px; position: relative; }
+        .total-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .total-label span { display: block; font-size: 10px; color: #666; text-transform: uppercase; }
+        .total-label strong { font-size: 20px; font-weight: 800; }
+
+        #list-items { max-height: 180px; overflow-y: auto; margin-top: 25px; padding-right: 5px; }
+        .item {
+            background: var(--card); padding: 16px 20px; border-radius: 20px;
+            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--border); animation: itemIn 0.5s ease backwards;
+        }
+        @keyframes itemIn { from { opacity:0; transform: translateX(-20px); } to { opacity:1; transform: translateX(0); } }
+
+        .del-circle { width: 32px; height: 32px; background: rgba(255, 71, 87, 0.1); color: #ff4757; 
+                      border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+                      cursor: pointer; font-size: 12px; transition: 0.3s; border: none; }
+        .del-circle:hover { background: #ff4757; color: #fff; }
+
+        /* Custom Scrollbar */
+        #list-items::-webkit-scrollbar { width: 4px; }
+        #list-items::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
+<canvas id="star-canvas"></canvas>
 
-<div class="container" id="loginBox">
-    <div class="lang-switcher" id="ls1"></div>
-    <h2 style="text-align:center; margin-bottom:25px;">KIRISH</h2>
-    <div style="display:flex; justify-content:center;">
-        <!-- TELEGRAM WIDGET -->
+<!-- 1-BOSQICH: LOGIN -->
+<div class="main-container" id="view-login">
+    <h1>CYBER FINANCE</h1>
+    <p>Xavfsiz va aqlli moliya boshqaruvi</p>
+    
+    <div style="background: var(--card); padding: 25px; border-radius: 30px; border: 1px dashed #333; margin-bottom: 25px;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                data-telegram-login="ibrohim_bazaa_bot" data-size="large" 
-                data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+            data-telegram-login="ibrohim_bazaa_bot" 
+            data-size="large" 
+            data-onauth="onTelegramAuth(user)"></script>
+    </div>
+    
+    <div id="domain-msg" style="display:none; color: #ff4757; font-size: 11px;">
+        ⚠️ DIQQAT: BotFather orqali noutbook762.github.io domenini tasdiqlang!
     </div>
 </div>
 
-<div class="container" id="infoBox" style="display:none">
-    <div class="lang-switcher" id="ls2"></div>
-    <h2 id="t-info" style="text-align: center; margin-bottom: 15px;">MA'LUMOTLAR</h2>
-    <input id="fName" placeholder="Ism">
-    <input id="lName" placeholder="Familiya">
-    <input id="pPhone" type="tel" placeholder="+998">
-    <button onclick="finishSetup()">SAQLASH 🚀</button>
+<!-- 2-BOSQICH: MA'LUMOTLAR -->
+<div class="main-container" id="view-setup" style="display:none;">
+    <h1>PROFILE</h1>
+    <p>O'zingizni tanishtiring</p>
+    <div class="input-group">
+        <label>To'liq ismingiz</label>
+        <input type="text" id="setup-name" placeholder="Masalan: Ibrohim">
+    </div>
+    <div class="input-group">
+        <label>Telefon raqam</label>
+        <input type="tel" id="setup-phone" placeholder="+998 90 123 45 67">
+    </div>
+    <button class="btn-prime" onclick="saveProfile()">SAQLASH VA KIRISH ⚡</button>
 </div>
 
-<div class="container" id="appBox" style="display:none">
-    <div class="lang-switcher" id="ls3"></div>
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <h4 id="userName"></h4>
-        <button onclick="logout()" style="width:auto; padding:6px 12px; background:#ff4757; color:#fff; font-size:10px; border-radius:12px;">CHIQISH</button>
+<!-- 3-BOSQICH: ASOSIY ILOVA -->
+<div class="main-container dashboard" id="view-app">
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="text-align: left;">
+            <h2 id="hello-user" style="font-size: 18px;">Salom!</h2>
+            <div id="live-rate" style="font-size: 10px; color: #00ff88;">$ 1 = 12,680 UZS</div>
+        </div>
+        <button onclick="logout()" style="background: none; border: 1px solid #333; color: #555; padding: 8px 15px; border-radius: 12px; font-size: 10px; cursor: pointer;">CHIQISH</button>
     </div>
-    <div class="chart-box"><canvas id="myChart"></canvas></div>
-    <input id="expName" placeholder="Nima harajat?">
-    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px">
-        <input id="expAmount" type="number" placeholder="Summa">
-        <select id="curr" style="background:#111; color:#fff; border-radius:20px;">
-            <option value="UZS">SO'M</option>
-            <option value="USD">USD</option>
-        </select>
+
+    <div class="stats-circle">
+        <canvas id="financeChart"></canvas>
+        <div class="total-label">
+            <span>JAMI</span>
+            <strong id="total-val">0</strong>
+        </div>
     </div>
-    <button onclick="addExp()" style="background:#2ecc71; color:#fff;">QO'SHISH</button>
-    <h2 id="total" style="text-align:center; margin:10px 0;">0</h2>
-    <ul id="list"></ul>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+        <input type="text" id="ex-title" placeholder="Nima sotib oldingiz?">
+        <div style="display: flex; gap: 10px;">
+            <input type="number" id="ex-amount" placeholder="Summa">
+            <select id="ex-currency" style="width: 110px;">
+                <option value="UZS">SO'M</option>
+                <option value="USD">USD</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn-prime" onclick="addItem()" style="background: #00ff88; color: #000;">QO'SHISH</button>
+
+    <div id="list-items"></div>
 </div>
 
 <script>
-// --- FON VA KURS ---
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
-let time = 0; let usdRate = 12650;
-function initBG() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.onresize = initBG; initBG();
-function drawBG() {
-    time += 0.02; ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "white";
-    for(let x=0; x<canvas.width; x+=25) {
-        for(let y=0; y<canvas.height; y+=25) {
-            let ox = Math.sin(x/100+time)*10; let oy = Math.cos(y/100+time)*10;
-            ctx.beginPath(); ctx.arc(x+ox, y+oy, 1, 0, Math.PI*2); ctx.fill();
-        }
+    // --- 1. FON ANIMATSIYASI (STARFIELD) ---
+    const canvas = document.getElementById('star-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    function initStars() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        stars = [];
+        for(let i=0; i<150; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.5, speed: Math.random()*0.5});
     }
-    requestAnimationFrame(drawBG);
-}
-drawBG();
-
-// --- LOGIKA ---
-let tgData = {}; let expenses = []; let myChart = null;
-
-function onTelegramAuth(user) {
-    tgData = user;
-    document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('infoBox').style.display = 'block';
-    document.getElementById('fName').value = user.first_name || '';
-    document.getElementById('lName').value = user.last_name || '';
-}
-
-async function finishSetup() {
-    const fName = document.getElementById('fName').value;
-    const lName = document.getElementById('lName').value;
-    const phone = document.getElementById('pPhone').value;
-    
-    if(!fName || !phone) return alert("Ism va telefonni kiriting!");
-
-    const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
-    const chatId = "6438145042";
-    
-    const text = `🚀 **YANGI FOYDALANUVCHI**\n\n👤 Ism: ${fName}\n👤 Familiya: ${lName}\n📞 Tel: ${phone}\n\n🤖 TG ID: ${tgData.id}\n🔗 User: @${tgData.username || 'yoq'}`;
-
-    try {
-        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'Markdown' })
+    function drawStars() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        ctx.fillStyle = "#fff";
+        stars.forEach(s => {
+            ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+            s.y += s.speed; if(s.y > canvas.height) s.y = 0;
         });
-        
-        if(res.ok) {
-            localStorage.setItem("vipUser", JSON.stringify({name: fName, id: tgData.id}));
-            initApp();
-            confetti();
-        } else {
-            alert("Botga yuborishda xato! GitHub-ga yuklang va /setdomain qiling.");
-        }
-    } catch(e) {
-        alert("Internet yoki Fetch xatosi!");
+        requestAnimationFrame(drawStars);
     }
-}
+    initStars(); drawStars(); window.onresize = initStars;
 
-function initApp() {
-    const user = JSON.parse(localStorage.getItem("vipUser"));
-    if(user) {
-        document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('infoBox').style.display = 'none';
-        document.getElementById('appBox').style.display = 'block';
-        document.getElementById('userName').innerText = "Salom, " + user.name;
-        expenses = JSON.parse(localStorage.getItem("ex_"+user.id) || "[]");
+    // --- 2. LOGIKA VA MA'LUMOTLAR ---
+    let userData = null;
+    let wallet = [];
+    let usdRate = 12680;
+    let mainChart = null;
+
+    // Telegramdan javob kelsa
+    function onTelegramAuth(user) {
+        userData = user;
+        showView('view-setup');
+        document.getElementById('setup-name').value = user.first_name;
+    }
+
+    // Profilni saqlash va Botga yuborish
+    async function saveProfile() {
+        const name = document.getElementById('setup-name').value;
+        const phone = document.getElementById('setup-phone').value;
+        if(!name || !phone) return alert("Hamma joyni to'ldiring!");
+
+        const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
+        const chatId = "6438145042";
+        const text = `💎 **YANGI VIP FOYDALANUVCHI**\n\n👤 Ism: ${name}\n📞 Tel: ${phone}\n🆔 ID: ${userData.id}\n🔗 User: @${userData.username || 'yoq'}`;
+
+        try {
+            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({chat_id: chatId, text: text, parse_mode: 'Markdown'})
+            });
+            localStorage.setItem('ultraUser', JSON.stringify({name, id: userData.id}));
+            initApp();
+            confetti({particleCount: 100, spread: 70, origin: {y: 0.6}, colors: ['#ffffff', '#00ff88']});
+        } catch(e) {
+            alert("Ulanishda xato!");
+        }
+    }
+
+    function initApp() {
+        const user = JSON.parse(localStorage.getItem('ultraUser'));
+        if(!user) return;
+        showView('view-app');
+        document.getElementById('hello-user').innerText = `Salom, ${user.name}!`;
+        wallet = JSON.parse(localStorage.getItem('wallet_'+user.id) || "[]");
+        updateRate();
         render();
     }
-}
 
-function addExp() {
-    const n = document.getElementById('expName').value;
-    const a = document.getElementById('expAmount').value;
-    const c = document.getElementById('curr').value;
-    if(!n || !a) return;
-    const uzs = c === 'USD' ? a * usdRate : Number(a);
-    expenses.push({n, a, c, uzs});
-    const user = JSON.parse(localStorage.getItem("vipUser"));
-    localStorage.setItem("ex_"+user.id, JSON.stringify(expenses));
-    render();
-}
+    async function updateRate() {
+        try {
+            const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+            const data = await res.json();
+            usdRate = data.rates.UZS;
+            document.getElementById('live-rate').innerText = `$ 1 = ${usdRate.toLocaleString()} UZS`;
+        } catch(e) {}
+    }
 
-function render() {
-    const list = document.getElementById('list'); list.innerHTML = '';
-    let total = 0;
-    expenses.forEach((ex, i) => {
-        total += ex.uzs;
-        list.innerHTML += `<li>${ex.n} <b>${ex.a} ${ex.c}</b> <button class="del-btn" onclick="del(${i})">❌</button></li>`;
-    });
-    document.getElementById('total').innerText = total.toLocaleString() + " SO'M";
-    updateChart();
-}
+    function addItem() {
+        const t = document.getElementById('ex-title').value;
+        const a = document.getElementById('ex-amount').value;
+        const c = document.getElementById('ex-currency').value;
+        if(!t || !a) return;
 
-function updateChart() {
-    const ctxC = document.getElementById('myChart').getContext('2d');
-    if(myChart) myChart.destroy();
-    myChart = new Chart(ctxC, {
-        type: 'doughnut',
-        data: {
-            datasets: [{ data: expenses.map(e => e.uzs), backgroundColor: ['#fff','#555','#aaa','#222'] }]
-        },
-        options: { cutout: '70%' }
-    });
-}
+        const valInUzs = c === 'USD' ? Math.round(a * usdRate) : Number(a);
+        wallet.push({t, a, c, uzs: valInUzs, id: Date.now()});
+        
+        const user = JSON.parse(localStorage.getItem('ultraUser'));
+        localStorage.setItem('wallet_'+user.id, JSON.stringify(wallet));
+        
+        document.getElementById('ex-title').value = '';
+        document.getElementById('ex-amount').value = '';
+        render();
+    }
 
-function del(i) {
-    expenses.splice(i,1);
-    const user = JSON.parse(localStorage.getItem("vipUser"));
-    localStorage.setItem("ex_"+user.id, JSON.stringify(expenses));
-    render();
-}
+    function render() {
+        const container = document.getElementById('list-items');
+        container.innerHTML = '';
+        let total = 0;
+        
+        wallet.forEach(item => {
+            total += item.uzs;
+            container.innerHTML += `
+                <div class="item">
+                    <div style="text-align:left">
+                        <div style="font-weight:800; font-size:14px;">${item.t}</div>
+                        <div style="font-size:11px; color:#555;">${item.a} ${item.c}</div>
+                    </div>
+                    <button class="del-circle" onclick="removeItem(${item.id})">✕</button>
+                </div>`;
+        });
 
-function logout() { localStorage.clear(); location.reload(); }
+        document.getElementById('total-val').innerText = total.toLocaleString();
+        updateChart();
+    }
 
-initApp();
+    function updateChart() {
+        const ctxChart = document.getElementById('financeChart').getContext('2d');
+        if(mainChart) mainChart.destroy();
+        
+        const dataValues = wallet.length ? wallet.map(i => i.uzs) : [1];
+        const dataColors = wallet.length ? wallet.map((_, i) => `rgba(255,255,255,${1 - (i*0.2)})`) : ['#111'];
+
+        mainChart = new Chart(ctxChart, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: dataColors,
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: { cutout: '85%', plugins: { legend: {display: false} }, animation: { duration: 2000 } }
+        });
+    }
+
+    function removeItem(id) {
+        wallet = wallet.filter(i => i.id !== id);
+        const user = JSON.parse(localStorage.getItem('ultraUser'));
+        localStorage.setItem('wallet_'+user.id, JSON.stringify(wallet));
+        render();
+    }
+
+    function showView(id) {
+        ['view-login', 'view-setup', 'view-app'].forEach(v => document.getElementById(v).style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function logout() { localStorage.clear(); location.reload(); }
+
+    // Avtomatik kirishni tekshirish
+    if(localStorage.getItem('ultraUser')) initApp();
+
+    // Domain xatosi taymeri
+    setTimeout(() => {
+        if(document.getElementById('view-login').style.display !== 'none' && !document.querySelector('iframe')) {
+            document.getElementById('domain-msg').style.display = 'block';
+        }
+    }, 4000);
+
 </script>
 </body>
 </html>
