@@ -3,374 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Pro V20 - Ultra Max</title>
-    
-    <!-- Tashqi kutubxonalar -->
+    <title>Finance Pro V21</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
-        /* 1. CSS VARIABLES & BASE */
-        :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --glass-bg: rgba(255, 255, 255, 0.12);
-            --glass-border: rgba(255, 255, 255, 0.25);
-            --text: #ffffff;
-        }
-
+        :root { --p: #6366f1; --s: #a855f7; --g: rgba(255, 255, 255, 0.12); --b: rgba(255, 255, 255, 0.2); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-
-        /* 2. DYNAMIC BACKGROUND ANIMATION */
-        body {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #581c87, #1e3a8a);
-            background-size: 400% 400%;
-            animation: meshGradient 15s ease infinite;
-            color: var(--text);
-            overflow: hidden;
+        body { 
+            height: 100vh; display: flex; align-items: center; justify-content: center; 
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a); color: white; overflow: hidden; 
         }
-
-        @keyframes meshGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .card { 
+            width: 90%; max-width: 400px; padding: 30px; background: var(--g); 
+            backdrop-filter: blur(25px); border-radius: 35px; border: 1px solid var(--b); 
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
         }
-
-        /* 3. GLASS CARD & ANIMATIONS */
-        .card {
-            width: 90%;
-            max-width: 420px;
-            padding: 35px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-radius: 40px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
-            position: relative;
-            z-index: 10;
-            animation: entry 1s cubic-bezier(0.19, 1, 0.22, 1);
+        h1 { font-weight: 900; margin-bottom: 20px; text-transform: uppercase; }
+        input, select { 
+            width: 100%; padding: 16px; margin: 8px 0; background: rgba(255,255,255,0.08); 
+            border: 1px solid var(--b); border-radius: 18px; color: white; outline: none; transition: 0.3s;
         }
-
-        @keyframes entry {
-            0% { opacity: 0; transform: scale(0.8) translateY(100px); filter: blur(10px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        input:focus { border-color: var(--p); background: rgba(255,255,255,0.15); }
+        button { 
+            width: 100%; padding: 18px; background: linear-gradient(90deg, var(--p), var(--s)); 
+            border: none; border-radius: 18px; color: white; font-weight: 900; cursor: pointer; margin-top: 10px;
         }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
-        }
-
-        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-
-        /* 4. TYPOGRAPHY */
-        h1 { font-weight: 900; font-size: 28px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: -1px; }
-
-        /* 5. INPUTS & CONTROLS */
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { font-size: 12px; opacity: 0.7; margin-left: 10px; font-weight: 600; }
-
-        input, select {
-            width: 100%;
-            padding: 18px;
-            margin-top: 5px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-            transition: all 0.4s ease;
-        }
-
-        input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
-            transform: translateY(-2px);
-        }
-
-        input.error { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
-
-        button {
-            width: 100%;
-            padding: 20px;
-            background: linear-gradient(90deg, #6366f1, #a855f7);
-            border: none;
-            border-radius: 20px;
-            color: white;
-            font-weight: 900;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.4s;
-            margin-top: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        button:hover { transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 15px 30px rgba(168, 85, 247, 0.3); }
-        button:active { transform: scale(0.97); }
-
-        /* 6. LIST & CHART SECTION */
-        .chart-box { width: 180px; height: 180px; margin: 0 auto 20px; position: relative; }
-        #total-val { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 20px; }
-
-        #list-container { max-height: 150px; overflow-y: auto; margin-top: 20px; padding-right: 5px; }
-        #list-container::-webkit-scrollbar { width: 4px; }
-        #list-container::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
-
-        .list-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 14px 20px;
-            border-radius: 18px;
-            margin-bottom: 10px;
-            animation: listIn 0.5s ease backwards;
-        }
-
-        @keyframes listIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-
-        .del-icon { color: var(--danger); cursor: pointer; font-size: 20px; margin-left: 10px; opacity: 0.5; transition: 0.3s; }
-        .del-icon:hover { opacity: 1; transform: scale(1.2); }
-
-        /* 7. LANGUAGE BOX */
-        .langs { display: flex; justify-content: center; gap: 12px; margin-bottom: 25px; }
-        .lang-item { cursor: pointer; opacity: 0.4; font-weight: 900; font-size: 14px; transition: 0.3s; padding: 5px 10px; border-bottom: 2px solid transparent; }
-        .lang-item.active { opacity: 1; border-color: var(--primary); transform: scale(1.1); }
-
+        button:active { transform: scale(0.96); }
+        .lang-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .lang-btn { cursor: pointer; opacity: 0.4; font-weight: 900; transition: 0.3s; }
+        .lang-btn.active { opacity: 1; color: var(--p); transform: scale(1.1); }
+        #history { max-height: 130px; overflow-y: auto; margin-top: 15px; }
+        .item { display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 6px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div class="card" id="mainCard">
-    <div class="langs">
-        <span class="lang-item active" onclick="setLang('uz')">UZ</span>
-        <span class="lang-item" onclick="setLang('ru')">RU</span>
-        <span class="lang-item" onclick="setLang('en')">EN</span>
+<div class="card">
+    <div class="lang-bar">
+        <span class="lang-btn active" onclick="setLang('uz')">UZ</span>
+        <span class="lang-btn" onclick="setLang('ru')">RU</span>
+        <span class="lang-btn" onclick="setLang('en')">EN</span>
     </div>
 
-    <!-- STEP 1: LOGIN -->
-    <div id="view-login">
-        <h1 data-key="title_login">KIRISH</h1>
-        <div id="telegram-login-box" style="display: flex; justify-content: center;"></div>
+    <!-- KIRISH -->
+    <div id="step-1">
+        <h1 data-tr="t_login">KIRISH</h1>
+        <div id="tg-login-btn"></div>
     </div>
 
-    <!-- STEP 2: PROFILE -->
-    <div id="view-profile" style="display:none;">
-        <h1 data-key="title_profile">PROFIL</h1>
-        <div class="input-group">
-            <input type="text" id="inp-fname" placeholder="Ismingiz" onkeydown="keyMove(event, 'inp-lname')">
-        </div>
-        <div class="input-group">
-            <input type="text" id="inp-lname" placeholder="Familiyangiz" onkeydown="keyMove(event, 'inp-phone')">
-        </div>
-        <div class="input-group">
-            <input type="tel" id="inp-phone" value="+998" onkeydown="keyMove(event, 'btn-save-profile')">
-        </div>
-        <button id="btn-save-profile" onclick="saveProfile()" data-key="btn_save">SAQLASH ✅</button>
+    <!-- PROFIL -->
+    <div id="step-2" style="display:none;">
+        <h1 data-tr="t_prof">PROFIL</h1>
+        <input type="text" id="fn" data-ph="ph_fn" onkeydown="nav(event, 'ln')">
+        <input type="text" id="ln" data-ph="ph_ln" onkeydown="nav(event, 'ph')">
+        <!-- Telefon inputiga maska berilgan -->
+        <input type="tel" id="ph" value="+998 " maxlength="19" onkeydown="nav(event, 'sv')" oninput="mask(this)">
+        <button id="sv" onclick="saveProf()" data-tr="b_save">SAQLASH ✅</button>
     </div>
 
-    <!-- STEP 3: DASHBOARD -->
-    <div id="view-main" style="display:none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <p id="greet" style="font-weight: 600; font-size: 14px; color: var(--secondary);"></p>
-            <p onclick="logout()" style="font-size: 11px; opacity: 0.5; cursor: pointer; text-decoration: underline;">LOGOUT</p>
+    <!-- DASHBOARD -->
+    <div id="step-3" style="display:none;">
+        <div style="display:flex; justify-content: space-between; font-size: 12px; margin-bottom: 10px;">
+            <b id="user-info"></b>
+            <span onclick="reset()" style="cursor:pointer; opacity:0.6" data-tr="b_out">CHIQISH</span>
         </div>
-
-        <div class="chart-box">
-            <canvas id="mainChart"></canvas>
-            <div id="total-val">0</div>
+        <div style="height: 120px; position:relative; margin-bottom:15px;">
+            <canvas id="chart"></canvas>
         </div>
-
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
-            <input type="text" id="ex-name" placeholder="Nima?" onkeydown="keyMove(event, 'ex-amt')">
-            <select id="ex-cur">
-                <option value="UZS">UZS</option>
-                <option value="USD">USD</option>
-            </select>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <input type="text" id="ex-n" data-ph="ph_ex" onkeydown="nav(event, 'ex-v')">
+            <input type="number" id="ex-v" data-ph="ph_sum" onkeydown="nav(event, 'add')">
         </div>
-        <input type="number" id="ex-amt" placeholder="Summa" onkeydown="keyMove(event, 'btn-add-ex')">
-        <button id="btn-add-ex" onclick="addExpense()" data-key="btn_add">QO'SHISH +</button>
-
-        <div id="list-container"></div>
+        <button id="add" onclick="addEx()" data-tr="b_add">QO'SHISH +</button>
+        <div id="history"></div>
     </div>
 </div>
 
 <script>
-    // 8. CONFIGURATION & DATA
-    const BOT_TOKEN = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
-    const ADMIN_ID = "6438145042";
-    const USD_RATE = 12850;
-    
-    let state = {
-        lang: 'uz',
-        user: null,
-        expenses: [],
-        chart: null
+    const BT = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
+    const AD = "6438145042";
+    let L = 'uz', U = null, E = [], CH = null;
+
+    const TR = {
+        uz: { t_login: "KIRISH", t_prof: "PROFIL", b_save: "SAQLASH", b_out: "CHIQISH", b_add: "QO'SHISH", ph_fn: "Ismingiz", ph_ln: "Familiyangiz", ph_ex: "Nima xarid?", ph_sum: "Summa" },
+        ru: { t_login: "ВХОД", t_prof: "ПРОФИЛЬ", b_save: "СОХРАНИТЬ", b_out: "ВЫХОД", b_add: "ДОБАВИТЬ", ph_fn: "Имя", ph_ln: "Фамилия", ph_ex: "Что купили?", ph_sum: "Сумма" },
+        en: { t_login: "LOGIN", t_prof: "PROFILE", b_save: "SAVE", b_out: "LOGOUT", b_add: "ADD", ph_fn: "Firstname", ph_ln: "Lastname", ph_ex: "Expense", ph_sum: "Amount" }
     };
 
-    const dict = {
-        uz: { title_login: "KIRISH", title_profile: "PROFIL", btn_save: "SAQLASH", btn_add: "QO'SHISH", ph_name: "Ism", ph_last: "Familiya" },
-        ru: { title_login: "ВХОД", title_profile: "ПРОФИЛЬ", btn_save: "СОХРАНИТЬ", btn_add: "ДОБАВИТЬ", ph_name: "Имя", ph_last: "Фамилия" },
-        en: { title_login: "LOGIN", title_profile: "PROFILE", btn_save: "SAVE", btn_add: "ADD", ph_name: "Name", ph_last: "Lastname" }
-    };
-
-    // 9. CORE LOGIC
-    function setLang(l) {
-        state.lang = l;
-        document.querySelectorAll('.lang-item').forEach(el => el.classList.toggle('active', el.innerText.toLowerCase() === l));
-        document.querySelectorAll('[data-key]').forEach(el => el.innerText = dict[l][el.getAttribute('data-key')]);
+    function setLang(lang) {
+        L = lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase() === lang));
+        document.querySelectorAll('[data-tr]').forEach(el => el.innerText = TR[lang][el.getAttribute('data-tr')]);
+        document.querySelectorAll('[data-ph]').forEach(el => el.placeholder = TR[lang][el.getAttribute('data-ph')]);
     }
 
-    function keyMove(e, nextId) {
+    // Telefon maskasi: +998 (90) 123-45-67
+    function mask(i) {
+        let v = i.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
+        i.value = !v[2] ? "+998 " : "+998 (" + v[2] + (v[3] ? ") " + v[3] : "") + (v[4] ? "-" + v[4] : "") + (v[5] ? "-" + v[5] : "");
+    }
+
+    function nav(e, next) {
         if(e.key === 'Enter') {
             e.preventDefault();
-            const nextEl = document.getElementById(nextId);
-            if(nextEl.tagName === 'BUTTON') nextEl.click();
-            else nextEl.focus();
+            const el = document.getElementById(next);
+            if(el.tagName === 'BUTTON') el.click(); else {
+                el.focus();
+                // Kursorni oxiriga qo'yish
+                if(el.type === 'tel' || el.type === 'text') {
+                    setTimeout(() => { el.selectionStart = el.selectionEnd = el.value.length; }, 0);
+                }
+            }
         }
     }
 
     function onTelegramAuth(user) {
-        state.user = user;
-        showView('view-profile');
+        U = user;
+        document.getElementById('step-1').style.display = 'none';
+        document.getElementById('step-2').style.display = 'block';
     }
 
-    async function saveProfile() {
-        const fn = document.getElementById('inp-fname'), ln = document.getElementById('inp-lname'), ph = document.getElementById('inp-phone');
+    async function saveProf() {
+        const f = document.getElementById('fn').value, l = document.getElementById('ln').value, p = document.getElementById('ph').value;
+        if(!f || !l || p.length < 18) return alert("To'liq to'ldiring!");
+
+        const msg = `👤 **YANGI USER**\n\nIsm: ${f}\nFam: ${l}\nTel: ${p}\nID: ${U?.id}\nUser: @${U?.username || 'yoq'}`;
         
-        if(!fn.value || !ln.value || ph.value.length < 10) {
-            document.getElementById('mainCard').classList.add('shake');
-            setTimeout(() => document.getElementById('mainCard').classList.remove('shake'), 500);
-            return;
-        }
-
-        const report = `🔔 **YANGI FOYDALANUVCHI**\n` +
-                       `━━━━━━━━━━━━━━━━━━\n` +
-                       `👤 **FIO:** ${fn.value} ${ln.value}\n` +
-                       `📞 **Tel:** ${ph.value}\n` +
-                       `🆔 **TG ID:** \`${state.user?.id || 'N/A'}\`\n` +
-                       `🔗 **User:** @${state.user?.username || 'yoq'}\n` +
-                       `━━━━━━━━━━━━━━━━━━`;
-
         try {
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            await fetch(`https://api.telegram.org/bot${BT}/sendMessage`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ chat_id: ADMIN_ID, text: report, parse_mode: 'Markdown' })
+                body: JSON.stringify({ chat_id: AD, text: msg, parse_mode: 'Markdown' })
             });
-            
-            const userData = { ...state.user, localFname: fn.value, localLname: ln.value, phone: ph.value };
-            localStorage.setItem('fpro_user', JSON.stringify(userData));
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            setTimeout(() => location.reload(), 1500);
-        } catch(e) { alert("Xato!"); }
+            localStorage.setItem('u_v21', JSON.stringify({f, l, p, id: U?.id}));
+            location.reload();
+        } catch(e) { alert("Xabar ketmadi!"); }
     }
 
-    function addExpense() {
-        const name = document.getElementById('ex-name'), amt = document.getElementById('ex-amt'), cur = document.getElementById('ex-cur').value;
-        if(!name.value || !amt.value) return;
-
-        const val = Number(amt.value);
-        const uzs = cur === 'USD' ? val * USD_RATE : val;
-
-        state.expenses.push({ id: Date.now(), name: name.value, amt: val, cur: cur, uzs: uzs });
-        saveData();
+    function addEx() {
+        const n = document.getElementById('ex-n'), v = document.getElementById('ex-v');
+        if(!n.value || !v.value) return;
+        E.push({n: n.value, v: v.value, d: new Date().toLocaleTimeString()});
+        localStorage.setItem('e_v21_'+JSON.parse(localStorage.getItem('u_v21')).id, JSON.stringify(E));
         render();
-        name.value = ''; amt.value = ''; name.focus();
-    }
-
-    function deleteEx(id) {
-        state.expenses = state.expenses.filter(e => e.id !== id);
-        saveData();
-        render();
-    }
-
-    function saveData() {
-        localStorage.setItem('fpro_data_' + state.user.id, JSON.stringify(state.expenses));
+        n.value = ''; v.value = ''; n.focus();
+        confetti({particleCount: 50, spread: 60});
     }
 
     function render() {
-        const container = document.getElementById('list-container');
-        container.innerHTML = '';
-        let total = 0;
-
-        state.expenses.slice().reverse().forEach(ex => {
-            total += ex.uzs;
-            container.innerHTML += `
-                <div class="list-item">
-                    <span>${ex.name}</span>
-                    <div style="display:flex; align-items:center;">
-                        <b style="color:var(--secondary)">${ex.amt.toLocaleString()} ${ex.cur}</b>
-                        <span class="del-icon" onclick="deleteEx(${ex.id})">×</span>
-                    </div>
-                </div>`;
+        const h = document.getElementById('history'); h.innerHTML = '';
+        E.slice().reverse().forEach(x => {
+            h.innerHTML += `<div class="item"><span>${x.n}</span><b>${Number(x.v).toLocaleString()}</b></div>`;
         });
-
-        document.getElementById('total-val').innerText = Math.round(total).toLocaleString();
         updateChart();
     }
 
     function updateChart() {
-        const ctx = document.getElementById('mainChart').getContext('2d');
-        if(state.chart) state.chart.destroy();
-
-        const dataPoints = state.expenses.length ? state.expenses.map(e => e.uzs) : [1];
-        const colors = ['#6366f1', '#a855f7', '#ec4899', '#f59e0b', '#10b981'];
-
-        state.chart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: dataPoints,
-                    backgroundColor: colors,
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
+        const ctx = document.getElementById('chart').getContext('2d');
+        if(CH) CH.destroy();
+        CH = new Chart(ctx, {
+            type: 'line',
+            data: { 
+                labels: E.map(x => x.d), 
+                datasets: [{ label: 'Xarajat', data: E.map(x => x.v), borderColor: '#a855f7', tension: 0.4, fill: true, backgroundColor: 'rgba(168, 85, 247, 0.1)' }]
             },
-            options: {
-                cutout: '85%',
-                plugins: { legend: { display: false } },
-                animation: { animateRotate: true, duration: 1000 }
-            }
+            options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { display: false } } }
         });
     }
 
-    function showView(id) {
-        ['view-login', 'view-profile', 'view-main'].forEach(v => document.getElementById(v).style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-    }
-
     function init() {
-        const savedUser = localStorage.getItem('fpro_user');
-        if(savedUser) {
-            state.user = JSON.parse(savedUser);
-            state.expenses = JSON.parse(localStorage.getItem('fpro_data_' + state.user.id) || "[]");
-            showView('view-main');
-            document.getElementById('greet').innerText = `SALOM, ${state.user.localFname}!`;
+        setLang('uz');
+        const saved = localStorage.getItem('u_v21');
+        if(saved) {
+            const user = JSON.parse(saved);
+            document.getElementById('step-1').style.display = 'none';
+            document.getElementById('step-3').style.display = 'block';
+            document.getElementById('user-info').innerText = `${user.f} ${user.l}`.toUpperCase();
+            E = JSON.parse(localStorage.getItem('e_v21_'+user.id) || "[]");
             render();
         } else {
-            const script = document.createElement('script');
-            script.src = "https://telegram.org/js/telegram-widget.js?22";
-            script.setAttribute('data-telegram-login', 'ibo_aka_bot');
-            script.setAttribute('data-size', 'large');
-            script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-            document.getElementById('telegram-login-box').appendChild(script);
+            const s = document.createElement('script');
+            s.src = "https://telegram.org/js/telegram-widget.js?22";
+            s.setAttribute('data-telegram-login', 'ibo_aka_bot');
+            s.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            document.getElementById('tg-login-btn').appendChild(s);
         }
-        setLang('uz');
     }
 
-    function logout() { localStorage.clear(); location.reload(); }
-
-    window.onload = init;
+    function reset() { localStorage.clear(); location.reload(); }
+    init();
 </script>
 </body>
 </html>
