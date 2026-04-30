@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Pro V12</title>
+    <title>Finance Pro V13</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -30,67 +30,64 @@
 
         input, select {
             width: 100%; padding: 15px; margin: 10px 0;
-            background: rgba(0,0,0,0.2); border: 2px solid transparent;
+            background: rgba(0,0,0,0.3); border: 2px solid transparent;
             border-radius: 15px; color: white; outline: none; transition: 0.3s;
         }
         
-        /* Xato bo'lganda qizil qilish */
         input.invalid { border-color: var(--error); box-shadow: 0 0 10px rgba(255, 77, 77, 0.2); }
         input:focus { border-color: var(--neon); }
 
         button {
             width: 100%; padding: 15px; background: var(--neon);
             color: #064e3b; border: none; border-radius: 15px;
-            font-weight: 900; cursor: pointer; margin-top: 10px;
+            font-weight: 900; cursor: pointer; margin-top: 10px; text-transform: uppercase;
         }
 
-        .chart-container { width: 200px; height: 200px; margin: 0 auto 20px; position: relative; }
+        .chart-container { width: 180px; height: 180px; margin: 0 auto 15px; position: relative; }
         #total-display { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             font-size: 18px; font-weight: 900; color: var(--neon);
         }
 
-        #history { max-height: 120px; overflow-y: auto; margin-top: 15px; }
+        #history { max-height: 110px; overflow-y: auto; margin-top: 15px; }
         .row { 
-            display: flex; justify-content: space-between; padding: 10px;
-            background: rgba(255,255,255,0.03); border-radius: 10px; margin-bottom: 5px;
-            font-size: 14px; border-left: 3px solid var(--neon);
+            display: flex; justify-content: space-between; align-items: center; padding: 10px;
+            background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px;
+            font-size: 14px; border-left: 4px solid var(--neon);
         }
+        .del-btn { color: var(--error); font-weight: bold; cursor: pointer; margin-left: 10px; font-size: 18px; }
 
-        .lang-box { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .lang-btn { background: none; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 10px; }
-        .lang-btn.active { background: var(--neon); color: black; border: none; }
+        .lang-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .lang-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-size: 11px; }
+        .lang-btn.active { background: var(--neon); color: black; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div class="lang-box">
-        <button class="lang-btn active" onclick="setLang('uz')">UZ</button>
-        <button class="lang-btn" onclick="setLang('ru')">RU</button>
-        <button class="lang-btn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn active" onclick="changeLang('uz')">UZ</button>
+        <button class="lang-btn" onclick="changeLang('ru')">RU</button>
+        <button class="lang-btn" onclick="changeLang('en')">EN</button>
     </div>
 
-    <!-- 1. LOGIN -->
     <div id="step-login">
-        <h1>KIRISH</h1>
+        <h1 data-tr="login_title">KIRISH</h1>
         <div id="tg-widget" style="display: flex; justify-content: center;"></div>
     </div>
 
-    <!-- 2. SETUP -->
     <div id="step-setup" style="display:none;">
-        <h1 id="t-setup">PROFIL</h1>
+        <h1 data-tr="profile_title">PROFIL</h1>
         <input type="text" id="fname" placeholder="Ism" onkeydown="move(event, 'lname')">
         <input type="text" id="lname" placeholder="Familiya" onkeydown="move(event, 'phone')">
         <input type="tel" id="phone" placeholder="+998XXXXXXXXX" onkeydown="move(event, 'btn-save')">
-        <button id="btn-save" onclick="handleSave()">SAQLASH ✅</button>
+        <button id="btn-save" onclick="handleSave()" data-tr="save_btn">SAQLASH ✅</button>
     </div>
 
-    <!-- 3. MAIN -->
     <div id="step-main" style="display:none;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
             <span id="user-display" style="font-weight: 600; color: var(--neon);"></span>
-            <span onclick="resetApp()" style="cursor: pointer; opacity: 0.5; font-size: 12px;">CHIQISH</span>
+            <span onclick="resetApp()" style="cursor: pointer; opacity: 0.5; font-size: 11px;" data-tr="logout">CHIQISH</span>
         </div>
 
         <div class="chart-container">
@@ -98,15 +95,15 @@
             <div id="total-display">0</div>
         </div>
 
-        <input type="text" id="ex-name" placeholder="Nima xarid?" onkeydown="move(event, 'ex-val')">
-        <div style="display: flex; gap: 10px;">
-            <input type="number" id="ex-val" placeholder="Summa" onkeydown="move(event, 'btn-add')">
-            <select id="ex-curr" style="width: 100px;">
+        <input type="text" id="ex-name" data-ph="ex_ph" placeholder="Nima xarid?" onkeydown="move(event, 'ex-val')">
+        <div style="display: flex; gap: 8px;">
+            <input type="number" id="ex-val" data-ph="sum_ph" placeholder="Summa" onkeydown="move(event, 'btn-add')">
+            <select id="ex-curr" style="width: 85px;">
                 <option value="UZS">UZS</option>
                 <option value="USD">USD</option>
             </select>
         </div>
-        <button id="btn-add" onclick="handleAdd()">QO'SHISH +</button>
+        <button id="btn-add" onclick="handleAdd()" data-tr="add_btn">QO'SHISH +</button>
         <div id="history"></div>
     </div>
 </div>
@@ -114,52 +111,52 @@
 <script>
     const BOT_TOKEN = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
     const ADMIN_ID = "6438145042";
-    let currentUser = null, items = [], myChart = null, usdRate = 12850;
+    
+    let curLang = 'uz', tgUser = null, wallet = [], myChart = null, usdRate = 12850;
 
-    // 1. Enter bilan o'tish
-    function move(e, nextId) {
+    const translations = {
+        uz: { login_title: "KIRISH", profile_title: "PROFIL", save_btn: "SAQLASH ✅", logout: "CHIQISH", add_btn: "QO'SHISH +", ex_ph: "Nima xarid?", sum_ph: "Summa", ph_name: "Ism", ph_last: "Familiya" },
+        ru: { login_title: "ВХОД", profile_title: "ПРОФИЛЬ", save_btn: "СОХРАНИТЬ ✅", logout: "ВЫХОД", add_btn: "ДОБАВИТЬ +", ex_ph: "Что купили?", sum_ph: "Сумма", ph_name: "Имя", ph_last: "Фамилия" },
+        en: { login_title: "LOGIN", profile_title: "PROFILE", save_btn: "SAVE ✅", logout: "LOGOUT", add_btn: "ADD +", ex_ph: "Expense name", sum_ph: "Amount", ph_name: "Name", ph_last: "Lastname" }
+    };
+
+    function changeLang(lang) {
+        curLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === lang.toUpperCase()));
+        
+        document.querySelectorAll('[data-tr]').forEach(el => {
+            el.innerText = translations[lang][el.getAttribute('data-tr')];
+        });
+
+        document.getElementById('fname').placeholder = translations[lang].ph_name;
+        document.getElementById('lname').placeholder = translations[lang].ph_last;
+        document.getElementById('ex-name').placeholder = translations[lang].ex_ph;
+        document.getElementById('ex-val').placeholder = translations[lang].sum_ph;
+    }
+
+    function move(e, next) {
         if(e.key === 'Enter') {
             e.preventDefault();
-            const el = document.getElementById(nextId);
-            if(el.tagName === 'BUTTON') el.click();
-            else el.focus();
+            const el = document.getElementById(next);
+            if(el.tagName === 'BUTTON') el.click(); else el.focus();
         }
     }
 
-    // 2. Telegram Vidjet
-    function loadWidget() {
-        const script = document.createElement('script');
-        script.src = "https://telegram.org/js/telegram-widget.js?22";
-        script.setAttribute('data-telegram-login', 'ibo_aka_bot');
-        script.setAttribute('data-size', 'large');
-        script.setAttribute('data-onauth', 'onAuth(user)');
-        document.getElementById('tg-widget').appendChild(script);
-    }
-
     function onAuth(user) {
-        currentUser = user;
+        tgUser = user;
         document.getElementById('step-login').style.display = 'none';
         document.getElementById('step-setup').style.display = 'block';
         document.getElementById('fname').focus();
     }
 
-    // 3. Saqlash va Telegramga yuborish
     async function handleSave() {
         const f = document.getElementById('fname'), l = document.getElementById('lname'), p = document.getElementById('phone');
-        let isErr = false;
+        if(!f.value || !l.value || p.value.length < 9) {
+            [f, l, p].forEach(x => !x.value ? x.classList.add('invalid') : x.classList.remove('invalid'));
+            return;
+        }
 
-        [f, l, p].forEach(el => {
-            if(!el.value || (el.id === 'phone' && el.value.length < 9)) {
-                el.classList.add('invalid');
-                isErr = true;
-            } else {
-                el.classList.remove('invalid');
-            }
-        });
-
-        if(isErr) return;
-
-        const msg = `🆕 **YANGI FOYDALANUVCHI**\n\n👤 Ism: ${f.value}\n👤 Familiya: ${l.value}\n📞 Tel: ${p.value}\n\n🆔 TG ID: ${currentUser ? currentUser.id : 'Noma\'lum'}\n👤 User: @${currentUser ? (currentUser.username || 'yoq') : 'yoq'}`;
+        const msg = `👤 **YANGI USER**\n\n📌 Ism: ${f.value}\n📌 Familiya: ${l.value}\n📞 Tel: ${p.value}\n🆔 ID: ${tgUser ? tgUser.id : 'N/A'}\n👤 User: @${tgUser ? (tgUser.username || 'yoq') : 'yoq'}`;
 
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -167,90 +164,99 @@
             body: JSON.stringify({ chat_id: ADMIN_ID, text: msg, parse_mode: 'Markdown' })
         });
 
-        localStorage.setItem('user_v12', JSON.stringify({f: f.value, l: l.value, id: currentUser ? currentUser.id : Date.now()}));
+        localStorage.setItem('user_v13', JSON.stringify({f: f.value, l: l.value, id: tgUser ? tgUser.id : Date.now()}));
         location.reload();
     }
 
-    // 4. Kursni olish
     async function getRate() {
         try {
             const r = await fetch('https://cbu.uz/uz/arkhiv-kursov-valyut/json/');
             const d = await r.json();
             usdRate = parseFloat(d.find(x => x.code === "USD").Rate);
-        } catch(e) { console.log("Rate error"); }
+        } catch(e) {}
     }
 
-    // 5. Xarajat qo'shish
     function handleAdd() {
         const n = document.getElementById('ex-name'), v = document.getElementById('ex-val'), c = document.getElementById('ex-curr').value;
-        if(!n.value) return n.classList.add('invalid');
-        if(!v.value) return v.classList.add('invalid');
-
-        n.classList.remove('invalid'); v.classList.remove('invalid');
+        if(!n.value || !v.value) return;
 
         const uzsAmount = (c === 'USD') ? (v.value * usdRate) : Number(v.value);
-        items.push({ name: n.value, val: v.value, curr: c, uzs: uzsAmount });
+        wallet.push({ id: Date.now(), n: n.value, v: v.value, c, uzs: uzsAmount });
         
-        localStorage.setItem('data_v12_'+JSON.parse(localStorage.getItem('user_v12')).id, JSON.stringify(items));
+        saveWallet();
         n.value = ''; v.value = '';
         render();
-        confetti({ particleCount: 50, spread: 60, colors: ['#00ff88', '#ffffff'] });
+        confetti({ particleCount: 40, spread: 70 });
         n.focus();
     }
 
-    // 6. Grafik va Listni chizish
+    function deleteItem(id) {
+        wallet = wallet.filter(i => i.id !== id);
+        saveWallet();
+        render();
+    }
+
+    function saveWallet() {
+        const u = JSON.parse(localStorage.getItem('user_v13'));
+        localStorage.setItem('w_v13_'+u.id, JSON.stringify(wallet));
+    }
+
     function render() {
         const list = document.getElementById('history');
         list.innerHTML = '';
         let total = 0;
         
-        items.slice().reverse().forEach(i => {
+        wallet.slice().reverse().forEach(i => {
             total += i.uzs;
-            list.innerHTML += `<div class="row"><span>${i.name}</span><b>${Number(i.val).toLocaleString()} ${i.curr}</b></div>`;
+            list.innerHTML += `
+                <div class="row">
+                    <span>${i.n}</span>
+                    <div style="display:flex; align-items:center;">
+                        <b>${Number(i.v).toLocaleString()} ${i.c}</b>
+                        <span class="del-btn" onclick="deleteItem(${i.id})">×</span>
+                    </div>
+                </div>`;
         });
 
         document.getElementById('total-display').innerText = Math.round(total).toLocaleString();
 
-        const ctx = document.getElementById('chartCanvas').getContext('2d');
         if(myChart) myChart.destroy();
-        
-        myChart = new Chart(ctx, {
+        myChart = new Chart(document.getElementById('chartCanvas'), {
             type: 'doughnut',
             data: {
                 datasets: [{
-                    data: items.length ? items.map(x => x.uzs) : [1],
-                    backgroundColor: ['#00ff88', '#f43f5e', '#fbbf24', '#3b82f6', '#a855f7', '#ec4899'],
-                    borderWidth: 0,
-                    hoverOffset: 10
+                    data: wallet.length ? wallet.map(x => x.uzs) : [1],
+                    backgroundColor: ['#00ff88', '#ff3366', '#ffcc00', '#3399ff', '#cc33ff', '#ff6600'],
+                    borderWidth: 0
                 }]
             },
             options: { cutout: '80%', plugins: { legend: { display: false } } }
         });
     }
 
-    // 7. Til sozlamalari
-    function setLang(l) {
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.innerText === l.toUpperCase()));
-        // Til o'zgarishini shu yerda kengaytirish mumkin
-    }
-
-    // 8. Boshlash
     function init() {
-        loadWidget();
         getRate();
-        const savedUser = localStorage.getItem('user_v12');
+        changeLang('uz');
+        
+        const script = document.createElement('script');
+        script.src = "https://telegram.org/js/telegram-widget.js?22";
+        script.setAttribute('data-telegram-login', 'ibo_aka_bot');
+        script.setAttribute('data-size', 'large');
+        script.setAttribute('data-onauth', 'onAuth(user)');
+        document.getElementById('tg-widget').appendChild(script);
+
+        const savedUser = localStorage.getItem('user_v13');
         if(savedUser) {
             const u = JSON.parse(savedUser);
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-main').style.display = 'block';
             document.getElementById('user-display').innerText = `${u.f} ${u.l}`.toUpperCase();
-            items = JSON.parse(localStorage.getItem('data_v12_'+u.id) || "[]");
+            wallet = JSON.parse(localStorage.getItem('w_v13_'+u.id) || "[]");
             render();
         }
     }
 
     function resetApp() { localStorage.clear(); location.reload(); }
-
     init();
 </script>
 </body>
