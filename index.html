@@ -3,313 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ULTRA FINANCE | 2026 EDITION</title>
+    <title>FINANCE PRO | STABLE EDITION</title>
     
-    <!-- Tashqi Kutubxonalar -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --accent: #ffffff; --bg: #050505; --card: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); }
-        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Inter', sans-serif; }
+        body { background: #000; color: #fff; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         
-        body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        
-        /* Interactive Background */
-        #star-canvas { position: fixed; top:0; left:0; z-index: -1; pointer-events: none; }
+        #bgCanvas { position: fixed; top:0; left:0; z-index: -1; }
 
-        .main-container {
-            width: 92%; max-width: 450px; padding: 40px;
-            background: rgba(10, 10, 10, 0.7);
-            backdrop-filter: blur(40px);
-            border-radius: 45px;
-            border: 1px solid var(--border);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+        .card {
+            width: 90%; max-width: 400px; padding: 35px;
+            background: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
             text-align: center;
-            animation: containerFloat 1s ease-out;
         }
 
-        @keyframes containerFloat { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        h1 { font-weight: 800; font-size: 28px; letter-spacing: -1px; margin-bottom: 8px; }
-        p { color: #666; font-size: 13px; margin-bottom: 25px; }
-
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #555; margin-left: 15px; }
-
-        input, select {
-            width: 100%; padding: 18px 22px; margin-top: 5px;
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 22px; color: #fff; font-size: 15px; outline: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        input, select, button {
+            width: 100%; padding: 16px; margin: 8px 0;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px; color: #fff; font-size: 16px; outline: none;
         }
-        input:focus { border-color: var(--accent); background: rgba(255,255,255,0.06); transform: scale(1.02); }
+        input:focus { border-color: #fff; background: rgba(255,255,255,0.1); }
 
-        .btn-prime {
-            width: 100%; padding: 20px; border-radius: 22px; border: none;
-            background: #fff; color: #000; font-weight: 800; font-size: 15px;
-            cursor: pointer; transition: 0.4s; margin-top: 15px;
-            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
-        }
-        .btn-prime:hover { background: #eee; transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255,255,255,0.2); }
-        .btn-prime:active { transform: scale(0.98); }
+        button { background: #fff; color: #000; font-weight: 900; cursor: pointer; border: none; text-transform: uppercase; }
+        button:hover { opacity: 0.9; }
 
-        /* App Layout */
-        .dashboard { display: none; }
-        .stats-circle { width: 220px; height: 220px; margin: 0 auto 20px; position: relative; }
-        .total-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .total-label span { display: block; font-size: 10px; color: #666; text-transform: uppercase; }
-        .total-label strong { font-size: 20px; font-weight: 800; }
-
-        #list-items { max-height: 180px; overflow-y: auto; margin-top: 25px; padding-right: 5px; }
-        .item {
-            background: var(--card); padding: 16px 20px; border-radius: 20px;
-            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid var(--border); animation: itemIn 0.5s ease backwards;
-        }
-        @keyframes itemIn { from { opacity:0; transform: translateX(-20px); } to { opacity:1; transform: translateX(0); } }
-
-        .del-circle { width: 32px; height: 32px; background: rgba(255, 71, 87, 0.1); color: #ff4757; 
-                      border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-                      cursor: pointer; font-size: 12px; transition: 0.3s; border: none; }
-        .del-circle:hover { background: #ff4757; color: #fff; }
-
-        /* Custom Scrollbar */
-        #list-items::-webkit-scrollbar { width: 4px; }
-        #list-items::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .chart-box { width: 180px; height: 180px; margin: 15px auto; position: relative; }
+        #list { max-height: 150px; overflow-y: auto; margin-top: 15px; list-style: none; }
+        .li-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: #333; }
     </style>
 </head>
 <body>
 
-<canvas id="star-canvas"></canvas>
+<canvas id="bgCanvas"></canvas>
 
-<!-- 1-BOSQICH: LOGIN -->
-<div class="main-container" id="view-login">
-    <h1>CYBER FINANCE</h1>
-    <p>Xavfsiz va aqlli moliya boshqaruvi</p>
-    
-    <div style="background: var(--card); padding: 25px; border-radius: 30px; border: 1px dashed #333; margin-bottom: 25px;">
+<!-- 1. LOGIN -->
+<div class="card" id="view-login">
+    <h2 style="margin-bottom: 20px;">KIRISH</h2>
+    <div style="display: flex; justify-content: center;">
         <script async src="https://telegram.org/js/telegram-widget.js?22" 
             data-telegram-login="ibrohim_bazaa_bot" 
             data-size="large" 
             data-onauth="onTelegramAuth(user)"></script>
     </div>
+</div>
+
+<!-- 2. SETUP -->
+<div class="card" id="view-setup" style="display:none;">
+    <h2 style="margin-bottom: 15px;">MA'LUMOTLAR</h2>
+    <input type="text" id="in-fn" placeholder="Ism" onkeydown="handleEnter(event, 'in-ln')">
+    <input type="text" id="in-ln" placeholder="Familiya" onkeydown="handleEnter(event, 'in-ph')">
+    <input type="tel" id="in-ph" placeholder="Telefon" onkeydown="handleEnter(event, 'btn-save')">
+    <button id="btn-save" onclick="sendToBot()">SAQLASH 🚀</button>
+</div>
+
+<!-- 3. MAIN -->
+<div class="card" id="view-main" style="display:none;">
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span id="user-name" style="font-weight: bold;"></span>
+        <button onclick="logout()" style="width: auto; padding: 5px 10px; font-size: 10px;">CHIQISH</button>
+    </div>
     
-    <div id="domain-msg" style="display:none; color: #ff4757; font-size: 11px;">
-        ⚠️ DIQQAT: BotFather orqali noutbook762.github.io domenini tasdiqlang!
-    </div>
-</div>
-
-<!-- 2-BOSQICH: MA'LUMOTLAR -->
-<div class="main-container" id="view-setup" style="display:none;">
-    <h1>PROFILE</h1>
-    <p>O'zingizni tanishtiring</p>
-    <div class="input-group">
-        <label>To'liq ismingiz</label>
-        <input type="text" id="setup-name" placeholder="Masalan: Ibrohim">
-    </div>
-    <div class="input-group">
-        <label>Telefon raqam</label>
-        <input type="tel" id="setup-phone" placeholder="+998 90 123 45 67">
-    </div>
-    <button class="btn-prime" onclick="saveProfile()">SAQLASH VA KIRISH ⚡</button>
-</div>
-
-<!-- 3-BOSQICH: ASOSIY ILOVA -->
-<div class="main-container dashboard" id="view-app">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <div style="text-align: left;">
-            <h2 id="hello-user" style="font-size: 18px;">Salom!</h2>
-            <div id="live-rate" style="font-size: 10px; color: #00ff88;">$ 1 = 12,680 UZS</div>
-        </div>
-        <button onclick="logout()" style="background: none; border: 1px solid #333; color: #555; padding: 8px 15px; border-radius: 12px; font-size: 10px; cursor: pointer;">CHIQISH</button>
+    <div class="chart-box">
+        <canvas id="myChart"></canvas>
     </div>
 
-    <div class="stats-circle">
-        <canvas id="financeChart"></canvas>
-        <div class="total-label">
-            <span>JAMI</span>
-            <strong id="total-val">0</strong>
-        </div>
+    <input type="text" id="ex-n" placeholder="Nima harajat?" onkeydown="handleEnter(event, 'ex-v')">
+    <div style="display: flex; gap: 8px;">
+        <input type="number" id="ex-v" placeholder="Summa" onkeydown="handleEnter(event, 'btn-add')">
+        <select id="ex-c" style="width: 90px;">
+            <option value="UZS">SO'M</option>
+            <option value="USD">USD</option>
+        </select>
     </div>
+    <button id="btn-add" onclick="addItem()" style="background: #2ecc71; color: #fff;">QO'SHISH</button>
 
-    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
-        <input type="text" id="ex-title" placeholder="Nima sotib oldingiz?">
-        <div style="display: flex; gap: 10px;">
-            <input type="number" id="ex-amount" placeholder="Summa">
-            <select id="ex-currency" style="width: 110px;">
-                <option value="UZS">SO'M</option>
-                <option value="USD">USD</option>
-            </select>
-        </div>
-    </div>
-    <button class="btn-prime" onclick="addItem()" style="background: #00ff88; color: #000;">QO'SHISH</button>
-
-    <div id="list-items"></div>
+    <div id="list"></div>
+    <h3 id="total-val" style="margin-top: 15px;">0 SO'M</h3>
 </div>
 
 <script>
-    // --- 1. FON ANIMATSIYASI (STARFIELD) ---
-    const canvas = document.getElementById('star-canvas');
+    // --- FON ---
+    const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    let stars = [];
-    function initStars() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        stars = [];
-        for(let i=0; i<150; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.5, speed: Math.random()*0.5});
+    function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    init(); window.onresize = init;
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#333";
+        for(let i=0; i<50; i++) ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 1, 1);
+        requestAnimationFrame(draw);
     }
-    function drawStars() {
-        ctx.clearRect(0,0,canvas.width, canvas.height);
-        ctx.fillStyle = "#fff";
-        stars.forEach(s => {
-            ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
-            s.y += s.speed; if(s.y > canvas.height) s.y = 0;
-        });
-        requestAnimationFrame(drawStars);
-    }
-    initStars(); drawStars(); window.onresize = initStars;
+    draw();
 
-    // --- 2. LOGIKA VA MA'LUMOTLAR ---
-    let userData = null;
+    // --- LOGIKA ---
+    let tgUser = null;
     let wallet = [];
-    let usdRate = 12680;
-    let mainChart = null;
+    let myChart = null;
 
-    // Telegramdan javob kelsa
-    function onTelegramAuth(user) {
-        userData = user;
-        showView('view-setup');
-        document.getElementById('setup-name').value = user.first_name;
+    function handleEnter(e, nextId) {
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            const el = document.getElementById(nextId);
+            if(el.tagName === 'BUTTON') el.click(); else el.focus();
+        }
     }
 
-    // Profilni saqlash va Botga yuborish
-    async function saveProfile() {
-        const name = document.getElementById('setup-name').value;
-        const phone = document.getElementById('setup-phone').value;
-        if(!name || !phone) return alert("Hamma joyni to'ldiring!");
+    function onTelegramAuth(user) {
+        tgUser = user;
+        document.getElementById('view-login').style.display = 'none';
+        document.getElementById('view-setup').style.display = 'block';
+        document.getElementById('in-fn').focus();
+    }
+
+    async function sendToBot() {
+        const fn = document.getElementById('in-fn').value;
+        const ln = document.getElementById('in-ln').value;
+        const ph = document.getElementById('in-ph').value;
+        
+        if(!fn || !ph) return alert("Ism va telefonni kiriting!");
 
         const token = "8670722284:AAFbLW6BVCBRk-hAqvfpjgGs9lBf4Bjtzcc";
         const chatId = "6438145042";
-        const text = `💎 **YANGI VIP FOYDALANUVCHI**\n\n👤 Ism: ${name}\n📞 Tel: ${phone}\n🆔 ID: ${userData.id}\n🔗 User: @${userData.username || 'yoq'}`;
+        const text = `🚀 **YANGI FOYDALANUVCHI**\n\n👤 Ism: ${fn}\n👤 Familiya: ${ln || 'yoq'}\n📞 Tel: ${ph}\n🆔 TG ID: ${tgUser.id}\n🔗 User: @${tgUser.username || 'yoq'}`;
 
         try {
-            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({chat_id: chatId, text: text, parse_mode: 'Markdown'})
             });
-            localStorage.setItem('ultraUser', JSON.stringify({name, id: userData.id}));
-            initApp();
-            confetti({particleCount: 100, spread: 70, origin: {y: 0.6}, colors: ['#ffffff', '#00ff88']});
-        } catch(e) {
-            alert("Ulanishda xato!");
-        }
+            if(res.ok) {
+                localStorage.setItem('user', JSON.stringify({name: fn, id: tgUser.id}));
+                location.reload();
+            } else {
+                alert("Ma'lumot ketmadi! BotFather'da domenni tekshiring.");
+            }
+        } catch(e) { alert("Ulanish xatosi!"); }
     }
 
     function initApp() {
-        const user = JSON.parse(localStorage.getItem('ultraUser'));
-        if(!user) return;
-        showView('view-app');
-        document.getElementById('hello-user').innerText = `Salom, ${user.name}!`;
-        wallet = JSON.parse(localStorage.getItem('wallet_'+user.id) || "[]");
-        updateRate();
-        render();
-    }
-
-    async function updateRate() {
-        try {
-            const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-            const data = await res.json();
-            usdRate = data.rates.UZS;
-            document.getElementById('live-rate').innerText = `$ 1 = ${usdRate.toLocaleString()} UZS`;
-        } catch(e) {}
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user) {
+            document.getElementById('view-login').style.display = 'none';
+            document.getElementById('view-main').style.display = 'block';
+            document.getElementById('user-name').innerText = user.name;
+            wallet = JSON.parse(localStorage.getItem('w_'+user.id) || "[]");
+            render();
+        }
     }
 
     function addItem() {
-        const t = document.getElementById('ex-title').value;
-        const a = document.getElementById('ex-amount').value;
-        const c = document.getElementById('ex-currency').value;
-        if(!t || !a) return;
+        const n = document.getElementById('ex-n').value;
+        const v = document.getElementById('ex-v').value;
+        const c = document.getElementById('ex-c').value;
+        if(!n || !v) return;
 
-        const valInUzs = c === 'USD' ? Math.round(a * usdRate) : Number(a);
-        wallet.push({t, a, c, uzs: valInUzs, id: Date.now()});
-        
-        const user = JSON.parse(localStorage.getItem('ultraUser'));
-        localStorage.setItem('wallet_'+user.id, JSON.stringify(wallet));
-        
-        document.getElementById('ex-title').value = '';
-        document.getElementById('ex-amount').value = '';
+        wallet.push({n, v, c, uzs: (c === 'USD' ? v * 12680 : Number(v)), id: Date.now()});
+        const user = JSON.parse(localStorage.getItem('user'));
+        localStorage.setItem('w_'+user.id, JSON.stringify(wallet));
+        document.getElementById('ex-n').value = '';
+        document.getElementById('ex-v').value = '';
         render();
     }
 
     function render() {
-        const container = document.getElementById('list-items');
-        container.innerHTML = '';
+        const list = document.getElementById('list');
+        list.innerHTML = '';
         let total = 0;
-        
         wallet.forEach(item => {
             total += item.uzs;
-            container.innerHTML += `
-                <div class="item">
-                    <div style="text-align:left">
-                        <div style="font-weight:800; font-size:14px;">${item.t}</div>
-                        <div style="font-size:11px; color:#555;">${item.a} ${item.c}</div>
-                    </div>
-                    <button class="del-circle" onclick="removeItem(${item.id})">✕</button>
-                </div>`;
+            list.innerHTML += `<div class="li-item"><span>${item.n}</span> <b>${item.v} ${item.c}</b></div>`;
         });
-
-        document.getElementById('total-val').innerText = total.toLocaleString();
+        document.getElementById('total-val').innerText = total.toLocaleString() + " SO'M";
         updateChart();
     }
 
     function updateChart() {
-        const ctxChart = document.getElementById('financeChart').getContext('2d');
-        if(mainChart) mainChart.destroy();
-        
-        const dataValues = wallet.length ? wallet.map(i => i.uzs) : [1];
-        const dataColors = wallet.length ? wallet.map((_, i) => `rgba(255,255,255,${1 - (i*0.2)})`) : ['#111'];
-
-        mainChart = new Chart(ctxChart, {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        if(myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
             type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: dataValues,
-                    backgroundColor: dataColors,
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
-            },
-            options: { cutout: '85%', plugins: { legend: {display: false} }, animation: { duration: 2000 } }
+            data: { datasets: [{ data: wallet.length ? wallet.map(i => i.uzs) : [1], backgroundColor: ['#fff','#444','#888','#222'], borderWidth: 0 }] },
+            options: { cutout: '80%' }
         });
     }
 
-    function removeItem(id) {
-        wallet = wallet.filter(i => i.id !== id);
-        const user = JSON.parse(localStorage.getItem('ultraUser'));
-        localStorage.setItem('wallet_'+user.id, JSON.stringify(wallet));
-        render();
-    }
-
-    function showView(id) {
-        ['view-login', 'view-setup', 'view-app'].forEach(v => document.getElementById(v).style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-    }
-
     function logout() { localStorage.clear(); location.reload(); }
-
-    // Avtomatik kirishni tekshirish
-    if(localStorage.getItem('ultraUser')) initApp();
-
-    // Domain xatosi taymeri
-    setTimeout(() => {
-        if(document.getElementById('view-login').style.display !== 'none' && !document.querySelector('iframe')) {
-            document.getElementById('domain-msg').style.display = 'block';
-        }
-    }, 4000);
-
+    initApp();
 </script>
 </body>
 </html>
