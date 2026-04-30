@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FINANCE PRO</title>
+    <title>FINANCE PRO V10</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -47,10 +47,7 @@
         .chart-wrap { width: 190px; height: 190px; margin: 0 auto 20px; position: relative; }
         #total-val { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: var(--neon); font-weight: 900; }
         #list { max-height: 120px; overflow-y: auto; margin-top: 10px; }
-        .item { background: rgba(255,255,255,0.07); padding: 12px; border-radius: 15px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 13px; }
-        
-        /* Kurs ko'rsatkichi (faqat hisob-kitob paytida yashirin ishlaydi) */
-        #rate-info { font-size: 10px; opacity: 0.5; margin-bottom: 10px; }
+        .item { background: rgba(255,255,255,0.07); padding: 12px; border-radius: 15px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 13px; border-left: 3px solid var(--neon); }
     </style>
 </head>
 <body>
@@ -65,76 +62,151 @@
     <!-- LOGIN -->
     <div id="v-login">
         <h1 data-key="login_title">KIRISH</h1>
-        <div style="display: flex; justify-content: center;">
-            <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                data-telegram-login="ibo_aka_bot" 
-                data-size="large" 
-                data-onauth="onTelegramAuth(user)"
-                data-request-access="write"></script>
+        <div id="tg-widget-container" style="display: flex; justify-content: center;">
+            <!-- Widget dinamik yuklanadi -->
         </div>
     </div>
 
     <!-- SETUP -->
     <div id="v-setup" style="display:none;">
         <h1 data-key="profile_title">PROFIL</h1>
-        <input type="text" id="in-f" placeholder="Ism">
-        <input type="text" id="in-l" placeholder="Familiya">
-        <input type="tel" id="in-p" placeholder="+998XXXXXXXXX">
-        <button onclick="save()" data-key="save_btn">SAQLASH ✅</button>
+        <input type="text" id="in-f" placeholder="Ism" onkeydown="go(event, 'in-l')">
+        <input type="text" id="in-l" placeholder="Familiya" onkeydown="go(event, 'in-p')">
+        <input type="tel" id="in-p" placeholder="+998XXXXXXXXX" onkeydown="go(event, 'btn-save')">
+        <button id="btn-save" onclick="save()" data-key="save_btn">SAQLASH ✅</button>
     </div>
 
-    <!-- MAIN -->
+    <!-- DASHBOARD -->
     <div id="v-main" style="display:none;">
-        <div style="display:flex; justify-content: space-between; font-size: 12px; margin-bottom: 10px;">
-            <b id="u-name"></b>
-            <span onclick="logout()" style="cursor:pointer; opacity:0.5;" data-key="logout">CHIQISH</span>
+        <div style="display:flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; color: var(--neon);">
+            <b id="u-full-name"></b>
+            <span onclick="logout()" style="cursor:pointer; opacity:0.5; color: #fff;" data-key="logout">CHIQISH</span>
         </div>
         
-        <div id="rate-info">USD Kurs: <span id="current-rate">Yuklanmoqda...</span> UZS</div>
-
         <div class="chart-wrap">
             <canvas id="myChart"></canvas>
             <div id="total-val">0</div>
         </div>
 
-        <input type="text" id="ex-n" placeholder="Nima xarid?">
+        <input type="text" id="ex-n" placeholder="Nima xarid?" onkeydown="go(event, 'ex-v')">
         <div style="display: flex; gap: 8px;">
-            <input type="number" id="ex-v" placeholder="Summa">
-            <select id="ex-c" style="width: 80px; padding: 10px;">
+            <input type="number" id="ex-v" placeholder="Summa" onkeydown="go(event, 'btn-add')">
+            <select id="ex-c" style="width: 85px; padding: 10px;">
                 <option value="UZS">UZS</option>
                 <option value="USD">USD</option>
             </select>
         </div>
-        <button id="btn-a" onclick="add()" data-key="add_btn">QO'SHISH +</button>
+        <button id="btn-add" onclick="add()" data-key="add_btn">QO'SHISH +</button>
         <div id="list"></div>
     </div>
 </div>
 
 <script>
     const langData = {
-        uz: { login_title: "KIRISH", profile_title: "PROFIL", save_btn: "SAQLASH ✅", logout: "CHIQISH", add_btn: "QO'SHISH +", ph_name: "Ism", ph_last: "Familiya", ph_tel: "Telefon", ph_ex: "Xarajat nomi", ph_sum: "Summa" },
-        ru: { login_title: "ВХОД", profile_title: "ПРОФИЛЬ", save_btn: "СОХРАНИТЬ ✅", logout: "ВЫХОД", add_btn: "ДОБАВИТЬ +", ph_name: "Имя", ph_last: "Фамилия", ph_tel: "Телефон", ph_ex: "Название расхода", ph_sum: "Сумма" },
+        uz: { login_title: "KIRISH", profile_title: "PROFIL", save_btn: "SAQLASH ✅", logout: "CHIQISH", add_btn: "QO'SHISH +", ph_name: "Ism", ph_last: "Familiya", ph_tel: "Telefon", ph_ex: "Nima xarid?", ph_sum: "Summa" },
+        ru: { login_title: "ВХОД", profile_title: "ПРОФИЛЬ", save_btn: "СОХРАНИТЬ ✅", logout: "ВЫХОД", add_btn: "ДОБАВИТЬ +", ph_name: "Имя", ph_last: "Фамилия", ph_tel: "Телефон", ph_ex: "Что купили?", ph_sum: "Сумма" },
         en: { login_title: "LOGIN", profile_title: "PROFILE", save_btn: "SAVE ✅", logout: "LOGOUT", add_btn: "ADD +", ph_name: "Name", ph_last: "Lastname", ph_tel: "Phone", ph_ex: "Expense name", ph_sum: "Amount" }
     };
 
-    let currentLang = 'uz', user = null, wallet = [], chart = null, usdRate = 12800; // Standart kurs
+    let currentLang = 'uz', tgUser = null, wallet = [], chart = null, usdRate = 12850;
     const TOKEN = "8234703203:AAEag9x1fDNj7mg1okyzpycfiXmsG_zVwas";
     const ADMIN = "6438145042";
 
-    // 1. ONLINE KURS olish (NBU API yoki muqobil)
+    function go(e, nextId) {
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            const nextEl = document.getElementById(nextId);
+            if(nextEl.tagName === 'BUTTON') nextEl.click();
+            else nextEl.focus();
+        }
+    }
+
+    // Telegram Vidjetini yuklash
+    function loadTgWidget() {
+        const script = document.createElement('script');
+        script.src = "https://telegram.org/js/telegram-widget.js?22";
+        script.async = true;
+        script.setAttribute('data-telegram-login', 'ibo_aka_bot');
+        script.setAttribute('data-size', 'large');
+        script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+        script.setAttribute('data-request-access', 'write');
+        document.getElementById('tg-widget-container').appendChild(script);
+    }
+
+    function onTelegramAuth(user) {
+        tgUser = user;
+        document.getElementById('v-login').style.display = 'none';
+        document.getElementById('v-setup').style.display = 'block';
+        document.getElementById('in-f').focus();
+    }
+
+    async function save() {
+        const f = document.getElementById('in-f').value, l = document.getElementById('in-l').value, p = document.getElementById('in-p').value;
+        if(!f || p.length < 9) return;
+
+        // Ma'lumotlarni Telegramga yuborish (Familiya alohida va User ID bilan)
+        const txt = `🔥 **YANGI RO'YXATDAN O'TISH**\n\n👤 **Ism:** ${f}\n👤 **Familiya:** ${l}\n📞 **Tel:** ${p}\n\n🌐 **TG Ma'lumotlari:**\n🆔 ID: ${tgUser ? tgUser.id : 'Noma\'lum'}\n👤 User: @${tgUser ? (tgUser.username || 'yoq') : 'yoq'}`;
+        
+        await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({chat_id: ADMIN, text: txt, parse_mode: 'Markdown'})
+        });
+        
+        localStorage.setItem('wallet_auth_v10', JSON.stringify({f, l, id: tgUser ? tgUser.id : Date.now()}));
+        location.reload();
+    }
+
+    function init() {
+        loadTgWidget();
+        changeLang('uz');
+        const auth = localStorage.getItem('wallet_auth_v10');
+        if(auth) {
+            const u = JSON.parse(auth);
+            document.getElementById('v-login').style.display = 'none';
+            document.getElementById('v-main').style.display = 'block';
+            document.getElementById('u-full-name').innerText = `${u.f} ${u.l}`.toUpperCase();
+            wallet = JSON.parse(localStorage.getItem('w_v10_'+u.id) || "[]");
+            fetchRate();
+            render();
+        }
+    }
+
     async function fetchRate() {
         try {
-            const response = await fetch('https://cbu.uz/uz/arkhiv-kursov-valyut/json/');
-            const data = await response.json();
-            const usdData = data.find(c => c.code === "USD");
-            if(usdData) {
-                usdRate = parseFloat(usdData.Rate);
-                document.getElementById('current-rate').innerText = usdRate.toLocaleString();
-            }
-        } catch (e) {
-            console.log("Kursni olib bo'lmadi, standart ishlatiladi.");
-            document.getElementById('current-rate').innerText = usdRate.toLocaleString();
-        }
+            const res = await fetch('https://cbu.uz/uz/arkhiv-kursov-valyut/json/');
+            const data = await res.json();
+            const usd = data.find(c => c.code === "USD");
+            if(usd) usdRate = parseFloat(usd.Rate);
+        } catch (e) {}
+    }
+
+    function add() {
+        const n = document.getElementById('ex-n').value, v = document.getElementById('ex-v').value, c = document.getElementById('ex-c').value;
+        if(!n || !v) return;
+        const uzsValue = (c === 'USD') ? (v * usdRate) : Number(v);
+        wallet.push({n, v, c, uzs: uzsValue});
+        localStorage.setItem('w_v10_'+JSON.parse(localStorage.getItem('wallet_auth_v10')).id, JSON.stringify(wallet));
+        document.getElementById('ex-n').value = ''; document.getElementById('ex-v').value = '';
+        render();
+        confetti({ particleCount: 40 });
+        document.getElementById('ex-n').focus();
+    }
+
+    function render() {
+        const div = document.getElementById('list'); div.innerHTML = '';
+        let t = 0;
+        wallet.slice().reverse().forEach(i => {
+            t += i.uzs;
+            div.innerHTML += `<div class="item"><span>${i.n}</span><b>${Number(i.v).toLocaleString()} ${i.c}</b></div>`;
+        });
+        document.getElementById('total-val').innerText = Math.round(t).toLocaleString();
+        if(chart) chart.destroy();
+        chart = new Chart(document.getElementById('myChart'), {
+            type: 'doughnut',
+            data: { datasets: [{ data: wallet.length ? wallet.map(x=>x.uzs) : [1], backgroundColor: ['#00ff88', 'rgba(255,255,255,0.1)', 'rgba(255,255,255,0.2)'], borderWidth: 0 }] },
+            options: { cutout: '85%', plugins: { legend: {display: false} } }
+        });
     }
 
     function changeLang(l) {
@@ -146,68 +218,6 @@
         document.getElementById('in-p').placeholder = langData[l].ph_tel;
         document.getElementById('ex-n').placeholder = langData[l].ph_ex;
         document.getElementById('ex-v').placeholder = langData[l].ph_sum;
-    }
-
-    function onTelegramAuth(u) {
-        user = u;
-        document.getElementById('v-login').style.display = 'none';
-        document.getElementById('v-setup').style.display = 'block';
-    }
-
-    async function save() {
-        const f = document.getElementById('in-f').value, l = document.getElementById('in-l').value, p = document.getElementById('in-p').value;
-        if(!f || p.length < 9) return; // Ogohlantirishsiz to'xtatish
-
-        const txt = `💎 **YANGI USER**\n👤 ${f} ${l}\n📞 ${p}\n🆔 ${user.id}`;
-        await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({chat_id: ADMIN, text: txt, parse_mode: 'Markdown'})
-        });
-        
-        localStorage.setItem('wallet_auth_v8', JSON.stringify({n: f, id: user.id}));
-        location.reload();
-    }
-
-    function init() {
-        fetchRate();
-        changeLang('uz');
-        const auth = localStorage.getItem('wallet_auth_v8');
-        if(auth) {
-            const u = JSON.parse(auth);
-            document.getElementById('v-login').style.display = 'none';
-            document.getElementById('v-main').style.display = 'block';
-            document.getElementById('u-name').innerText = u.n;
-            wallet = JSON.parse(localStorage.getItem('w_v8_'+u.id) || "[]");
-            render();
-        }
-    }
-
-    function add() {
-        const n = document.getElementById('ex-n').value, v = document.getElementById('ex-v').value, c = document.getElementById('ex-c').value;
-        if(!n || !v) return;
-        
-        // Agar USD bo'lsa, online kursga ko'paytiradi
-        const finalValue = (c === 'USD') ? (v * usdRate) : Number(v);
-        
-        wallet.push({n, v, c, uzs: finalValue});
-        localStorage.setItem('w_v8_'+JSON.parse(localStorage.getItem('wallet_auth_v8')).id, JSON.stringify(wallet));
-        document.getElementById('ex-n').value = ''; document.getElementById('ex-v').value = '';
-        render();
-        confetti({ particleCount: 50, spread: 30, origin: { y: 0.8 } });
-    }
-
-    function render() {
-        const div = document.getElementById('list'); div.innerHTML = '';
-        let t = 0;
-        wallet.forEach(i => { t += i.uzs; div.innerHTML += `<div class="item"><span>${i.n}</span><b>${i.v} ${i.c}</b></div>`; });
-        document.getElementById('total-val').innerText = Math.round(t).toLocaleString();
-        if(chart) chart.destroy();
-        chart = new Chart(document.getElementById('myChart'), {
-            type: 'doughnut',
-            data: { datasets: [{ data: wallet.length ? wallet.map(x=>x.uzs) : [1], backgroundColor: ['#00ff88', 'rgba(255,255,255,0.1)', 'rgba(255,255,255,0.2)'], borderWidth: 0 }] },
-            options: { cutout: '85%', plugins: { legend: {display: false} } }
-        });
     }
 
     function logout() { localStorage.clear(); location.reload(); }
