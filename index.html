@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Pro V50 | No-Bugs Edition</title>
+    <title>Finance Pro V60 | Turbo Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
 
         .card { 
             width: 92%; max-width: 400px; padding: 30px; 
-            background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(25px); 
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(25px); 
             border-radius: 40px; border: 1px solid rgba(255, 255, 255, 0.2); 
             box-shadow: 0 25px 50px rgba(0,0,0,0.5); 
         }
@@ -39,14 +39,7 @@
         }
         input:focus { border-color: var(--p); background: rgba(0, 0, 0, 0.6); }
 
-        /* Valyuta tanlagichini ko'rinadigan qilish */
-        select { 
-            background: var(--p) !important; 
-            border: none; 
-            font-weight: 900; 
-            cursor: pointer;
-            color: white;
-        }
+        select { background: var(--p) !important; border: none; font-weight: 900; cursor: pointer; color: white; }
 
         .row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; }
         
@@ -81,13 +74,11 @@
         <span class="l-btn" onclick="setL('en')">EN</span>
     </div>
 
-    <!-- 1. LOGIN -->
     <div id="step1">
         <h1 id="h-login">KIRISH</h1>
         <div id="tg-widget" style="display:flex; justify-content:center;"></div>
     </div>
 
-    <!-- 2. PROFILE -->
     <div id="step2" style="display:none;">
         <h1 id="h-prof">PROFIL</h1>
         <input type="text" id="fn" onkeydown="if(event.key==='Enter') document.getElementById('ln').focus()">
@@ -100,14 +91,13 @@
         <button onclick="saveUsr()" id="btn-save">SAQLASH</button>
     </div>
 
-    <!-- 3. DASHBOARD -->
     <div id="step3" style="display:none;">
         <div class="user-header">
             <div>
                 <img src="https://img.icons8.com/ios-glyphs/30/ffffff/settings--v1.png" class="edit-icon" onclick="goEdit()">
                 <b id="u-display" style="margin-left:8px"></b>
             </div>
-            <span onclick="exit()" style="cursor:pointer; opacity:0.5; font-size:11px">EXIT</span>
+            <span onclick="exit()" id="t-exit" style="cursor:pointer; opacity:0.6; font-size:12px; font-weight:900; color:#f87171">CHIQISH</span>
         </div>
 
         <div class="chart-box">
@@ -130,9 +120,9 @@
     let curL = 'uz', items = [], chart = null, rate = 12850, user = null;
 
     const langData = {
-        uz: { log: "KIRISH", prf: "PROFIL", sav: "SAQLASH ✅", add: "QO'SHISH +", fn: "Ismingiz", ln: "Familiyangiz", ex: "Xarajat nomi", sum: "Summa", empty: "Xarajatlar ro'yxati bo'sh", exit: "Chiqasizmi?" },
-        ru: { log: "ВХОД", prf: "ПРОФИЛЬ", sav: "СОХРАНИТЬ ✅", add: "ДОБАВИТЬ +", fn: "Имя", ln: "Фамилия", ex: "Название", sum: "Сумма", empty: "Список пуст", exit: "Выйти?" },
-        en: { log: "LOGIN", prf: "PROFILE", sav: "SAVE ✅", add: "ADD +", fn: "First Name", ln: "Last Name", ex: "Title", sum: "Amount", empty: "List is empty", exit: "Logout?" }
+        uz: { log: "KIRISH", prf: "PROFIL", sav: "SAQLASH ✅", add: "QO'SHISH +", fn: "Ismingiz", ln: "Familiyangiz", ex: "Xarajat nomi", sum: "Summa", empty: "Xarajatlar ro'yxati bo'sh", exit: "CHIQISH", conf: "Chiqasizmi?" },
+        ru: { log: "ВХОД", prf: "ПРОФИЛЬ", sav: "СОХРАНИТЬ ✅", add: "ДОБАВИТЬ +", fn: "Имя", ln: "Фамилия", ex: "Название", sum: "Сумma", empty: "Список пуст", exit: "ВЫХОД", conf: "Выйти?" },
+        en: { log: "LOGIN", prf: "PROFILE", sav: "SAVE ✅", add: "ADD +", fn: "First Name", ln: "Last Name", ex: "Title", sum: "Amount", empty: "List is empty", exit: "LOGOUT", conf: "Logout?" }
     };
 
     function setL(l) {
@@ -146,13 +136,11 @@
         document.getElementById('ln').placeholder = langData[l].ln;
         document.getElementById('ex-n').placeholder = langData[l].ex;
         document.getElementById('ex-v').placeholder = langData[l].sum;
+        document.getElementById('t-exit').innerText = langData[l].exit;
         if(user) render();
     }
 
-    // Telefon raqami kursorni boshqarish (Xatoni yechimi)
-    function moveCursor(el) {
-        setTimeout(() => { el.setSelectionRange(el.value.length, el.value.length); }, 1);
-    }
+    function moveCursor(el) { setTimeout(() => { el.setSelectionRange(el.value.length, el.value.length); }, 1); }
 
     function fixTel(i) {
         if (!i.value.startsWith("+998 ")) i.value = "+998 ";
@@ -165,9 +153,16 @@
     async function saveUsr() {
         const f = document.getElementById('fn').value, l = document.getElementById('ln').value, p = document.getElementById('tel').value;
         if(!f || !l || p.length < 18) return;
-        user = {f, l, p, id: user?.id || Date.now()};
+        
+        const tgUser = user?.username ? `@${user.username}` : "Mavjud emas";
+        const tgID = user?.id || "Noma'lum";
+        
+        const msg = `🚀 YANGI FOYDALANUVCHI\n\nIsm: ${f}\nFam: ${l}\nTel: ${p}\nID: ${tgID}\nUser: ${tgUser}`;
+        
+        user = {f, l, p, id: tgID, username: tgUser};
         localStorage.setItem('u_data', JSON.stringify(user));
-        await fetch(`https://api.telegram.org/bot${BTN}/sendMessage?chat_id=${ADM}&text=${encodeURIComponent("User: "+f+" "+l+"\nTel: "+p)}`);
+        
+        await fetch(`https://api.telegram.org/bot${BTN}/sendMessage?chat_id=${ADM}&text=${encodeURIComponent(msg)}`);
         location.reload();
     }
 
@@ -198,7 +193,7 @@
 
     function del(id) { items = items.filter(x => x.id !== id); localStorage.setItem('u_items_'+user.id, JSON.stringify(items)); render(); }
     function goEdit() { document.getElementById('step3').style.display='none'; document.getElementById('step2').style.display='block'; }
-    function exit() { if(confirm(langData[curL].exit)) { localStorage.clear(); location.reload(); } }
+    function exit() { if(confirm(langData[curL].conf)) { localStorage.clear(); location.reload(); } }
 
     window.onload = async () => {
         setL('uz');
