@@ -3,42 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Pro V28</title>
+    <title>Finance Pro V30</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; --s: #a855f7; --g: rgba(255, 255, 255, 0.12); --b: rgba(255, 255, 255, 0.2); }
+        :root { --p: #6366f1; --s: #a855f7; --g: rgba(255, 255, 255, 0.1); --b: rgba(255, 255, 255, 0.2); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         
         body { 
             height: 100vh; display: flex; align-items: center; justify-content: center; 
             background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #1e1b4b);
-            background-size: 400% 400%; animation: moveBG 12s ease infinite; color: white; overflow: hidden; 
+            background-size: 400% 400%; animation: moveBG 15s ease infinite; color: white; overflow: hidden; 
         }
         @keyframes moveBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        .card { width: 92%; max-width: 400px; padding: 30px; background: var(--g); backdrop-filter: blur(30px); border-radius: 40px; border: 1px solid var(--b); box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
-        h1 { font-weight: 900; margin-bottom: 20px; text-align: center; font-size: 26px; }
+        .card { width: 92%; max-width: 400px; padding: 30px; background: var(--g); backdrop-filter: blur(25px); border-radius: 40px; border: 1px solid var(--b); box-shadow: 0 25px 50px rgba(0,0,0,0.5); position: relative; }
+        
+        h1 { font-weight: 900; margin-bottom: 20px; text-align: center; font-size: 24px; letter-spacing: 1px; }
 
-        input, select { width: 100%; padding: 16px; margin: 8px 0; background: rgba(255,255,255,0.08); border: 1px solid var(--b); border-radius: 18px; color: white; outline: none; }
-        select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; background-size: 18px; cursor: pointer; }
-        select option { background: #1e1b4b; color: white; }
+        input, select { width: 100%; padding: 16px; margin: 8px 0; background: rgba(255,255,255,0.07); border: 1px solid var(--b); border-radius: 18px; color: white; outline: none; transition: 0.3s; }
+        input:focus { background: rgba(255,255,255,0.15); border-color: var(--p); }
 
-        .row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; align-items: center; }
-        button { width: 100%; padding: 18px; background: linear-gradient(90deg, var(--p), var(--s)); border: none; border-radius: 18px; color: white; font-weight: 900; cursor: pointer; margin-top: 10px; }
+        .row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; }
+        button { width: 100%; padding: 18px; background: linear-gradient(90deg, var(--p), var(--s)); border: none; border-radius: 18px; color: white; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        button:active { transform: scale(0.96); }
 
-        .chart-box { position: relative; width: 150px; height: 150px; margin: 0 auto 15px; }
-        #total-val { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; font-weight: 900; text-align: center; line-height: 1.1; }
+        /* Icon Settings */
+        .edit-btn { 
+            display: inline-block; width: 24px; height: 24px; 
+            background: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUSEhIWEhMWFhUYFxYXFRYWFRUTGRUXGRgVFh0YHSggGBslHRUaIzEiJiorLi4uFx81ODUvNygtLisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAOEA4QMBIgACEQEDEQH/xAAcAAEAAgIDAQAAAAAAAAAAAAAABwgBBgIEBQP/xABGEAABAwICBgYGBQsDBQEAAAABAAIDBBEFIQYHEjFRcRMiQWGBkQgUQmKhsSMygpKiFSQzQ1JTVHJzstFjk8EXNIPS4Rb/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AnFERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEWvaQaa0NHcVFVGxw9gHbk+625UfYvr6pm3FNSyy23OkLY2nwG0beSCYkVca3XtiDj9HFTxN7Oo97vMvsfJdX/qljj82Xt7tMCPkUFmEVaP+p2OtzdtW96mAH9q+1JrzxJh68dPIO0GN7T5tfl5ILIooWwnX7EbCppHs74nh452dY/Fb/o/rCw6ssIapgedzJPo38gHb/C6DakS6ICIiAiIgIiICIiAiIgIiICIiAiIgLBKxJIGglxAAFySbAAbyT2BQZrI1xEl1LhrrDNr6jtd3Q93veXFBI2mmsWjw4Fsj+lntlCwgv+0dzBzUKY1rFxXFJOgpg+JrshDTglxB/beBtW8gvQ0E1QVFYRU17nwRO62yT+cS3zudodQHic893ap2wDR+mo4+ipoWRN7bDrOPFzjm480EG6O6jquaz6yZtMDmWgCWU9pub7IPiVI+Dan8LgsXQmocPale4j7os34Lf0QefQ4JTQi0VPFGPdjaPkF3w1ZRBiy6lXhUEotLDHIPeY13zC7iINIxfVRhU9z6sIXftQudH+EHZ+CjrSLUPM27qKoEo7I5RsO5B46pPgFPiIKv4fpbjGDSCKYSBg/UzjaY4e47s+ybKYdB9atHX7Mbz6tUH9W93Vcf9N+53I2K3PFcLhqIzFPEyWM72vaCOY4HvChHTzUq6Panw0l7d5p3G7x/SPtcjn3lBPIKyq8avdbM9I4UuIbckIOztuB6aE3tZ183NHA5iyn+hrY5o2yxPbJG8Atc03Dge0EIOwiIgIiICIiAiIgIiICIiAuMjw0FxIAAJJJsABvJ4LJKgzXlp8S52G0zsh/3D2n6x/cD/ny4oPH1p6x5K+Q0VEXGm2g0lgO1UuvuHbsX3DtW66rdVLKUNqq1okqjYtjNiyDt5Of37h2cU1N6uRSsbW1Lb1LxeNhH6BhH95Bz4DLipXQAiIgIiICIiAiIgIiICxZZRBH2svVnDiDTLFaGrAyfazZbezJblk7eFEmgmmdTg1S6lqmO6DbtLCc3RuyvJH88snBWcWg61NX7MSh6SMBtXG36N27pGi56J/dnkew+KDdsPrY5o2SxPD43tDmuGYLTuK7Crlqf03fQVBoKslkD3lvWy9XmuQb33NJyPA58VYwFBlERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQf/Z");
+            background-size: contain; background-repeat: no-repeat; cursor: pointer; 
+            filter: brightness(0) invert(1); mix-blend-mode: overlay; transition: 0.4s; vertical-align: middle;
+        }
+        .edit-btn:hover { transform: rotate(90deg); opacity: 1; }
 
-        #history { max-height: 120px; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(255,255,255,0.06); border-radius: 15px; margin-bottom: 6px; }
-        .del-btn { color: #ff4757; font-weight: 900; cursor: pointer; margin-left: 10px; font-size: 18px; opacity: 0.6; transition: 0.3s; }
-        .del-btn:hover { opacity: 1; transform: scale(1.2); }
+        .user-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid var(--b); margin-bottom: 15px; }
+        .u-info { display: flex; align-items: center; gap: 10px; }
 
-        .langs { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
-        .l-btn { cursor: pointer; opacity: 0.4; font-weight: 900; }
-        .l-btn.active { opacity: 1; color: var(--p); }
+        .chart-box { position: relative; width: 150px; height: 150px; margin: 0 auto 20px; }
+        #total-val { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-weight: 900; }
+
+        #history { max-height: 120px; overflow-y: auto; margin-top: 15px; }
+        .item { display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 5px; font-size: 14px; }
+        .del { color: #ff4757; cursor: pointer; font-weight: 900; margin-left: 10px; }
+
+        .langs { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; font-size: 12px; font-weight: 900; cursor: pointer; }
+        .l-btn { opacity: 0.3; } .l-btn.active { opacity: 1; color: var(--p); }
     </style>
 </head>
 <body>
@@ -50,34 +61,43 @@
         <span class="l-btn" onclick="setL('en')">EN</span>
     </div>
 
+    <!-- 1-BOSQICH: KIRISH -->
     <div id="step1">
         <h1 data-tr="h_login">KIRISH</h1>
         <div id="tg-login" style="display:flex; justify-content:center;"></div>
     </div>
 
+    <!-- 2-BOSQICH: PROFIL VA TAHRIRLASH -->
     <div id="step2" style="display:none;">
-        <h1 data-tr="h_prof">PROFIL</h1>
-        <input type="text" id="fn" data-ph="p_fn" onkeydown="nx(event, 'ln')">
-        <input type="text" id="ln" data-ph="p_ln" onkeydown="nx(event, 'tel')">
-        <input type="tel" id="tel" value="+998 " oninput="msk(this)" onkeydown="nx(event, 'sv-btn')">
-        <button id="sv-btn" onclick="svUsr()" data-tr="b_save">SAQLASH ✅</button>
+        <h1 id="prof-title" data-tr="h_prof">PROFIL</h1>
+        <input type="text" id="fn" data-ph="p_fn">
+        <input type="text" id="ln" data-ph="p_ln">
+        <input type="tel" id="tel" value="+998 " oninput="msk(this)">
+        <button onclick="svUsr()" data-tr="b_save">SAQLASH ✅</button>
+        <button id="cancel-btn" onclick="goBack()" style="background:transparent; border:1px solid var(--b); display:none;">BEKOR QILISH</button>
     </div>
 
+    <!-- 3-BOSQICH: ASOSIY PANEL -->
     <div id="step3" style="display:none;">
+        <div class="user-header">
+            <div class="u-info">
+                <span class="edit-btn" onclick="editProfile()"></span>
+                <b id="u-name" style="font-size: 14px;"></b>
+            </div>
+            <span onclick="out()" style="cursor:pointer; opacity:0.5; font-size: 12px;">EXIT</span>
+        </div>
+
         <div class="chart-box">
             <canvas id="chrt"></canvas>
-            <div id="total-val">0<br><small style="font-size:9px; opacity:0.5">UZS</small></div>
+            <div id="total-val">0<br><small style="font-size:9px">UZS</small></div>
         </div>
-        <div style="display:flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px;">
-            <b id="u-name"></b>
-            <span onclick="out()" style="cursor:pointer; opacity:0.5" data-tr="b_out">CHIQISH</span>
-        </div>
-        <input type="text" id="ex-n" data-ph="p_ex" onkeydown="nx(event, 'ex-v')">
+
+        <input type="text" id="ex-n" data-ph="p_ex">
         <div class="row">
-            <input type="number" id="ex-v" data-ph="p_sum" onkeydown="nx(event, 'add-btn')">
+            <input type="number" id="ex-v" data-ph="p_sum">
             <select id="ex-c"><option value="UZS">UZS</option><option value="USD">USD</option></select>
         </div>
-        <button id="add-btn" onclick="add()" data-tr="b_add">QO'SHISH +</button>
+        <button onclick="add()" data-tr="b_add">QO'SHISH +</button>
         <div id="history"></div>
     </div>
 </div>
@@ -87,74 +107,78 @@
     let L = 'uz', U = null, E = [], CT = null, RATE = 12850;
 
     const TR = {
-        uz: { h_login: "KIRISH", h_prof: "PROFIL", b_save: "SAQLASH", b_out: "CHIQISH", b_add: "QO'SHISH", p_fn: "Ismingiz", p_ln: "Familiyangiz", p_ex: "Nima xarid?", p_sum: "Summa" },
-        ru: { h_login: "ВХОД", h_prof: "ПРОФИЛЬ", b_save: "СОХРАНИТЬ", b_out: "ВЫХОД", b_add: "ДОБАВИТЬ", p_fn: "Имя", p_ln: "Фамилия", p_ex: "Что купили?", p_sum: "Сумма" },
-        en: { h_login: "LOGIN", h_prof: "PROFILE", b_save: "SAVE", b_out: "LOGOUT", b_add: "ADD", p_fn: "Name", p_ln: "Lastname", p_ex: "Expense", p_sum: "Amount" }
+        uz: { h_login: "KIRISH", h_prof: "PROFIL", b_save: "SAQLASH", b_add: "QO'SHISH", p_fn: "Ismingiz", p_ln: "Familiyangiz", p_ex: "Xarajat nomi", p_sum: "Summa" },
+        ru: { h_login: "ВХОД", h_prof: "ПРОФИЛЬ", b_save: "СОХРАНИТЬ", b_add: "ДОБАВИТЬ", p_fn: "Имя", p_ln: "Фамилия", p_ex: "Название", p_sum: "Сумма" },
+        en: { h_login: "LOGIN", h_prof: "PROFILE", b_save: "SAVE", b_add: "ADD", p_fn: "Firstname", p_ln: "Lastname", p_ex: "Title", p_sum: "Amount" }
     };
 
     async function getRate() { try { const r = await fetch('https://cbu.uz/uz/arkhiv-kursov-valyut/json/'); const d = await r.json(); RATE = parseFloat(d.find(x => x.Ccy === 'USD').Rate); } catch(e) {} }
     function setL(l) { L = l; document.querySelectorAll('.l-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase() === l)); document.querySelectorAll('[data-tr]').forEach(el => el.innerText = TR[l][el.getAttribute('data-tr')]); document.querySelectorAll('[data-ph]').forEach(el => el.placeholder = TR[l][el.getAttribute('data-ph')]); }
     function msk(i) { let v = i.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/); i.value = !v[2] ? "+998 " : "+998 (" + v[2] + (v[3] ? ") " + v[3] : "") + (v[4] ? "-" + v[4] : "") + (v[5] ? "-" + v[5] : ""); }
-    function nx(e, n) { if(e.key === 'Enter') { e.preventDefault(); const el = document.getElementById(n); if(el.tagName === 'BUTTON') el.click(); else el.focus(); } }
+
     function onTelegramAuth(user) { U = user; document.getElementById('step1').style.display = 'none'; document.getElementById('step2').style.display = 'block'; }
+
+    function editProfile() {
+        const u = JSON.parse(localStorage.getItem('u_v30'));
+        document.getElementById('step3').style.display = 'none';
+        document.getElementById('step2').style.display = 'block';
+        document.getElementById('cancel-btn').style.display = 'block';
+        document.getElementById('fn').value = u.f;
+        document.getElementById('ln').value = u.l;
+    }
+
+    function goBack() { document.getElementById('step2').style.display = 'none'; document.getElementById('step3').style.display = 'block'; }
 
     async function svUsr() {
         const f = document.getElementById('fn').value, l = document.getElementById('ln').value, p = document.getElementById('tel').value;
-        if(!f || !l || p.length < 18) return alert("To'liq to'ldiring!");
-        const msg = `🚀 <b>YANGI FOYDALANUVCHI</b>%0A%0A<b>Ism:</b> ${f}%0A<b>Fam:</b> ${l}%0A<b>Tel:</b> ${p}%0A<b>ID:</b> ${U?.id || '—'}%0A<b>User:</b> @${U?.username || 'yoq'}`;
-        await fetch(`https://api.telegram.org/bot${BT}/sendMessage?chat_id=${AD}&text=${msg}&parse_mode=HTML`);
-        localStorage.setItem('u_v28', JSON.stringify({f, l, id: U?.id})); location.reload();
+        if(!f || !l || p.length < 18) return alert("Ma'lumotlarni to'liq kiriting!");
+        const isEdit = !!localStorage.getItem('u_v30');
+        const text = `${isEdit ? '🔄 TAHRIRLANDI' : '🚀 YANGI USER'}\n\nIsm: ${f}\nFam: ${l}\nTel: ${p}`;
+        await fetch(`https://api.telegram.org/bot${BT}/sendMessage?chat_id=${AD}&text=${encodeURIComponent(text)}`);
+        localStorage.setItem('u_v30', JSON.stringify({f, l, id: U?.id || JSON.parse(localStorage.getItem('u_v30')).id}));
+        location.reload();
     }
 
     function add() {
         const n = document.getElementById('ex-n'), v = document.getElementById('ex-v'), c = document.getElementById('ex-c').value;
         if(!n.value || !v.value) return;
         E.push({ id: Date.now(), n: n.value, v: Number(v.value), c: c, uzs: c === 'USD' ? Number(v.value) * RATE : Number(v.value) });
-        save(); render(); n.value = ''; v.value = ''; n.focus(); confetti({particleCount: 40});
+        save(); render(); n.value = ''; v.value = ''; confetti({particleCount: 50, spread: 60, origin: { y: 0.8 }});
     }
 
-    // O'CHIRISH FUNKSIYASI (X)
-    function del(id) {
-        E = E.filter(x => x.id !== id);
-        save();
-        render();
-    }
-
-    function save() { localStorage.setItem('e_v28_'+JSON.parse(localStorage.getItem('u_v28')).id, JSON.stringify(E)); }
+    function del(id) { E = E.filter(x => x.id !== id); save(); render(); }
+    function save() { const u = JSON.parse(localStorage.getItem('u_v30')); localStorage.setItem('e_v30_'+u.id, JSON.stringify(E)); }
 
     function render() {
         const h = document.getElementById('history'); h.innerHTML = ''; let t = 0;
         E.slice().reverse().forEach(x => {
             t += x.uzs;
-            h.innerHTML += `<div class="item">
-                <span style="flex:1">${x.n}</span>
-                <b>${x.c === 'USD' ? '$' : 'S'} ${x.v.toLocaleString()}</b>
-                <span class="del-btn" onclick="del(${x.id})">×</span>
-            </div>`;
+            h.innerHTML += `<div class="item"><span>${x.n}</span><b>${x.c==='USD'?'$':''}${x.v.toLocaleString()}</b><span class="del" onclick="del(${x.id})">×</span></div>`;
         });
-        document.getElementById('total-val').innerHTML = `${Math.round(t).toLocaleString()}<br><small style="font-size:9px; opacity:0.5">UZS</small>`;
-        updateChart();
-    }
-
-    function updateChart() {
-        const ctx = document.getElementById('chrt').getContext('2d');
+        document.getElementById('total-val').innerHTML = `${Math.round(t).toLocaleString()}<br><small style="font-size:9px">UZS</small>`;
         if(CT) CT.destroy();
-        CT = new Chart(ctx, { type: 'doughnut', data: { datasets: [{ data: E.length ? E.map(x => x.uzs) : [1], backgroundColor: ['#6366f1', '#a855f7', '#ec4899', '#f59e0b', '#10b981'], borderWidth: 0, cutout: '80%' }] }, options: { plugins: { legend: { display: false } } } });
+        CT = new Chart(document.getElementById('chrt'), { type: 'doughnut', data: { datasets: [{ data: E.length ? E.map(x => x.uzs) : [1], backgroundColor: ['#6366f1', '#a855f7', '#ec4899', '#f59e0b', '#10b981'], borderWidth: 0, cutout: '85%' }] }, options: { plugins: { legend: { display: false } } } });
     }
 
     async function init() {
-        setL('uz'); await getRate(); const saved = localStorage.getItem('u_v28');
+        setL('uz'); await getRate();
+        const saved = localStorage.getItem('u_v30');
         if(saved) {
-            const u = JSON.parse(saved); document.getElementById('step1').style.display = 'none'; document.getElementById('step3').style.display = 'block';
-            document.getElementById('u-name').innerText = `${u.f} ${u.l}`.toUpperCase();
-            E = JSON.parse(localStorage.getItem('e_v28_'+u.id) || "[]"); render();
+            const u = JSON.parse(saved);
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+            document.getElementById('u-name').innerText = (u.f + " " + u.l).toUpperCase();
+            E = JSON.parse(localStorage.getItem('e_v30_'+u.id) || "[]");
+            render();
         } else {
             const s = document.createElement('script'); s.src = "https://telegram.org/js/telegram-widget.js?22";
-            s.setAttribute('data-telegram-login', 'ibo_aka_bot'); s.setAttribute('data-onauth', 'onTelegramAuth(user)'); document.getElementById('tg-login').appendChild(s);
+            s.setAttribute('data-telegram-login', 'ibo_aka_bot'); s.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            document.getElementById('tg-login').appendChild(s);
         }
     }
     function out() { localStorage.clear(); location.reload(); }
     window.onload = init;
 </script>
+
 </body>
 </html>
