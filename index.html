@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Pro V70 | Smart Tracking</title>
+    <title>Finance Pro V80 | Enter Master</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
@@ -61,9 +61,11 @@
 
     <div id="step2" style="display:none;">
         <h1 id="h-prof">PROFIL</h1>
-        <input type="text" id="fn" placeholder="Ism">
-        <input type="text" id="ln" placeholder="Familiya">
-        <input type="tel" id="tel" value="+998 " oninput="fixTel(this)" onfocus="moveCursor(this)" onclick="moveCursor(this)">
+        <input type="text" id="fn" onkeydown="if(event.key==='Enter') document.getElementById('ln').focus()">
+        <input type="text" id="ln" onkeydown="if(event.key==='Enter') document.getElementById('tel').focus()">
+        <input type="tel" id="tel" value="+998 " 
+               oninput="fixTel(this)" onfocus="moveCursor(this)" onclick="moveCursor(this)"
+               onkeydown="if(event.key==='Enter') saveUsr()">
         <button onclick="saveUsr()" id="btn-save">SAQLASH</button>
     </div>
 
@@ -79,9 +81,9 @@
             <canvas id="chrt"></canvas>
             <div id="total-val">0<br><small>UZS</small></div>
         </div>
-        <input type="text" id="ex-n">
+        <input type="text" id="ex-n" onkeydown="if(event.key==='Enter') document.getElementById('ex-v').focus()">
         <div class="row">
-            <input type="number" id="ex-v">
+            <input type="number" id="ex-v" onkeydown="if(event.key==='Enter') addEx()">
             <select id="ex-c"><option value="UZS">UZS</option><option value="USD">USD</option></select>
         </div>
         <button onclick="addEx()" id="btn-add">QO'SHISH</button>
@@ -153,7 +155,7 @@
         if(!n.value || !v.value) return;
         items.push({ id: Date.now(), n: n.value, v: Number(v.value), c, uzs: c==='USD'?v.value*rate:v.value });
         localStorage.setItem('u_items_'+user.id, JSON.stringify(items));
-        render(); n.value = ''; v.value = '';
+        render(); n.value = ''; v.value = ''; n.focus();
         confetti({particleCount: 40, spread: 60, origin: { y: 0.8 }});
     }
 
